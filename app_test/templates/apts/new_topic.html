@@ -1,0 +1,9 @@
+{% extends "apts/base.html" %}
+{% block content %}
+<p>Add new Topic:</p>
+<form action = "{% url 'apts:new_topic' %}"method = 'post'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="sumit topic">add topic</button>
+</form>
+{% endblock content %}
