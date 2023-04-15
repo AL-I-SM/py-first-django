@@ -6,8 +6,15 @@ from .forms import TopicForm, EntryForm, Entry
 from django.contrib.auth.decorators import login_required
 
 
+menu = {"Админка": 'admin',
+        "Плиткой": 'projects/',
+        "Блог": 'blog/',
+        "Участники": 'users/login/',
+        "Темы": 'topics/'}
+
+
 def index(request):
-    return render(request, 'apts/index.html', {})
+    return render(request, 'apts/index.html', {'all_menu': menu})
 
 
 @login_required
@@ -30,7 +37,7 @@ def topic(request, topic_id):
             raise Http404
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic, 'topics': topics, 'entries': entries,
-               'user': request.user, 'person': topic.owner}
+               'user': request.user, 'person': topic.owner, 'all_menu': menu}
     return render(request, 'apts/topic.html', context)
 
 

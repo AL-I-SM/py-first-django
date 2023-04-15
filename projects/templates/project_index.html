@@ -2,11 +2,10 @@
 {% load static %}
 {% block page_content %}
 <h1>Projects</h1>
-<div class="row">
+<div class="container-fluid";>
 {% for project in projects %}
-    <div>
-        <div>
-            <img class="card-img-top" src="{% static project.image %}" width="200" height="200">
+    <div class="col-md-2">
+        <img class="card-img-top" src="{% static project.image %}" width="200" height="200">
             <div class="card-body">
                 <h5 class="card-title">{{ project.title }}</h5>
                 <p class="card-text">{{ project.description }}</p>
@@ -14,8 +13,7 @@
                     Read More
                 </a>
             </div>
-        </div>
-    </div>
-    {% endfor %}
+     </div>
+        {% endfor %}
 </div>
 {% endblock %}
