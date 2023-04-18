@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'blog',
     'users',
     'players',
+    'cards',
+    'django.contrib.humanize',
 
     'bootstrap3',
 ]
