@@ -10,7 +10,8 @@ menu = {"Админка": 'admin',
         "Плиткой": 'projects/',
         "Блог": 'blog/',
         "Участники": 'users/login/',
-        "Темы": 'topics/'}
+        "Темы": 'topics/',
+        "Мир книг": 'catalog/',}
 
 
 def index(request):

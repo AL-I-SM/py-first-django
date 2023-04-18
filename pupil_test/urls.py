@@ -23,4 +23,6 @@ urlpatterns = [
     path('blog/', include("blog.urls")),
     path('users/', include(('users.urls', 'users'), namespace='users')),
     re_path(r'^', include(('players.urls', 'players'), namespace='players')),
+    path('catalog/', include('catalog.urls')),
+    re_path(r'^accounts/', include('django.contrib.auth.urls')),
 ]
