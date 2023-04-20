@@ -1,4 +1,5 @@
-<!doctype html>
+<a href="{% url 'players:register' %}">Регистрация нового пользователя</a>
+{% block content %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,7 +46,4 @@
         display: none;
     }
 </style>
-
-<h1>Welcome to Website</h1>
-{% block content %}
 {% endblock %}

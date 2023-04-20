@@ -7,6 +7,11 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+
+
+# class CatalogLogin(LoginView):
+#     template_name = "catalog_login"
 
 
 @login_required

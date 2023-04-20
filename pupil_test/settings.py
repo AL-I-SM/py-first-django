@@ -35,7 +35,6 @@ LOGIN_URL = '/users/login/'
 # Application definition
 
 INSTALLED_APPS = [
-    'catalog',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,6 +48,7 @@ INSTALLED_APPS = [
     'blog',
     'users',
     'players',
+    'catalog',
     'cards',
     'django.contrib.humanize',
 

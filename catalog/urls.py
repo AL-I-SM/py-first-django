@@ -1,7 +1,7 @@
-from django.urls import path, re_path
-# from django.conf.urls import url
+from django.urls import path, re_path, include
 from django.contrib import admin
 from . import views
+from django.contrib.auth.views import LoginView
 
 urlpatterns = [
     path('', views.index, name="index"),
@@ -9,7 +9,7 @@ urlpatterns = [
     path('author_edit/<int:id>/', views.author_edit, name="author_edit"),
     path('author_delete/<int:id>/', views.author_delete, name="author_delete"),
     path('author_create/', views.author_create, name="author_create"),
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     re_path(r'^books/$', views.BookListView.as_view(), name='books'),
     re_path(r'^books/(?P<pk>\d+)$', views.BookDetailView.as_view(), name='book-detail'),
     re_path(r'^authors/$', views.AuthorsListView.as_view(), name='authors'),
@@ -18,5 +18,7 @@ urlpatterns = [
     re_path(r'^book/create/$', views.BookCreate.as_view(), name='book_create'),
     re_path(r'^book/update/(?P<pk>\d+)$', views.BookUpdate.as_view(), name='book_update'),
     re_path(r'^book/delete/(?P<pk>\d+)$', views.BookDelete.as_view(), name='book_delete'),
+    path("accounts/login/", LoginView.as_view(template_name="registration/login_catalog.html")),
+    re_path(r'^accounts/', include('django.contrib.auth.urls'))
 ]
 
