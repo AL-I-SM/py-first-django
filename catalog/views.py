@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.datetime_safe import datetime
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
 from .forms import AuthorsForms
@@ -10,9 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 
 
-# class CatalogLogin(LoginView):
-#     template_name = "catalog_login"
-
+class CatalogLogin(LoginView):
+    template_name = "registration/login_catalog.html"
 
 @login_required
 def authors_add(request):
@@ -35,6 +35,8 @@ def author_create(request):
 
 def author_edit(request, id):
     author = Author.objects.get(id=id)
+    author.date_of_death = author.date_of_death.__format__("%Y-%m-%d")
+    author.date_of_birth = author.date_of_birth.__format__("%Y-%m-%d")
     if request.method == "POST":
         author.first_name = request.POST.get("first_name")
         author.last_name = request.POST.get("last_name")

@@ -1,12 +1,19 @@
-.sidebar-nav {
-    margin-top: 20px;
-    padding: 0;
-    list-style: none;
-}
+/*.sidebar-nav {*/
+/*    margin-top: 20px;*/
+/*    padding: 0;*/
+/*    list-style: none;*/
+/*}*/
 .danger {
     color: red;
 }
-.container {
+.catalog-logo {
+    color: dodgerblue;
+    text-align: center;
+    font-size: 50px;
+    text-align: left;
+
+}
+.container-body {
     float: left;
     margin-bottom: 15px;
 }

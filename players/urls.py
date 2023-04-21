@@ -12,7 +12,6 @@ urlpatterns = [
     path('delete/<int:id>', views.delete),
     re_path(r'^accounts/', include('django.contrib.auth.urls')),
     path('dashboard/', dashboard, name='dashboard'),
-    # path('login/', views.login_user, name='login'),
     re_path(r'^register/$', register_user, name="register"),
 ]
 

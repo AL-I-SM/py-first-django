@@ -12,36 +12,7 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-default navbar-static-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed"
-                            data-toggle="collapse" data-target="#navbar"
-                            aria-expanded="false" aria-controls="navbar">
-                    </button>
-                    <a class="navbar-brand" href="{% url 'apts:index' %}">Проекты:</a>
-                </div>
-
-                <div id="navbar" class="navbar-collapse collapse">
-                  <ul class="nav navbar-nav nav-tabs">
-                        <li><a href="{% url 'apts:topics' %}">|</a></li>
-                        {% for title, url_name in all_menu.items %}
-                            <li class="nav-item"><a class="nav-link active" href="http://127.0.0.1:8000/{{ url_name }}">{{ title }}</a></li>
-                        {% endfor %}
-                        <li><a href="{% url 'apts:topics' %}">|</a></li>
-                  </ul>
-                  <ul class="nav navbar-nav navbar-right">
-                        {% if user.is_authenticated %}
-                            <li><a>Hello, <b> {{ user }} </b> </a></li>
-                            <li><a href="{% url 'users:logout' %}">logout</a></li>
-                        {% else %}
-                            <li><a href="{% url 'users:register' %}">register</a></li>
-                            <li><a href="{% url 'users:login' %}">login</a></li>
-                        {% endif %}
-                  </ul>
-                </div><!--/.nav-collapse -->
-            </div>
-        </nav>
+        {% include 'apts/menu.html' %}
         <nav>
             <div class="container">
                 {% block header %}{% endblock header %}
