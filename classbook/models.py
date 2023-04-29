@@ -6,7 +6,7 @@ SCORE_CHOICES = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
 
 class User(AbstractUser):
     middle_name = models.CharField(max_length=50)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(blank=True, null=True)
     sex = models.CharField('Пол', choices=((0, 'М'), (1, 'Ж')), max_length=1)
 
 
@@ -43,20 +43,20 @@ class KTP(models.Model):
 class Lessons(models.Model):
     discipline = models.ManyToManyField('Disciplines')
     teacher = models.ManyToManyField('Teachers', related_name='prime_teacher')
-    date = models.DateField()
+    date = models.DateField(blank=True, null=True)
     alt_teacher = models.ManyToManyField('Teachers', related_name='alt_teacher')
     topic = models.CharField(max_length=255)
     home_work = models.CharField(max_length=255)
 
 
 class Holidays(models.Model):
-    date = models.DateField()
+    date = models.DateField(blank=True, null=True)
     name = models.CharField(max_length=255)
 
 
 class Schedule(models.Model):
-    date = models.DateField()
-    week = models.IntegerField()
+    date = models.DateField(blank=True, null=True)
+    week = models.SmallIntegerField()
     teacher = models.ForeignKey('Teachers', on_delete=models.PROTECT, null=True)
     cabinet = models.CharField(max_length=25)
     discipline = models.ForeignKey('Disciplines', on_delete=models.PROTECT, null=True)
