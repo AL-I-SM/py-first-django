@@ -19,6 +19,7 @@ urlpatterns = [
     re_path(r'^book/update/(?P<pk>\d+)$', views.BookUpdate.as_view(), name='book_update'),
     re_path(r'^book/delete/(?P<pk>\d+)$', views.BookDelete.as_view(), name='book_delete'),
     path("accounts/login/", views.CatalogLogin.as_view()),
-    re_path(r'^accounts/', include('django.contrib.auth.urls'))
+    re_path(r'^accounts/', include('django.contrib.auth.urls')),
+    path('api/v1/booklist/', views.BookAPIView.as_view()),
 ]
 

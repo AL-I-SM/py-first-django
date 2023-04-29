@@ -9,10 +9,18 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from rest_framework import generics
+from .serializers import BookSerializer
+
+
+class BookAPIView(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
 
 class CatalogLogin(LoginView):
     template_name = "registration/login_catalog.html"
+
 
 @login_required
 def authors_add(request):

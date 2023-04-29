@@ -50,8 +50,10 @@ INSTALLED_APPS = [
     'players',
     'catalog',
     'cards',
+    'classbook',
     'django.contrib.humanize',
 
+    'rest_framework',
     'bootstrap3',
 ]
 
@@ -123,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -144,3 +146,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MAIL_HOST = "localhost"
 EMAIL_PORT = 1025
 APPEND_SLASH = False
+
+AUTH_USER_MODEL = 'classbook.User'

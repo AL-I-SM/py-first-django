@@ -24,5 +24,6 @@ urlpatterns = [
     path('users/', include(('users.urls', 'users'), namespace='users')),
     path('catalog/', include('catalog.urls')),
     path('cards/', include("cards.urls")),
+    path('classbook/', include("classbook.urls")),
     re_path(r'^players/', include(('players.urls', 'players'), namespace='players')),
 ]

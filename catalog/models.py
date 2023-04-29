@@ -1,7 +1,7 @@
 from django.contrib.auth import admin
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import User
+from classbook.models import User
 from datetime import date
 
 
@@ -38,7 +38,6 @@ class Author(models.Model):
         return reverse('author-detail', args=[str(self.id)])
 
     def author_books(self):
-        print([book.title for book in self.book_set.all()])
         return [book.title for book in self.book_set.all()]
 
 
