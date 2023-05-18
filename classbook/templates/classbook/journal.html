@@ -6,24 +6,32 @@
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
+    <h3>Выбор журнала</h3>
+    <form method="post">
+        {% csrf_token %}
+          {{ journal }}
+            <br>
+            {% buttons %}
+                <button name="" class="btn btn-primary">Показать журнал</button>
+            {% endbuttons %}<br>
+        </form>
+        <form method="get" action="{% url 'score' %}">
+            <table>
+            <tr><th>...</th>
+                {% for day in days %}
+                <th><div id="rotate-text">{{day.date}}</div></th>
+                {% endfor %}
+            </tr>
+                {% for pupil in pupils %}
+                <tr><td>{{ pupil }}</td>
+                    {% for day in days %}
+                        <td><label for="{{ day.id }} {{ pupil.id }}"></label>
+                            <input type="text" value="{{ scores }}" id="{{ day.id }} {{ pupil.id }}" name="{{ day.id }} {{ pupil.id }}" size="1"></td>
+                    {% endfor %}
+            </tr>
+                {% endfor %}
+            </table><br>
+            <input type="submit" value="Отправить">
+        </form>
 
-    {% csrf_token %}
-
-        {% buttons %}
-            <button name="submit" class="btn btn-primary">Какая-то кнопочка</button>
-        {% endbuttons %}
-        <table>
-        <tr><th>...</th>
-            {% for day in days %}
-            <th><div id="rotate-text">{{day.date}}</div></th>
-            {% endfor %}
-        </tr>
-            {% for pupil in pupils %}
-            <tr><td>{{ pupil.last_name}} {{pupil.first_name}}</td>
-            {% for day in days %}
-            <td>  </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-        </table>
 {% endblock content%}

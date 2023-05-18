@@ -34,7 +34,7 @@ class Pupils(User):
         verbose_name = 'Ученик'
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.last_name + " " + self.first_name
 
 
 class Teachers(User):
