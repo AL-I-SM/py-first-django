@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from .models import Pupils, Days, Score
 from .forms import SelectJournalForms
 from django.core import serializers
+import datetime
 
 # Create your views here.
 def index(request):
@@ -26,15 +27,16 @@ def journal(request, **kwargs):
                                       discipline_id=discipline,
                                       teacher_id=teacher)
         sc = {}
+        dy = {}
         pupils = Pupils.objects.filter(current_class_id=current_class)
-        for pupil in pupils:
-            sc.update([(pupil.id, {})])
-            sc[pupil.id].update([(s.date, s.score) for s in scores.filter(pupil_id=pupil.id)])
-        # todo придется тут раписать все по строкам, а там только готовые данные
         days = Days.objects.all()
+        for day in days:
+            sc.update([(day.id, {})])
+            sc[day.id].update([(s.pupil, s.score) for s in scores.filter(date=day.date)])
+        # todo придется тут раписать все по строкам, а там только готовые данные
         table = {'days': days, 'pupils': pupils,
                  # "form": scores_form,
-                 'journal': journal, 'scores': sc}
+                 'journal': journal, 'scores': sc, "t": 2}
         return render(request, 'classbook/journal.html', table)
     else:
         return redirect('journal',

@@ -19,14 +19,14 @@
             <table>
             <tr><th>...</th>
                 {% for day in days %}
-                <th><div id="rotate-text">{{day.date}}</div></th>
+                <th><div id="rotate-text">{{day}}</div></th>
                 {% endfor %}
             </tr>
                 {% for pupil in pupils %}
                 <tr><td>{{ pupil }}</td>
                     {% for day in days %}
                         <td><label for="{{ day.id }} {{ pupil.id }}"></label>
-                            <input type="text" value="{{ scores }}" id="{{ day.id }} {{ pupil.id }}" name="{{ day.id }} {{ pupil.id }}" size="1"></td>
+                            <input type="text" value="{{ scores.t }}" id="{{ day.id }} {{ pupil.id }}" name="{{ day.id }} {{ pupil.id }}" size="1"></td>
                     {% endfor %}
             </tr>
                 {% endfor %}
