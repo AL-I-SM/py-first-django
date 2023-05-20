@@ -1,5 +1,6 @@
 {% extends "apts/base.html" %}
 {% load bootstrap3 %}
+{% load filters %}
 {%  block header %}
     <h2>Журнал</h2>
 {%  endblock header %}
@@ -19,14 +20,17 @@
             <table>
             <tr><th>...</th>
                 {% for day in days %}
-                <th><div id="rotate-text">{{day}}</div></th>
+                <th><div id="rotate-text">{{day.date}}</div></th>
                 {% endfor %}
             </tr>
                 {% for pupil in pupils %}
                 <tr><td>{{ pupil }}</td>
                     {% for day in days %}
                         <td><label for="{{ day.id }} {{ pupil.id }}"></label>
-                            <input type="text" value="{{ scores.t }}" id="{{ day.id }} {{ pupil.id }}" name="{{ day.id }} {{ pupil.id }}" size="1"></td>
+                        {% if day.date %}
+                            <input type="text" value="{{ scores|by_date:day.date|by_pupil:pupil|str_score }}"
+                                   name="{{ day.id }} {{ pupil.id }} {{ teacher }} {{ discipline }} {{ scores|by_date:day.date|by_pupil:pupil|id_score }}" size="1">
+                        {% endif %}</td>
                     {% endfor %}
             </tr>
                 {% endfor %}
