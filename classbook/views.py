@@ -1,26 +1,24 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
+from django.views import View
+
 from .models import Pupils, Days, Score, Disciplines, Teachers
 from .forms import SelectJournalForms
 from django.core import serializers
 
 
-def index(request):
-    return render(request, 'classbook/index.html')
+# @method_decorator(login_required)
+class JournalView(View):
 
-
-def journal_select(request):
-    return redirect('journal', current_class=1, discipline=1, teacher=1)
-
-
-@login_required
-def journal(request, **kwargs):
-    if request.method == "GET":
+    def get(self, request, *args, **kwargs):
         current_class = kwargs['current_class']
         discipline = kwargs['discipline']
         teacher = kwargs['teacher']
-        journal = SelectJournalForms()
+        journal = SelectJournalForms(initial={'teacher': request.session.get("teacher"),
+                                              'discipline': discipline,
+                                              'current_class': current_class})
         # scores_form = ScoresForms()
         scores = Score.objects.filter(pupil__current_class=current_class,
                                       discipline_id=discipline,
@@ -32,11 +30,47 @@ def journal(request, **kwargs):
                  'teacher': teacher, 'discipline': discipline,
                  'journal': journal, 'scores': scores}
         return render(request, 'classbook/journal.html', table)
-    else:
+
+    def post(self, request, *args, **kwargs):
+        # какие-нибудь параметры можно хранить и в сессии
+        request.session['teacher'] = request.POST['teacher']
         return redirect('journal',
                         teacher=request.POST['teacher'],
                         discipline=request.POST['discipline'],
                         current_class=request.POST['current_class'])
+
+
+def index(request):
+    return render(request, 'classbook/index.html')
+
+
+def journal_select(request):
+    return redirect('journal', current_class=1, discipline=1, teacher=1)
+
+
+# @login_required
+# def journal(request, **kwargs):
+#     if request.method == "GET":
+#         current_class = kwargs['current_class']
+#         discipline = kwargs['discipline']
+#         teacher = kwargs['teacher']
+#         journal = SelectJournalForms()
+#         # scores_form = ScoresForms()
+#         scores = Score.objects.filter(pupil__current_class=current_class,
+#                                       discipline_id=discipline,
+#                                       teacher_id=teacher)
+#         pupils = Pupils.objects.filter(current_class_id=current_class)
+#         days = Days.objects.all()
+#         table = {'days': days, 'pupils': pupils,
+#                  # "form": scores_form,
+#                  'teacher': teacher, 'discipline': discipline,
+#                  'journal': journal, 'scores': scores}
+#         return render(request, 'classbook/journal.html', table)
+#     else:
+#         return redirect('journal',
+#                         teacher=request.POST['teacher'],
+#                         discipline=request.POST['discipline'],
+#                         current_class=request.POST['current_class'])
         # return HttpResponse(request.POST.items())
 
 
