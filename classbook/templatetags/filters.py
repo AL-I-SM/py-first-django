@@ -23,7 +23,6 @@ def str_score(query_obj):
     return ""
 
 
-
 @register.filter()
 def id_score(query_obj):
     """ """
@@ -32,4 +31,18 @@ def id_score(query_obj):
     if query_obj.count() > 1:
         return ", ".join([str(qo.id) for i, qo in enumerate(query_obj)])
     return ""
+
+
+@register.filter()
+def by_lesson(query_obj, key):
+    """ """
+    return query_obj.filter(lesson=key)
+
+
+@register.filter()
+def str_lesson(query_obj):
+    """ """
+    if query_obj.count() == 1:
+        return query_obj.first().discipline.name
+
 

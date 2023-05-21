@@ -28,7 +28,7 @@ class Positions(models.Model):
 
 
 class Pupils(User):
-    current_class = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
+    group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
 
     class Meta:
         verbose_name = 'Ученик'
@@ -73,6 +73,7 @@ class KTP(models.Model):
 class Lessons(models.Model):
     discipline = models.ManyToManyField('Disciplines')
     teacher = models.ManyToManyField('Teachers', related_name='prime_teacher')
+    group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
     date = models.DateField(blank=True, null=True)
     alt_teacher = models.ManyToManyField('Teachers', related_name='alt_teacher')
     topic = models.CharField(max_length=255)
@@ -89,11 +90,9 @@ class Days(models.Model):
 
 
 class Schedule(models.Model):
-    date = models.DateField(blank=True, null=True)
     week = models.SmallIntegerField()
-    teacher = models.ForeignKey('Teachers', on_delete=models.PROTECT, null=True)
+    lesson = models.ForeignKey('Lessons', on_delete=models.PROTECT, null=True)
     cabinet = models.CharField(max_length=25)
-    discipline = models.ForeignKey('Disciplines', on_delete=models.PROTECT, null=True)
     extra_info = models.CharField(max_length=255)
 
 

@@ -2,12 +2,11 @@
 {% load bootstrap3 %}
 {% load filters %}
 {%  block header %}
-    <h2>Журнал</h2>
+    <h2>Расписание</h2>
 {%  endblock header %}
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
-    <h3>Выбор журнала</h3>
     <form method="post">
         {% csrf_token %}
           {{ journal }}
@@ -20,22 +19,19 @@
             <table>
             <tr><th>...</th>
                 {% for day in days %}
-                <th><div id="rotate-text">{{day}}</div></th>
+                <th>{{day}}</th>
                 {% endfor %}
             </tr>
-                {% for pupil in pupils %}
-                <tr><td>{{ pupil }}</td>
+                {% for time in lessons_time %}
+                <tr><td>{{ time }}</td>
                     {% for day in days %}
-                        <td><label for="{{ day.id }} {{ pupil.id }}"></label>
-                        {% if day.date %}
-                            <input type="text" value="{{ scores|by_date:day.date|by_pupil:pupil|str_score }}"
-                                   name="{{ day.id }} {{ pupil.id }} {{ teacher }} {{ discipline }} {{ scores|by_date:day.date|by_pupil:pupil|id_score }}" style="width: 20px;">
-                        {% endif %}</td>
+                        <td>
+                        <input type="text" value="{{ lesson }}" style="width: 150px;">
+                        </td>
                     {% endfor %}
             </tr>
                 {% endfor %}
             </table><br>
-            <input type="submit" value="Отправить">
         </form>
 
 {% endblock content%}

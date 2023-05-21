@@ -3,28 +3,29 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-
-from .models import Pupils, Days, Score, Disciplines, Teachers
+from .models import Pupils, Days, Score, Disciplines, Lessons, Teachers
 from .forms import SelectJournalForms
 from django.core import serializers
+
+LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 
 
 # @method_decorator(login_required)
 class JournalView(View):
 
     def get(self, request, *args, **kwargs):
-        current_class = kwargs['current_class']
+        group = kwargs['group']
         discipline = kwargs['discipline']
         teacher = kwargs['teacher']
         journal = SelectJournalForms(initial={'teacher': request.session.get("teacher"),
                                               'discipline': discipline,
-                                              'current_class': current_class})
+                                              'group': group})
         # scores_form = ScoresForms()
-        scores = Score.objects.filter(pupil__current_class=current_class,
+        scores = Score.objects.filter(pupil__discipline=group,
                                       discipline_id=discipline,
                                       teacher_id=teacher)
-        pupils = Pupils.objects.filter(current_class_id=current_class)
-        days = Days.objects.all()
+        pupils = Pupils.objects.filter(group_id=group)
+        days = Days.objects.all().order_by("date")
         table = {'days': days, 'pupils': pupils,
                  # "form": scores_form,
                  'teacher': teacher, 'discipline': discipline,
@@ -37,7 +38,24 @@ class JournalView(View):
         return redirect('journal',
                         teacher=request.POST['teacher'],
                         discipline=request.POST['discipline'],
-                        current_class=request.POST['current_class'])
+                        group=request.POST['group'])
+
+
+class ScheduleView(View):
+
+    def get(self, request, *args, **kwargs):
+        group = 1  # kwargs['group']
+        # schedule = ScheduleForms(initial={'group': group})
+        lessons = Lessons.objects.filter(group_id=group)
+        days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
+        days = Days.objects.all().order_by("date")[:5]
+        table = {'days': days, 'lessons': lessons,
+                 'lessons_time': LESSONS_TIME}
+        return render(request, 'classbook/schedule.html', table)
+
+    def post(self, request, *args, **kwargs):
+        return redirect('schedule',
+                        group=request.POST['group'])
 
 
 def index(request):
@@ -45,33 +63,7 @@ def index(request):
 
 
 def journal_select(request):
-    return redirect('journal', current_class=1, discipline=1, teacher=1)
-
-
-# @login_required
-# def journal(request, **kwargs):
-#     if request.method == "GET":
-#         current_class = kwargs['current_class']
-#         discipline = kwargs['discipline']
-#         teacher = kwargs['teacher']
-#         journal = SelectJournalForms()
-#         # scores_form = ScoresForms()
-#         scores = Score.objects.filter(pupil__current_class=current_class,
-#                                       discipline_id=discipline,
-#                                       teacher_id=teacher)
-#         pupils = Pupils.objects.filter(current_class_id=current_class)
-#         days = Days.objects.all()
-#         table = {'days': days, 'pupils': pupils,
-#                  # "form": scores_form,
-#                  'teacher': teacher, 'discipline': discipline,
-#                  'journal': journal, 'scores': scores}
-#         return render(request, 'classbook/journal.html', table)
-#     else:
-#         return redirect('journal',
-#                         teacher=request.POST['teacher'],
-#                         discipline=request.POST['discipline'],
-#                         current_class=request.POST['current_class'])
-        # return HttpResponse(request.POST.items())
+    return redirect('journal', group=1, discipline=1, teacher=1)
 
 
 def score(request):
@@ -90,7 +82,7 @@ def score(request):
             new_score.teacher = Teachers.objects.get(pk=data.split()[2])
             new_score.discipline = Disciplines.objects.get(pk=data.split()[3])
             new_score.save()
-    return redirect('journal', current_class=2, discipline=1, teacher=9)
+    return redirect('journal', group=2, discipline=1, teacher=9)
     # return HttpResponse(request.GET.keys())
 
 

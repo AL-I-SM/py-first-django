@@ -4,7 +4,7 @@ from .models import *
 
 @admin.register(Pupils)
 class PupilsAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'date_of_birth', 'current_class')
+    list_display = ('last_name', 'first_name', 'date_of_birth', 'group')
     prepopulated_fields = {'username': ('last_name', 'first_name')}
 
 
