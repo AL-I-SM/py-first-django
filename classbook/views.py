@@ -1,9 +1,11 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Pupils, Days, Score, Disciplines, Lessons, Teachers
+from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers
 from .forms import SelectJournalForms
 from django.core import serializers
 
@@ -46,10 +48,12 @@ class ScheduleView(View):
     def get(self, request, *args, **kwargs):
         group = 1  # kwargs['group']
         # schedule = ScheduleForms(initial={'group': group})
-        lessons = Lessons.objects.filter(group_id=group)
+        schedule = Schedule.objects.filter(group__lessons=group)
         days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
-        days = Days.objects.all().order_by("date")[:5]
-        table = {'days': days, 'lessons': lessons,
+        mon_date = datetime.today() - timedelta(days=datetime.today().weekday())
+        sut_date = mon_date + timedelta(days=6)
+        days = Days.objects.all().filter(date__range=[mon_date, sut_date]).order_by("date")[:5]
+        table = {'days': days, 'lessons': schedule,
                  'lessons_time': LESSONS_TIME}
         return render(request, 'classbook/schedule.html', table)
 

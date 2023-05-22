@@ -72,12 +72,10 @@ class KTP(models.Model):
 
 class Lessons(models.Model):
     discipline = models.ManyToManyField('Disciplines')
-    teacher = models.ManyToManyField('Teachers', related_name='prime_teacher')
-    group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
     date = models.DateField(blank=True, null=True)
-    alt_teacher = models.ManyToManyField('Teachers', related_name='alt_teacher')
     topic = models.CharField(max_length=255)
     home_work = models.CharField(max_length=255)
+    group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
 
 
 class Days(models.Model):
@@ -92,6 +90,9 @@ class Days(models.Model):
 class Schedule(models.Model):
     week = models.SmallIntegerField()
     lesson = models.ForeignKey('Lessons', on_delete=models.PROTECT, null=True)
+    teacher = models.ManyToManyField('Teachers', related_name='prime_teacher')
+    alt_teacher = models.ManyToManyField('Teachers', related_name='alt_teacher')
+    group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
     cabinet = models.CharField(max_length=25)
     extra_info = models.CharField(max_length=255)
 
