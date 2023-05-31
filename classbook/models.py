@@ -71,7 +71,7 @@ class KTP(models.Model):
 
 
 class Lessons(models.Model):
-    discipline = models.ManyToManyField('Disciplines')
+    discipline = models.ForeignKey('Disciplines', on_delete=models.PROTECT)
     date = models.DateField(blank=True, null=True)
     topic = models.CharField(max_length=255)
     home_work = models.CharField(max_length=255)
@@ -89,7 +89,7 @@ class Days(models.Model):
 
 class Schedule(models.Model):
     week = models.SmallIntegerField()
-    lesson = models.ForeignKey('Lessons', on_delete=models.PROTECT, null=True)
+    discipline = models.ForeignKey('Disciplines', on_delete=models.PROTECT, null=True)
     day = models.SmallIntegerField(blank=True, null=True)
     teacher = models.ForeignKey('Teachers', related_name='prime_teacher', on_delete=models.PROTECT)
     alt_teacher = models.ForeignKey('Teachers', related_name='alt_teacher', null=True, blank=True, on_delete=models.PROTECT)

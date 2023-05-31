@@ -1,4 +1,5 @@
 from django.template.defaultfilters import register
+import datetime
 
 
 @register.filter()
@@ -36,13 +37,15 @@ def id_score(query_obj):
 @register.filter()
 def by_lesson(query_obj, key):
     """ """
-    return query_obj.filter(lesson=key)
+    return query_obj.filter(number=key)
 
 
 @register.filter()
-def str_lesson(query_obj):
+def by_day(query_obj, key):
     """ """
-    if query_obj.count() == 1:
-        return query_obj.first().discipline.name
-
+    data_lesson = query_obj.filter(day=datetime.date.fromisoformat(str(key)).weekday()).first()
+    if data_lesson:
+        return str(data_lesson.discipline) + ', ' + str(data_lesson.cabinet)
+    else:
+        return "нет уроков"
 
