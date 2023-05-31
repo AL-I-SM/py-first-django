@@ -12,3 +12,7 @@ def make_year():
             _ = Days()
             _.date = c_date
             _.save()
+
+
+def make_schedule():
+    pass

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers
+from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons
 from .forms import SelectJournalForms
 from django.core import serializers
 
@@ -51,10 +51,11 @@ class ScheduleView(View):
         schedule = Schedule.objects.filter(group__lessons=group)
         days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
         mon_date = datetime.today() - timedelta(days=datetime.today().weekday())
-        sut_date = mon_date + timedelta(days=6)
-        days = Days.objects.all().filter(date__range=[mon_date, sut_date]).order_by("date")[:5]
+        sut_date = mon_date + timedelta(days=5)
+        lessons_time = TimeLessons.objects.filter(variant=1)
+        days = Days.objects.all().filter(date__range=[mon_date, sut_date]).order_by("date")
         table = {'days': days, 'lessons': schedule,
-                 'lessons_time': LESSONS_TIME}
+                 'lessons_time': lessons_time}
         return render(request, 'classbook/schedule.html', table)
 
     def post(self, request, *args, **kwargs):

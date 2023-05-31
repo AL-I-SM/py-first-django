@@ -90,11 +90,20 @@ class Days(models.Model):
 class Schedule(models.Model):
     week = models.SmallIntegerField()
     lesson = models.ForeignKey('Lessons', on_delete=models.PROTECT, null=True)
-    teacher = models.ManyToManyField('Teachers', related_name='prime_teacher')
-    alt_teacher = models.ManyToManyField('Teachers', related_name='alt_teacher')
+    day = models.SmallIntegerField(blank=True, null=True)
+    teacher = models.ForeignKey('Teachers', related_name='prime_teacher', on_delete=models.PROTECT)
+    alt_teacher = models.ForeignKey('Teachers', related_name='alt_teacher', null=True, blank=True, on_delete=models.PROTECT)
     group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
-    cabinet = models.CharField(max_length=25)
-    extra_info = models.CharField(max_length=255)
+    cabinet = models.CharField(max_length=25, null=True)
+    extra_info = models.CharField(max_length=255, null=True)
+    number = models.ForeignKey('TimeLessons', on_delete=models.PROTECT)
+
+
+class TimeLessons(models.Model):
+    number = models.SmallIntegerField()
+    variant = models.SmallIntegerField()
+    lesson_time = models.TimeField()
+    rest_length = models.TimeField()
 
 
 class Score(models.Model):

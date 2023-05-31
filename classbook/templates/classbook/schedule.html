@@ -23,7 +23,7 @@
                 {% endfor %}
             </tr>
                 {% for time in lessons_time %}
-                <tr><td>{{ time }}</td>
+                <tr><td>{{ time.lesson_time }}</td>
                     {% for day in days %}
                         <td>
                         <input type="text" value="{{ lessons }}" style="width: 150px;">
