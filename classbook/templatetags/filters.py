@@ -47,5 +47,6 @@ def by_day(query_obj, key):
     if data_lesson:
         return str(data_lesson.discipline) + ', ' + str(data_lesson.cabinet)
     else:
-        return "нет уроков"
+        return 'нет уроков'
+        # return '<text color="gray">нет уроков</text>'
 

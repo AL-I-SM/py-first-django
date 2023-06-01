@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons
+from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons
 from .forms import SelectJournalForms
 from django.core import serializers
 
@@ -15,6 +15,7 @@ LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 # @method_decorator(login_required)
 class JournalView(View):
 
+
     def get(self, request, *args, **kwargs):
         group = kwargs['group']
         discipline = kwargs['discipline']
@@ -23,13 +24,14 @@ class JournalView(View):
                                               'discipline': discipline,
                                               'group': group})
         # scores_form = ScoresForms()
-        scores = Score.objects.filter(pupil__discipline=group,
+        scores = Score.objects.filter(pupil__group=group,
                                       discipline_id=discipline,
                                       teacher_id=teacher)
         pupils = Pupils.objects.filter(group_id=group)
-        days = Days.objects.all().order_by("date")
-        table = {'days': days, 'pupils': pupils,
-                 # "form": scores_form,
+        lessons = Lessons.objects.filter(group_id=group,
+                                         discipline_id=discipline).order_by("date")
+        print(lessons)
+        table = {'lessons': lessons, 'pupils': pupils,
                  'teacher': teacher, 'discipline': discipline,
                  'journal': journal, 'scores': scores}
         return render(request, 'classbook/journal.html', table)
@@ -48,7 +50,7 @@ class ScheduleView(View):
     def get(self, request, *args, **kwargs):
         group = 1  # kwargs['group']
         # schedule = ScheduleForms(initial={'group': group})
-        schedule = Schedule.objects.filter(group__lessons=group)
+        schedule = Schedule.objects.filter(group_id=group)
         days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
         mon_date = datetime.today() - timedelta(days=datetime.today().weekday())
         sut_date = mon_date + timedelta(days=5)

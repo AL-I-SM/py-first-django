@@ -18,18 +18,18 @@
         </form>
         <form method="get" action="{% url 'score' %}">
             <table>
-            <tr><th>...</th>
-                {% for day in days %}
-                <th><div id="rotate-text">{{day}}</div></th>
+                <tr><th>...</th>
+                {% for lesson in lessons %}
+                <th><div id="rotate-text">{{lesson.date}}</div></th>
                 {% endfor %}
             </tr>
                 {% for pupil in pupils %}
                 <tr><td>{{ pupil }}</td>
-                    {% for day in days %}
-                        <td><label for="{{ day.id }} {{ pupil.id }}"></label>
-                        {% if day.date %}
-                            <input type="text" value="{{ scores|by_date:day.date|by_pupil:pupil|str_score }}"
-                                   name="{{ day.id }} {{ pupil.id }} {{ teacher }} {{ discipline }} {{ scores|by_date:day.date|by_pupil:pupil|id_score }}" style="width: 20px;">
+                    {% for lesson in lessons %}
+                        <td><label for="{{ lesson.id }} {{ pupil.id }}"></label>
+                        {% if lesson.date %}
+                            <input type="text" value="{{ scores|by_date:lesson.date|by_pupil:pupil|str_score }}"
+                                   name="{{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ discipline }} {{ scores|by_date:lesson.date|by_pupil:pupil|id_score }}" style="width: 20px;">
                         {% endif %}</td>
                     {% endfor %}
             </tr>
