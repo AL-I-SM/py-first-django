@@ -29,6 +29,7 @@ class Positions(models.Model):
 
 class Pupils(User):
     group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
+    sub_group = models.SmallIntegerField(default=1)
 
     class Meta:
         verbose_name = 'Ученик'
@@ -97,6 +98,7 @@ class Schedule(models.Model):
     cabinet = models.CharField(max_length=25, null=True)
     extra_info = models.CharField(max_length=255, null=True)
     number = models.ForeignKey('TimeLessons', on_delete=models.PROTECT)
+    sub_group = models.SmallIntegerField(default=1)
 
 
 class TimeLessons(models.Model):

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons
-from .forms import SelectJournalForms
+from .forms import SelectJournalForms, SelectScheduleForms
 from django.core import serializers
 
 LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
@@ -15,7 +15,6 @@ LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 # @method_decorator(login_required)
 class JournalView(View):
 
-
     def get(self, request, *args, **kwargs):
         group = kwargs['group']
         discipline = kwargs['discipline']
@@ -23,14 +22,12 @@ class JournalView(View):
         journal = SelectJournalForms(initial={'teacher': request.session.get("teacher"),
                                               'discipline': discipline,
                                               'group': group})
-        # scores_form = ScoresForms()
         scores = Score.objects.filter(pupil__group=group,
                                       discipline_id=discipline,
                                       teacher_id=teacher)
         pupils = Pupils.objects.filter(group_id=group)
         lessons = Lessons.objects.filter(group_id=group,
                                          discipline_id=discipline).order_by("date")
-        print(lessons)
         table = {'lessons': lessons, 'pupils': pupils,
                  'teacher': teacher, 'discipline': discipline,
                  'journal': journal, 'scores': scores}
@@ -48,16 +45,18 @@ class JournalView(View):
 class ScheduleView(View):
 
     def get(self, request, *args, **kwargs):
-        group = 1  # kwargs['group']
-        # schedule = ScheduleForms(initial={'group': group})
+        group = kwargs['group']
+        select_schedule = SelectScheduleForms(initial={'group': group})
         schedule = Schedule.objects.filter(group_id=group)
-        days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
-        mon_date = datetime.today() - timedelta(days=datetime.today().weekday())
-        sut_date = mon_date + timedelta(days=5)
+        dt = datetime.datetime.today()
+        md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
+        td = datetime.timedelta(days=1)
+        # sd = md + td * 5
         lessons_time = TimeLessons.objects.filter(variant=1)
-        days = Days.objects.all().filter(date__range=[mon_date, sut_date]).order_by("date")
-        table = {'days': days, 'lessons': schedule,
-                 'lessons_time': lessons_time}
+        days = (('ПН', md), ('ВТ', md+td), ('СР', md+td*2), ('ЧТ', md+td*3), ('ПТ', md+td*4), ('СБ', md+td*5))
+        # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
+        table = {'days': days, 'schedule': select_schedule,
+                 'lessons_time': lessons_time, 'lessons': schedule}
         return render(request, 'classbook/schedule.html', table)
 
     def post(self, request, *args, **kwargs):

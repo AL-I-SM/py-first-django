@@ -1,32 +1,32 @@
 {% extends "apts/base.html" %}
 {% load bootstrap3 %}
 {% load filters %}
-{%  block header %}
+{% block header %}
     <h2>Расписание</h2>
-{%  endblock header %}
+{% endblock header %}
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
     <form method="post">
         {% csrf_token %}
-          {{ journal }}
+          {{ schedule }}
             <br>
             {% buttons %}
-                <button name="" class="btn btn-primary">Показать журнал</button>
+                <button name="" class="btn btn-primary">Показать расписание</button>
             {% endbuttons %}<br>
         </form>
         <form method="get" action="{% url 'score' %}">
             <table>
             <tr><th>...</th>
-                {% for day in days %}
-                <th>{{day}}</th>
+                {% for day, date in days %}
+                <th>{{ day }}, {{ date }}</th>
                 {% endfor %}
             </tr>
                 {% for time in lessons_time %}
                 <tr><td>{{ time.lesson_time }}</td>
-                    {% for day in days %}
+                    {% for _, date in days %}
                         <td>
-                        <input type="text" value="{{ lessons|by_lesson:time.number|by_day:day }}" style="width: 150px;">
+                        <input type="text" value="{{ lessons|by_lesson:time.number|by_day:date }}" style="width: 150px;">
                         </td>
                     {% endfor %}
             </tr>

@@ -1,6 +1,13 @@
 from django.template.defaultfilters import register
 import datetime
 
+days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
+
+
+@register.filter()
+def add_weekday(obj, key):
+    return str(key) + ", " + days[datetime.date.fromisoformat(str(key)).weekday()]
+
 
 @register.filter()
 def by_pupil(query_obj, key):
