@@ -9,13 +9,22 @@
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
     <h3>Выбор журнала</h3>
     <form method="post">
-        {% csrf_token %}
-          {{ journal }}
-            <br>
+    {% csrf_token %}
+          {{ select_journal }}
+            <br><br>
             {% buttons %}
-                <button name="" class="btn btn-primary">Показать журнал</button>
-            {% endbuttons %}<br>
-        </form>
+                <button name="get_journal" value = '1' class="btn btn-primary">Показать журнал</button>
+            {% endbuttons %}
+    </form>
+    <form method="post">
+    {% csrf_token %}
+        <input type="submit" class="btn" value="Добавить урок" name="add_lesson">
+        <input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" size="1"/>
+        <input type="text" value="{{ ktp.lesson_type }}" name="lesson_type" size="20"/>
+        <input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30"/>
+        <input type="text" value="{{ ktp.home_work }}" name="home_work" size="20"/>
+    <br>
+    </form>
         <form method="get" action="{% url 'score' %}">
             <table>
                 <tr><th>...</th>

@@ -76,7 +76,10 @@ class Lessons(models.Model):
     date = models.DateField(blank=True, null=True)
     topic = models.CharField(max_length=255)
     home_work = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
     group = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс")
+    teacher = models.ForeignKey('Teachers', on_delete=models.DO_NOTHING)
+    number = models.SmallIntegerField(blank=True)
 
 
 class Days(models.Model):

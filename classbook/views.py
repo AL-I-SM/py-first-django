@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons
+from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons, KTP
 from .forms import SelectJournalForms, SelectScheduleForms
 from django.core import serializers
 
@@ -15,31 +15,66 @@ LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 # @method_decorator(login_required)
 class JournalView(View):
 
+    group = 1
+    discipline = 1
+    teacher = 1
+
     def get(self, request, *args, **kwargs):
-        group = kwargs['group']
-        discipline = kwargs['discipline']
-        teacher = kwargs['teacher']
-        journal = SelectJournalForms(initial={'teacher': request.session.get("teacher"),
-                                              'discipline': discipline,
-                                              'group': group})
-        scores = Score.objects.filter(pupil__group=group,
-                                      discipline_id=discipline,
-                                      teacher_id=teacher)
-        pupils = Pupils.objects.filter(group_id=group)
-        lessons = Lessons.objects.filter(group_id=group,
-                                         discipline_id=discipline).order_by("date")
-        table = {'lessons': lessons, 'pupils': pupils,
-                 'teacher': teacher, 'discipline': discipline,
-                 'journal': journal, 'scores': scores}
+        self.group = kwargs['group']
+        self.discipline = kwargs['discipline']
+        self.teacher = kwargs['teacher']
+        select_journal = SelectJournalForms(initial={'teacher': self.teacher,
+                                                     'discipline': self.discipline,
+                                                     'group': self.group})
+        scores = Score.objects.filter(pupil__group=self.group,
+                                      discipline_id=self.discipline,
+                                      teacher_id=self.teacher)
+        pupils = Pupils.objects.filter(group_id=self.group)
+        lessons = Lessons.objects.filter(group_id=self.group,
+                                         discipline_id=self.discipline).order_by("date")
+        ktp = self.get_next_lesson()
+        table = {'lessons': lessons, 'pupils': pupils, 'ktp': ktp,
+                 'teacher': self.teacher, 'discipline': self.discipline,
+                 'select_journal': select_journal, 'scores': scores}
         return render(request, 'classbook/journal.html', table)
 
     def post(self, request, *args, **kwargs):
         # какие-нибудь параметры можно хранить и в сессии
-        request.session['teacher'] = request.POST['teacher']
+        # request.session['teacher'] = request.POST['teacher']
+        ## request.session.get("teacher")
+        self.group = kwargs['group']
+        self.discipline = kwargs['discipline']
+        self.teacher = kwargs['teacher']
+        if request.POST.get('add_lesson'):
+            self.add_lesson(request)
         return redirect('journal',
-                        teacher=request.POST['teacher'],
-                        discipline=request.POST['discipline'],
-                        group=request.POST['group'])
+                        teacher=self.teacher,
+                        discipline=self.discipline,
+                        group=self.group)
+
+    def get_next_lesson(self):
+        last_lesson = Lessons.objects.filter(group_id=self.group,
+                                             discipline_id=self.discipline).order_by('-number').first()
+        if not last_lesson:
+            ktp = KTP.objects.filter(discipline_id=self.discipline).first()
+        else:
+            ktp = KTP.objects.filter(discipline_id=self.discipline,
+                                     lesson_number=last_lesson.number + 1).first()
+        return ktp
+
+    def add_lesson(self, request):
+        lesson = Lessons()
+        lesson.group_id = self.group
+        lesson.discipline_id = self.discipline
+        lesson.teacher_id = self.teacher
+
+        # ktp = self.get_next_lesson()
+        lesson.number = request.POST['lesson_number']
+        lesson.topic = request.POST['lesson_topic']
+        lesson.home_work = request.POST['home_work']
+        lesson.type = request.POST['lesson_type']
+        lesson.date = datetime.datetime.now()
+        lesson.save()
 
 
 class ScheduleView(View):
@@ -53,7 +88,8 @@ class ScheduleView(View):
         td = datetime.timedelta(days=1)
         # sd = md + td * 5
         lessons_time = TimeLessons.objects.filter(variant=1)
-        days = (('ПН', md), ('ВТ', md+td), ('СР', md+td*2), ('ЧТ', md+td*3), ('ПТ', md+td*4), ('СБ', md+td*5))
+        days = (
+        ('ПН', md), ('ВТ', md + td), ('СР', md + td * 2), ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
         table = {'days': days, 'schedule': select_schedule,
                  'lessons_time': lessons_time, 'lessons': schedule}
@@ -90,5 +126,3 @@ def score(request):
             new_score.save()
     return redirect('journal', group=2, discipline=1, teacher=9)
     # return HttpResponse(request.GET.keys())
-
-
