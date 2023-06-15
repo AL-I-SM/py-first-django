@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-SCORE_CHOICES = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'))
+SCORE_CHOICES = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, 'н'))
 
 
 class User(AbstractUser):
@@ -113,9 +113,10 @@ class TimeLessons(models.Model):
 
 class Score(models.Model):
     date = models.DateField(auto_created=True)
-    score = models.SmallIntegerField(choices=SCORE_CHOICES, verbose_name='Оценка')
+    score = models.CharField(max_length=25, choices=SCORE_CHOICES, verbose_name='Оценка')
     updated = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     pupil = models.ForeignKey('Pupils', on_delete=models.PROTECT, null=True)
     teacher = models.ForeignKey('Teachers', on_delete=models.PROTECT, null=True)
     discipline = models.ForeignKey('Disciplines', on_delete=models.PROTECT, null=True)
     extra = models.CharField(max_length=250, null=True)
+    lesson = models.ForeignKey('Lessons', on_delete=models.DO_NOTHING)

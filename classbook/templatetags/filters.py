@@ -16,6 +16,12 @@ def by_pupil(query_obj, key):
 
 
 @register.filter()
+def by_lesson(query_obj, key):
+    """ """
+    return query_obj.filter(lesson=key)
+
+
+@register.filter()
 def by_date(query_obj, key):
     """ """
     return query_obj.filter(date=key)
@@ -42,7 +48,7 @@ def id_score(query_obj):
 
 
 @register.filter()
-def by_lesson(query_obj, key):
+def by_numb_lesson(query_obj, key):
     """ """
     return query_obj.filter(number=key)
 

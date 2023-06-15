@@ -26,7 +26,7 @@
                 <tr><td>{{ time.lesson_time }}</td>
                     {% for _, date in days %}
                         <td>
-                        <input type="text" value="{{ lessons|by_lesson:time.number|by_day:date }}" style="width: 150px;">
+                        <input type="text" value="{{ lessons|by_numb_lesson:time.number|by_day:date }}" style="width: 150px;">
                         </td>
                     {% endfor %}
             </tr>

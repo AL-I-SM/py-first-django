@@ -42,11 +42,16 @@ class JournalView(View):
         # какие-нибудь параметры можно хранить и в сессии
         # request.session['teacher'] = request.POST['teacher']
         ## request.session.get("teacher")
-        self.group = kwargs['group']
-        self.discipline = kwargs['discipline']
-        self.teacher = kwargs['teacher']
+
         if request.POST.get('add_lesson'):
+            self.discipline = kwargs['discipline']
+            self.teacher = kwargs['teacher']
+            self.group = kwargs['group']
             self.add_lesson(request)
+        if request.POST.get('get_journal'):
+            self.discipline = request.POST['discipline']
+            self.teacher = request.POST['teacher']
+            self.group = request.POST['group']
         return redirect('journal',
                         teacher=self.teacher,
                         discipline=self.discipline,
@@ -111,18 +116,22 @@ def journal_select(request):
 def score(request):
     for data, score in request.GET.items():
         if score:
-            print(len(data.split()))
+            print(data.split())
             if len(data.split()) == 4:
                 new_score = Score()
             if len(data.split()) > 4:
                 new_score = Score.objects.get(id=data.split()[4])
                 if score == str(new_score.score):
                     continue
-            new_score.date = Days.objects.get(pk=data.split()[0]).date
-            new_score.pupil = Pupils.objects.get(pk=data.split()[1])
+            new_score.date = Lessons.objects.get(pk=data.split()[0]).date
+            new_score.lesson_id = data.split()[0]
             new_score.score = score
-            new_score.teacher = Teachers.objects.get(pk=data.split()[2])
-            new_score.discipline = Disciplines.objects.get(pk=data.split()[3])
+            new_score.pupil_id = data.split()[1]
+            new_score.teacher_id = data.split()[2]
+            new_score.discipline_id = data.split()[3]
+            # new_score.pupil = Pupils.objects.get(pk=data.split()[1])
+            # new_score.teacher = Teachers.objects.get(pk=data.split()[2])
+            # new_score.discipline = Disciplines.objects.get(pk=data.split()[3])
             new_score.save()
-    return redirect('journal', group=2, discipline=1, teacher=9)
+    return redirect('journal', group=2, discipline=2, teacher=9)
     # return HttpResponse(request.GET.keys())
