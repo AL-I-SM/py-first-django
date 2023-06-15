@@ -25,26 +25,28 @@
         <input type="text" value="{{ ktp.home_work }}" name="home_work" size="20"/>
     <br>
     </form>
-        <form method="get" action="{% url 'score' %}">
-            <table>
-                <tr><th>...</th>
+{#  <form method="post" action="{% url 'score' %}">#}
+    <form method="post">
+    {% csrf_token %}
+        <table>
+            <tr><th>...</th>
+            {% for lesson in lessons %}
+            <th><div id="rotate-text">{{lesson.date}}</div></th>
+            {% endfor %}
+        </tr>
+            {% for pupil in pupils %}
+            <tr><td>{{ pupil }}</td>
                 {% for lesson in lessons %}
-                <th><div id="rotate-text">{{lesson.date}}</div></th>
+                    <td><label for="{{ lesson.id }} {{ pupil.id }}"></label>
+                    {% if lesson.date %}
+                        <input type="text" value="{{ scores|by_lesson:lesson|by_pupil:pupil|str_score }}"
+                               name="score {{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ scores|by_lesson:lesson|by_pupil:pupil|id_score }}" style="width: 24px;">
+                    {% endif %}</td>
                 {% endfor %}
-            </tr>
-                {% for pupil in pupils %}
-                <tr><td>{{ pupil }}</td>
-                    {% for lesson in lessons %}
-                        <td><label for="{{ lesson.id }} {{ pupil.id }}"></label>
-                        {% if lesson.date %}
-                            <input type="text" value="{{ scores|by_lesson:lesson|by_pupil:pupil|str_score }}"
-                                   name="{{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ discipline }} {{ scores|by_lesson:lesson|by_pupil:pupil|id_score }}" style="width: 24px;">
-                        {% endif %}</td>
-                    {% endfor %}
-            </tr>
-                {% endfor %}
-            </table><br>
-            <input type="submit" value="Отправить">
-        </form>
+        </tr>
+            {% endfor %}
+        </table><br>
+        <input type="submit" value="Отправить" name="set_scores">
+    </form>
 
 {% endblock content%}
