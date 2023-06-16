@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 SCORE_CHOICES = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, 'н'))
+SIMPLE_SCORE_CHOICES = ('1', '2', '3', '4', '5', 'н')
 
 
 class User(AbstractUser):

@@ -37,9 +37,9 @@
             {% for pupil in pupils %}
             <tr><td>{{ pupil }}</td>
                 {% for lesson in lessons %}
-                    <td><label for="{{ lesson.id }} {{ pupil.id }}"></label>
+                    <td><label for="{{ lesson.id }}{{ pupil.id }}"></label>
                     {% if lesson.date %}
-                        <input type="text" value="{{ scores|by_lesson:lesson|by_pupil:pupil|str_score }}"
+                        <input id="{{ lesson.id }}{{ pupil.id }}" type="text" value="{{ scores|by_lesson:lesson|by_pupil:pupil|str_score }}"
                                name="score {{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ scores|by_lesson:lesson|by_pupil:pupil|id_score }}" style="width: 24px;">
                     {% endif %}</td>
                 {% endfor %}

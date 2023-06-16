@@ -5,7 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons, KTP
+from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons, KTP, SCORE_CHOICES, \
+    SIMPLE_SCORE_CHOICES
 from .forms import SelectJournalForms, SelectScheduleForms
 from django.core import serializers
 
@@ -86,7 +87,7 @@ class JournalView(View):
 
     def score(self, request):
         for data, score in request.POST.items():
-            if score and data.startswith('score'):
+            if score in SIMPLE_SCORE_CHOICES and data.startswith('score'):
                 if len(data.split()) == 4:
                     new_score = Score()
                 if len(data.split()) > 4:
@@ -94,7 +95,6 @@ class JournalView(View):
                                             lesson_id=data.split()[1],
                                             pupil_id=data.split()[2],
                                             date=Lessons.objects.get(pk=data.split()[1]).date)])
-                    print(score, curr_score)
                     if score == curr_score:
                         continue
                     else:
