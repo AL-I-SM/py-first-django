@@ -1,9 +1,9 @@
 {% extends "apts/base.html" %}
 {% load bootstrap3 %}
 {% load filters %}
-{%  block header %}
+{% block header %}
     <h2>Журнал</h2>
-{%  endblock header %}
+{% endblock header %}
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
@@ -20,7 +20,12 @@
     {% csrf_token %}
         <input type="submit" class="btn" value="Добавить урок" name="add_lesson">
         <input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" size="1"/>
-        <input type="text" value="{{ ktp.lesson_type }}" name="lesson_type" size="20"/>
+        <select name="lesson_type">
+            {% for type_lesson, name_of_type in types_of_lessons.items %}
+                <option value="{{ type_lesson }}">{{ name_of_type }}</option>
+            {% endfor %}
+        </select>
+{#        <input type="text" value="{{ ktp.lesson_type }}" name="lesson_type" size="20"/>#}
         <input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30"/>
         <input type="text" value="{{ ktp.home_work }}" name="home_work" size="20"/>
     <br>
@@ -35,7 +40,7 @@
             {% endfor %}
         </tr>
             {% for pupil in pupils %}
-            <tr><td>{{ pupil }}</td>
+            <tr><td>{{ forloop.counter }}. {{ pupil }}</td>
                 {% for lesson in lessons %}
                     <td><label for="{{ lesson.id }}{{ pupil.id }}"></label>
                     {% if lesson.date %}
@@ -45,8 +50,14 @@
                 {% endfor %}
         </tr>
             {% endfor %}
-        </table><br>
-        <input type="submit" value="Отправить" name="set_scores">
+        </table>
+        <br>
+        <input type="submit" value="Отправить" name="set_scores"><br><br>
+        <table>
+        {% for lesson in lessons %}
+                    <tr><td></td><td>{{ forloop.counter }}. {{ lesson.number }} {{ lesson.topic}}, д/з: {{ lesson.home_work }}</td></tr>
+        {% endfor %}
+        </table>
     </form>
 
 {% endblock content%}

@@ -1,21 +1,31 @@
 import datetime
 
+from pytils.translit import slugify
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons, KTP, SCORE_CHOICES, \
-    SIMPLE_SCORE_CHOICES
-from .forms import SelectJournalForms, SelectScheduleForms
+    SIMPLE_SCORE_CHOICES, Classes
+from .forms import SelectJournalForms, SelectScheduleForms, PupilsForm, GroupsForm
 from django.core import serializers
 
 LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 
+menu = {"Журнал": 'classbook/journal/1/1/1/',
+        "Расписание": 'classbook/schedule/1/',
+        "Ученики": 'classbook/pupils/',
+        "Классы": 'classbook/groups/',
+        }
+
+types_of_lessons = {1: "Урок",
+                    2: "Контрольная",
+                    }
+
 
 # @method_decorator(login_required)
 class JournalView(View):
-
     group = 1
     discipline = 1
     teacher = 1
@@ -35,7 +45,8 @@ class JournalView(View):
         ktp = self.get_next_lesson()
         table = {'lessons': lessons, 'pupils': pupils, 'ktp': ktp,
                  'teacher': self.teacher, 'discipline': self.discipline,
-                 'select_journal': select_journal, 'scores': scores}
+                 'select_journal': select_journal, 'scores': scores,
+                 'types_of_lessons': types_of_lessons, 'all_menu': menu}
         return render(request, 'classbook/journal.html', table)
 
     def post(self, request, *args, **kwargs):
@@ -92,9 +103,9 @@ class JournalView(View):
                     new_score = Score()
                 if len(data.split()) > 4:
                     curr_score = ", ".join([s.score for s in Score.objects.filter(
-                                            lesson_id=data.split()[1],
-                                            pupil_id=data.split()[2],
-                                            date=Lessons.objects.get(pk=data.split()[1]).date)])
+                        lesson_id=data.split()[1],
+                        pupil_id=data.split()[2],
+                        date=Lessons.objects.get(pk=data.split()[1]).date)])
                     if score == curr_score:
                         continue
                     else:
@@ -128,7 +139,8 @@ class ScheduleView(View):
                 ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
         table = {'days': days, 'schedule': select_schedule,
-                 'lessons_time': lessons_time, 'lessons': schedule}
+                 'lessons_time': lessons_time, 'lessons': schedule,
+                 'all_menu': menu}
         return render(request, 'classbook/schedule.html', table)
 
     def post(self, request, *args, **kwargs):
@@ -143,6 +155,65 @@ def index(request):
 def journal_select(request):
     return redirect('journal', group=1, discipline=1, teacher=1)
 
+
+def pupils(request):
+    if request.method == 'POST':
+        return redirect('pupils')
+    pupils = Pupils.objects.all()
+    # group = Classes.objects.get(name=form.cleaned_data['group'])
+    context = {'pupils': pupils, 'all_menu': menu}
+    return render(request, 'classbook/pupils.html', context)
+
+
+def groups(request):
+    form = GroupsForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            group_name = form.cleaned_data['name']
+            new_group = Classes(name=group_name)
+            new_group.save()
+            teacher = Teachers.objects.get(id=form.cleaned_data['teacher'])
+            group_to_set = Classes.objects.get(name=form.cleaned_data['name'])
+            teacher.has_class.add(group_to_set)
+            return redirect('groups')
+        else:
+            pass
+    groups = Classes.objects.all()
+    context = {'form': form, 'groups': groups, 'all_menu': menu}
+    return render(request, 'classbook/groups.html', context)
+
+
+def group_edit(request, *args, **kwargs):
+    form = PupilsForm(request.POST or None)
+    if request.method == 'POST':
+        # form.is_valid() make the form to submit only
+        # when it contains CSRF Token
+        if form.is_valid():
+            # form.cleaned_data returns a dictionary of validated form input fields
+            new_pupil = Pupils(first_name=form.cleaned_data['first_name'],
+                               last_name=form.cleaned_data['last_name'],
+                               middle_name=form.cleaned_data['middle_name'],
+                               date_of_birth=form.cleaned_data['date_of_birth'],
+                               group_id=kwargs['group'],
+                               sex=form.cleaned_data['sex'],
+                               # email="a@a.com",
+                               username=slugify(form.cleaned_data['first_name'] + '-' + form.cleaned_data['last_name']),
+                               # password="111",
+                               # is_superuser=False,
+                               # is_staff=False,
+                               # is_active=True,
+                               # date_joined="2010-01-01",
+                               # last_login="2010-01-01",
+                               sub_group=1
+                               )
+            new_pupil.save()
+            return redirect('group_edit', group=kwargs['group'])
+        else:
+            pass
+    pupils = Pupils.objects.filter(group_id=kwargs['group'])
+    # group = Classes.objects.get(name=form.cleaned_data['group'])
+    context = {'form': form, 'pupils': pupils, 'all_menu': menu}
+    return render(request, 'classbook/group_edit.html', context)
 
 # def score(request, *args, **kwargs):
 #     for data, score in request.GET.items():

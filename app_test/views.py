@@ -6,7 +6,7 @@ from .forms import TopicForm, EntryForm, Entry
 from django.contrib.auth.decorators import login_required
 
 
-menu = {"Админка": 'admin',
+menu = {"Админка": 'admin/',
         "Плиткой": 'projects/',
         "Блог": 'blog/',
         "Участники": 'users/login/',

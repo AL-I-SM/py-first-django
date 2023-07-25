@@ -1,6 +1,8 @@
 from django.template.defaultfilters import register
 import datetime
 
+from classbook.models import Teachers
+
 days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
 
 
@@ -52,6 +54,15 @@ def by_numb_lesson(query_obj, key):
     """ """
     return query_obj.filter(number=key)
 
+
+@register.filter()
+def get_curator(query_obj, key):
+    """ """
+    try:
+        curator = Teachers.objects.get(has_class__name=key.name)
+    except:
+        curator = 'нет куратора'
+    return curator
 
 @register.filter()
 def by_day(query_obj, key):

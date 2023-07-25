@@ -41,7 +41,7 @@ class Pupils(User):
 
 class Teachers(User):
     has_class = models.ManyToManyField('Classes', verbose_name="Классный руководитель:")
-    can_teach = models.ManyToManyField('Disciplines', verbose_name="Может преподавать")
+    can_teach = models.ManyToManyField('Disciplines', verbose_name="Может преподавать:")
     position = models.ForeignKey('Positions', on_delete=models.PROTECT, verbose_name="Звание")
 
     class Meta:

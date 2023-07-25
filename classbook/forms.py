@@ -1,5 +1,19 @@
 from django import forms
-from classbook.models import Classes, Disciplines, Teachers
+from classbook.models import Classes, Disciplines, Teachers, Pupils
+
+
+class PupilsForm(forms.Form):
+    first_name = forms.CharField(label="Имя", max_length=200)
+    last_name = forms.CharField(label="Фамилия", max_length=200)
+    middle_name = forms.CharField(label="Отчество", max_length=200)
+    date_of_birth = forms.CharField(label="Дата рождения", max_length=200)
+    sex = forms.CharField(label="Пол", max_length=200)
+
+
+class GroupsForm(forms.Form):
+    name = forms.CharField(max_length=200)
+    teacher = forms.ChoiceField(choices=[(_.id, _.first_name + " " + _.middle_name + " " + _.last_name)
+                                         for _ in Teachers.objects.all()])
 
 
 class SelectScheduleForms(forms.Form):

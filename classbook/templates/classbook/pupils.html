@@ -1,0 +1,16 @@
+{% extends "apts/base.html" %}
+{#{% include 'apts/menu.html' %}#}
+{% block content %}
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+{#        {{ form.as_table }}#}
+{#        <input type="submit" value="Submit">#}
+    </form>
+    {% for pupil in pupils %}
+        {{ forloop.counter }}. {{ pupil }} - {{ pupil.sex }} - {{ pupil.group }} класс<br>
+    {% endfor %}
+</body>
+</html>
+{% endblock content %}

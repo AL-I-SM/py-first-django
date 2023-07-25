@@ -5,6 +5,9 @@ from .views import JournalView, ScheduleView
 
 urlpatterns = [
     path('', views.index, name="index"),
+    path('pupils/', views.pupils, name='pupils'),
+    path('groups/', views.groups, name='groups'),
+    path('group/<int:group>/', views.group_edit, name='group_edit'),
     path('journal/', views.journal_select, name="journal-select"),
     path('schedule/<int:group>/', ScheduleView.as_view(), name="schedule"),
     path('journal/<int:group>/<int:discipline>/<int:teacher>/', JournalView.as_view(), name="journal"),

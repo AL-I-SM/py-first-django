@@ -1,0 +1,18 @@
+{% extends "apts/base.html" %}
+{#{% include 'apts/menu.html' %}#}
+{% load filters %}
+{% block content %}
+</head>
+<body>
+    <form action='.' method="POST">
+        {% csrf_token %}
+{#        {{ form.as_table }}#}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+    {% for group in groups %}
+        {{ forloop.counter }}. <a href="{% url 'group_edit' group.id %}"> {{ group.name }} класс</a> - {{ group|get_curator:group }}<br>
+    {% endfor %}
+</body>
+</html>
+{% endblock content %}
