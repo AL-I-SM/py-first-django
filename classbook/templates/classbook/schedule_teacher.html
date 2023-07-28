@@ -2,7 +2,7 @@
 {% load bootstrap3 %}
 {% load filters %}
 {% block header %}
-    <h2>Расписание</h2>
+    <h2>Расписание для учителя</h2>
 {% endblock header %}
 {% block content %}
     {% load static %}
@@ -12,7 +12,7 @@
           {{ schedule }}
             <br>
             {% buttons %}
-                <button name="" class="btn btn-primary">Показать расписание</button>
+                <div><button name="" class="btn btn-primary">Показать расписание</button></div>
             {% endbuttons %}<br>
         </form>
         <form method="get">
@@ -33,5 +33,6 @@
                 {% endfor %}
             </table><br>
         </form>
+        <div>Перейки к расписанию <a href="{% url 'schedule_class' 1 %}">для класса</a></div>
 
 {% endblock content%}

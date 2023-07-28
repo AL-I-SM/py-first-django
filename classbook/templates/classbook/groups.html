@@ -8,7 +8,7 @@
         {% csrf_token %}
 {#        {{ form.as_table }}#}
         {{ form }}
-        <input type="submit" value="Submit">
+        <input type="submit" value="Добавить класс">
     </form>
     {% for group in groups %}
         {{ forloop.counter }}. <a href="{% url 'group_edit' group.id %}"> {{ group.name }} класс</a> - {{ group|get_curator:group }}<br>

@@ -1,17 +1,18 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, Http404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from .models import Topic
 from .forms import TopicForm, EntryForm, Entry
 from django.contrib.auth.decorators import login_required
 
 
-menu = {"Админка": 'admin/',
-        "Плиткой": 'projects/',
-        "Блог": 'blog/',
-        "Участники": 'users/login/',
-        "Темы": 'topics/',
-        "Мир книг": 'catalog/',}
+menu = {"Админка": '/admin/',
+        "Плиткой": '/projects/',
+        "Блог": '/blog/',
+        "Участники": '/users/login/',
+        "Темы": '/topics/',
+        "Мир книг": '/catalog/',
+        }
 
 
 def index(request):

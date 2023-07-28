@@ -1,0 +1,43 @@
+{% extends "apts/base.html" %}
+{% load bootstrap3 %}
+{% load filters %}
+{% block header %}
+
+{% endblock header %}
+{% block content %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
+
+    <h2>Расписание для {{ group }} класса</h2>
+
+    <form method="post">
+    {% csrf_token %}
+        {{ schedule_select }}
+        <br>
+        {% buttons %}
+            <div><button name="" class="btn btn-primary">Показать расписание</button></div>
+            {% endbuttons %}<br>
+    </form>
+
+    <form method="get">
+        <table class="table table-striped">
+        <tr><th>...</th>
+            {% for day, date in days %}
+            <th>{{ day }}, {{ date }}</th>
+            {% endfor %}
+        </tr>
+            {% for time in lessons_time %}
+            <tr><td>{{ time.lesson_time }}</td>
+                {% for _, date in days %}
+                    <td>
+                    <input type="text" value="{{ lessons|by_numb_lesson:time.number|by_day:date }}" style="width: 150px;">
+                    </td>
+                {% endfor %}
+        </tr>
+            {% endfor %}
+        </table><br>
+    </form>
+
+    <div>Перейки к расписанию  <a href="{% url 'schedule_teacher' 9 %}">для учителя</a></div>
+
+{% endblock content%}

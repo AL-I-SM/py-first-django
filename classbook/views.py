@@ -1,4 +1,6 @@
 import datetime
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
 
 from pytils.translit import slugify
 from django.contrib.auth.decorators import login_required
@@ -8,15 +10,16 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons, KTP, SCORE_CHOICES, \
     SIMPLE_SCORE_CHOICES, Classes
-from .forms import SelectJournalForms, SelectScheduleForms, PupilsForm, GroupsForm
+from .forms import SelectJournalForms, SelectTeacherScheduleForms, SelectGroupScheduleForms, PupilsForm, GroupsForm, \
+    PupilEditForm
 from django.core import serializers
 
 LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 
-menu = {"Журнал": 'classbook/journal/1/1/1/',
-        "Расписание": 'classbook/schedule/1/',
-        "Ученики": 'classbook/pupils/',
-        "Классы": 'classbook/groups/',
+menu = {"Журнал": reverse_lazy('journal', args=[1, 1, 1]),
+        "Расписание": reverse_lazy('schedule_class', args=[1]),
+        "Ученики": reverse_lazy('pupils'),
+        "Классы": reverse_lazy('groups'),
         }
 
 types_of_lessons = {1: "Урок",
@@ -38,7 +41,8 @@ class JournalView(View):
                                                      'discipline': self.discipline,
                                                      'group': self.group})
         scores = Score.objects.filter(pupil__group=self.group,
-                                      discipline_id=self.discipline)
+                                      discipline_id=self.discipline,
+                                      deleted=False)
         pupils = Pupils.objects.filter(group_id=self.group)
         lessons = Lessons.objects.filter(group_id=self.group,
                                          discipline_id=self.discipline).order_by("date")
@@ -102,33 +106,41 @@ class JournalView(View):
                 if len(data.split()) == 4:
                     new_score = Score()
                 if len(data.split()) > 4:
-                    curr_score = ", ".join([s.score for s in Score.objects.filter(
-                        lesson_id=data.split()[1],
-                        pupil_id=data.split()[2],
-                        date=Lessons.objects.get(pk=data.split()[1]).date)])
-                    if score == curr_score:
+                    if score == '0':
+                        for s in Score.objects.filter(
+                                lesson_id=data.split()[1],
+                                pupil_id=data.split()[2],
+                                date=Lessons.objects.get(pk=data.split()[1]).date):
+                            s.deleted = 1
+                            s.save()
                         continue
                     else:
-                        new_score = Score()
+                        curr_score = ", ".join([s.score for s in Score.objects.filter(
+                            lesson_id=data.split()[1],
+                            pupil_id=data.split()[2],
+                            date=Lessons.objects.get(pk=data.split()[1]).date,
+                            deleted=False)])
+                        if score == curr_score:
+                            continue
+                        else:
+                            new_score = Score()
                 new_score.date = Lessons.objects.get(pk=data.split()[1]).date
                 new_score.lesson_id = data.split()[1]
                 new_score.score = score
                 new_score.pupil_id = data.split()[2]
                 new_score.teacher_id = data.split()[3]
                 new_score.discipline = Lessons.objects.get(pk=data.split()[1]).discipline
-                # new_score.pupil = Pupils.objects.get(pk=data.split()[1])
-                # new_score.teacher = Teachers.objects.get(pk=data.split()[2])
-                # new_score.discipline = Disciplines.objects.get(pk=data.split()[3])
                 new_score.save()
         return redirect('journal', group=self.group, discipline=self.discipline, teacher=self.teacher)
         # return HttpResponse(request.GET.keys())
 
 
-class ScheduleView(View):
+class ScheduleClassView(View):
 
     def get(self, request, *args, **kwargs):
         group = kwargs['group']
-        select_schedule = SelectScheduleForms(initial={'group': group})
+        group_name = Classes.objects.get(id=group).name
+        select_schedule = SelectGroupScheduleForms(initial={'group': group})
         schedule = Schedule.objects.filter(group_id=group)
         dt = datetime.datetime.today()
         md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
@@ -140,16 +152,39 @@ class ScheduleView(View):
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
         table = {'days': days, 'schedule': select_schedule,
                  'lessons_time': lessons_time, 'lessons': schedule,
-                 'all_menu': menu}
-        return render(request, 'classbook/schedule.html', table)
+                 'group': group_name, 'all_menu': menu}
+        return render(request, 'classbook/schedule_class.html', table)
 
     def post(self, request, *args, **kwargs):
-        return redirect('schedule',
+        return redirect('schedule_class',
                         group=request.POST['group'])
 
 
+class ScheduleTeacherView(View):
+
+    def get(self, request, *args, **kwargs):
+        teacher = kwargs['teacher']
+        schedule_select = SelectTeacherScheduleForms(initial={'teacher': teacher})
+        schedule = Schedule.objects.filter(teacher_id=teacher)
+        dt = datetime.datetime.today()
+        md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
+        td = datetime.timedelta(days=1)
+        lessons_time = TimeLessons.objects.filter(variant=1)
+        days = (('ПН', md), ('ВТ', md + td), ('СР', md + td * 2),
+                ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
+        table = {'days': days, 'schedule_select': schedule_select,
+                 'lessons_time': lessons_time, 'lessons': schedule,
+                 'all_menu': menu}
+        return render(request, 'classbook/schedule_teacher.html', table)
+
+    def post(self, request, *args, **kwargs):
+        return redirect('schedule_teacher',
+                        teacher=request.POST['teacher'])
+
+
 def index(request):
-    return render(request, 'classbook/index.html')
+    return redirect('journal', group=1, discipline=1, teacher=1)
+    # return render(request, 'classbook/index.html')
 
 
 def journal_select(request):
@@ -163,6 +198,24 @@ def pupils(request):
     # group = Classes.objects.get(name=form.cleaned_data['group'])
     context = {'pupils': pupils, 'all_menu': menu}
     return render(request, 'classbook/pupils.html', context)
+
+
+class PupilUpdate(UpdateView):
+    model = Pupils
+    fields = "__all__"
+    success_url = reverse_lazy("pupil")
+
+
+def pupil_edit(request, *args, **kwargs):
+    pupil = Pupils.objects.get(pk=kwargs['pupil'])
+    form = PupilEditForm(request.POST or None, instance=pupil)
+    if request.method == 'POST':
+        if form.is_valid():
+            pupil.save()
+            return redirect('group_edit', group=pupil.group)
+    # group = Classes.objects.get(name=form.cleaned_data['group'])
+    context = {'form': form, 'pupils': pupils, 'all_menu': menu}
+    return render(request, 'classbook/pupil_edit.html', context)
 
 
 def groups(request):

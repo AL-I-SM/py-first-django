@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 SCORE_CHOICES = ((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, 'н'))
-SIMPLE_SCORE_CHOICES = ('1', '2', '3', '4', '5', 'н')
+SIMPLE_SCORE_CHOICES = ('0', '1', '2', '3', '4', '5', 'н')
 
 
 class User(AbstractUser):
@@ -121,3 +121,4 @@ class Score(models.Model):
     discipline = models.ForeignKey('Disciplines', on_delete=models.PROTECT, null=True)
     extra = models.CharField(max_length=250, null=True)
     lesson = models.ForeignKey('Lessons', on_delete=models.DO_NOTHING)
+    deleted = models.BooleanField(default=0)

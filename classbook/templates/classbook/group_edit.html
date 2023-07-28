@@ -7,8 +7,9 @@
         <input type="submit" value="Добавить ученика"><br><br>
     </form>
     {% for pupil in pupils %}
-        {{ forloop.counter }}. {{ pupil.first_name }} {{ pupil.last_name }} {{ pupil.middle_name }}
-        - {{ pupil.date_of_birth }} {{ pupil.sex }} - {{ pupil.group }} класс - {{ pupil.sub_group }}-я группа<br>
+        {{ forloop.counter }}. <a href="{% url 'pupil_edit' pupil.id %}">
+        {{ pupil.first_name }} {{ pupil.last_name }} {{ pupil.middle_name }}</a>
+         - {{ pupil.sex }} - {{ pupil.date_of_birth }} - {{ pupil.group }} класс - {{ pupil.sub_group }}-я группа<br>
     {% endfor %}
 </body>
 </html>

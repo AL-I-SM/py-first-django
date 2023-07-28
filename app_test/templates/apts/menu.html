@@ -17,11 +17,11 @@
 
                 <div id="navbar" class="navbar-collapse collapse">
                   <ul class="nav navbar-nav nav-tabs">
-                        <li><a href="{% url 'apts:topics' %}">|</a></li>
+                        <li><a>|</a></li>
                         {% for title, url_link in all_menu.items %}
-                            <li class="nav-item"><a class="nav-link active" href="http://127.0.0.1:8000/{{ url_link }}">{{ title }}</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="http://127.0.0.1:8000{{ url_link }}">{{ title }}</a></li>
                         {% endfor %}
-                        <li><a href="{% url 'apts:topics' %}">|</a></li>
+                        <li><a>|</a></li>
                   </ul>
                   <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
