@@ -1,4 +1,4 @@
-{% extends "apts/base.html" %}
+{% extends "classbook/base.html" %}
 {% load bootstrap3 %}
 {% load filters %}
 {% block header %}
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
     <form method="post">
         {% csrf_token %}
-          {{ schedule }}
+          {{ schedule_select }}
             <br>
             {% buttons %}
                 <div><button name="" class="btn btn-primary">Показать расписание</button></div>

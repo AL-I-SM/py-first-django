@@ -12,41 +12,43 @@ def add_weekday(obj, key):
 
 
 @register.filter()
-def by_pupil(query_obj, key):
+def by_lesson(score_list_obj, key):
     """ """
-    return query_obj.filter(pupil=key)
+    return [score for score in score_list_obj if score.lesson_id == key]
 
 
 @register.filter()
-def by_lesson(query_obj, key):
+def by_pupil(score_list_obj, key):
     """ """
-    return query_obj.filter(lesson=key)
+    return [score for score in score_list_obj if score.pupil_id == key]
 
 
 @register.filter()
-def by_date(query_obj, key):
+def by_date(score_list_obj, key):
     """ """
-    return query_obj.filter(date=key)
+    return [score for score in score_list_obj if score.date == key]
 
 
 @register.filter()
-def str_score(query_obj):
+def str_score(score_list_obj):
     """ """
-    if query_obj.count() == 1:
-        return query_obj.first().score
-    if query_obj.count() > 1:
-        return ", ".join([str(qo.score) for i, qo in enumerate(query_obj)])
-    return ""
+    if not score_list_obj:
+        return ""
+    if len(score_list_obj) == 1:
+        return score_list_obj[0].score
+    if len(score_list_obj) > 1:
+        return ", ".join([str(score.score) for score in score_list_obj])
 
 
 @register.filter()
-def id_score(query_obj):
+def id_score(score_list_obj):
     """ """
-    if query_obj.count() == 1:
-        return query_obj.first().id
-    if query_obj.count() > 1:
-        return ", ".join([str(qo.id) for i, qo in enumerate(query_obj)])
-    return ""
+    if not score_list_obj:
+        return ""
+    if len(score_list_obj) == 1:
+        return score_list_obj[0].score
+    if len(score_list_obj) > 1:
+        return ", ".join([str(score.id) for score in score_list_obj])
 
 
 @register.filter()

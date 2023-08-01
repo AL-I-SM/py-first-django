@@ -1,0 +1,31 @@
+{% load bootstrap3 %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE-edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Школьный журнал</title>
+    </head>
+
+    <body>
+        {% include 'apts/menu.html' %}
+        <nav>
+        <div id="wrapper">
+            <div class="container" id="header">
+                {% block header %}{% endblock header %}
+            </div>
+            <div class="container" id="content">
+                {% block content %}{% endblock content %}
+            </div>
+            {% block footer %}
+            {% block copyright %}
+                <div id="journal-footer"><br><p class="modal-footer">Copyright "Наша школа", 2023</p></div>
+            {% endblock %}
+            {% endblock %}
+        </div>
+        </nav>
+    </body>
+</html>

@@ -40,9 +40,10 @@ class JournalView(View):
         select_journal = SelectJournalForms(initial={'teacher': self.teacher,
                                                      'discipline': self.discipline,
                                                      'group': self.group})
-        scores = Score.objects.filter(pupil__group=self.group,
+        scores = list(Score.objects.filter(pupil__group=self.group,
                                       discipline_id=self.discipline,
-                                      deleted=False)
+                                      deleted=False))
+        # print(list(scores))
         pupils = Pupils.objects.filter(group_id=self.group)
         lessons = Lessons.objects.filter(group_id=self.group,
                                          discipline_id=self.discipline).order_by("date")
@@ -50,7 +51,8 @@ class JournalView(View):
         table = {'lessons': lessons, 'pupils': pupils, 'ktp': ktp,
                  'teacher': self.teacher, 'discipline': self.discipline,
                  'select_journal': select_journal, 'scores': scores,
-                 'types_of_lessons': types_of_lessons, 'all_menu': menu}
+                 'types_of_lessons': types_of_lessons, 'all_menu': menu,
+                 'range_col': range(30-len(lessons))}
         return render(request, 'classbook/journal.html', table)
 
     def post(self, request, *args, **kwargs):
@@ -140,7 +142,7 @@ class ScheduleClassView(View):
     def get(self, request, *args, **kwargs):
         group = kwargs['group']
         group_name = Classes.objects.get(id=group).name
-        select_schedule = SelectGroupScheduleForms(initial={'group': group})
+        schedule_select = SelectGroupScheduleForms(initial={'group': group})
         schedule = Schedule.objects.filter(group_id=group)
         dt = datetime.datetime.today()
         md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
@@ -150,7 +152,7 @@ class ScheduleClassView(View):
         days = (('ПН', md), ('ВТ', md + td), ('СР', md + td * 2),
                 ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
-        table = {'days': days, 'schedule': select_schedule,
+        table = {'days': days, 'schedule_select': schedule_select,
                  'lessons_time': lessons_time, 'lessons': schedule,
                  'group': group_name, 'all_menu': menu}
         return render(request, 'classbook/schedule_class.html', table)

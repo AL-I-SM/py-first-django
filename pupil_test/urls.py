@@ -26,4 +26,5 @@ urlpatterns = [
     path('cards/', include("cards.urls")),
     path('classbook/', include("classbook.urls")),
     re_path(r'^players/', include(('players.urls', 'players'), namespace='players')),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]

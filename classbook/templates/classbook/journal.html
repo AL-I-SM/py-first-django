@@ -1,21 +1,24 @@
-{% extends "apts/base.html" %}
+{% extends "classbook/base.html" %}
 {% load bootstrap3 %}
 {% load filters %}
 {% block header %}
-    <h2>Журнал</h2>
+
 {% endblock header %}
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
+    <h2>Журнал</h2>
     <h3>Выбор журнала</h3>
+
     <form method="post">
     {% csrf_token %}
           {{ select_journal }}
-            <br><br>
-            {% buttons %}
-                <button name="get_journal" value = '1' class="btn btn-primary">Показать журнал</button>
-            {% endbuttons %}
+          <br><br>
+          {% buttons %}
+              <button name="get_journal" value = '1' class="btn btn-primary">Показать журнал</button>
+          {% endbuttons %}
     </form>
+
     <form method="post">
     {% csrf_token %}
         <input type="submit" class="btn" value="Добавить урок" name="add_lesson">
@@ -33,19 +36,23 @@
 {#  <form method="post" action="{% url 'score' %}">#}
     <form method="post">
     {% csrf_token %}
-        <table>
-            <tr><th>...</th>
-            {% for lesson in lessons %}
-            <th><div id="rotate-text">{{lesson.date}}</div></th>
-            {% endfor %}
-        </tr>
+        <table id="journal-table">
+            <tr>
+                <th>...</th>
+                {% for lesson in lessons %}
+                <th><div id="rotate-text">{{lesson.date}}</div></th>
+                {% endfor %}
+                {% for _ in range_col %}
+                <th><div id="rotate-text">...</div></th>
+                {% endfor %}
+            </tr>
             {% for pupil in pupils %}
-            <tr><td>{{ forloop.counter }}. {{ pupil }}</td>
+            <tr id="journal-table-tr"><td>{{ forloop.counter }}. {{ pupil }}</td>
                 {% for lesson in lessons %}
                     <td><label for="{{ lesson.id }}{{ pupil.id }}"></label>
                     {% if lesson.date %}
-                        <input id="{{ lesson.id }}{{ pupil.id }}" type="text" value="{{ scores|by_lesson:lesson|by_pupil:pupil|str_score }}"
-                               name="score {{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ scores|by_lesson:lesson|by_pupil:pupil|id_score }}" style="width: 24px;">
+                        <input id="{{ lesson.id }}{{ pupil.id }}" type="text" value="{{ scores|by_lesson:lesson.id|by_pupil:pupil.id|str_score }}"
+                               name="score {{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ scores|by_lesson:lesson.id|by_pupil:pupil.id|id_score }}" style="width: 24px;">
                     {% endif %}</td>
                 {% endfor %}
         </tr>
@@ -53,7 +60,8 @@
         </table>
         <br>
         <input type="submit" value="Отправить" name="set_scores"><br><br>
-        <table>
+
+        <table class="table table-hover">
         {% for lesson in lessons %}
                     <tr><td></td><td>{{ forloop.counter }}. {{ lesson.number }} {{ lesson.topic}}, д/з: {{ lesson.home_work }}</td></tr>
         {% endfor %}
