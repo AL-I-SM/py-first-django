@@ -8,6 +8,11 @@
 {#        {{ form.as_table }}#}
 {#        <input type="submit" value="Submit">#}
     </form>
+    <br> 
+    <a href= "{% url 'pupils_vue' %}">показать через API и js</a>
+    <br>
+    <a href="api/?format=json">показать через API</a>
+    <br><br>
     {% for pupil in pupils %}
         {{ forloop.counter }}. {{ pupil }} - {{ pupil.sex }} - {{ pupil.group }} класс<br>
     {% endfor %}

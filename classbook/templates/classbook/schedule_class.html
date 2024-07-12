@@ -12,27 +12,36 @@
 
     <form method="post">
     {% csrf_token %}
-        {{ schedule_select }}
-        <br>
+        <div>{{ schedule_select }}</div>
         {% buttons %}
-            <div><button name="" class="btn btn-primary">Показать расписание</button></div>
-            {% endbuttons %}<br>
+            <div><button name="Кнопка" class="btn btn-primary">Показать расписание</button></div>
+        {% endbuttons %}
     </form>
 
     <form method="get">
-{#        <table class="table table-striped">#}
         <table>
+{#        <table>#}
         <tr><th>...</th>
             {% for day, date in days %}
-            <th>{{ day }}, {{ date }}</th>
+            <th id="schedule-th">{{ day }}<br>{{ date|date:'d-m' }}</th>
             {% endfor %}
         </tr>
             {% for time in lessons_time %}
-            <tr><td>{{ time.lesson_time }}</td>
-                {% for _, date in days %}
-                    <td>
-                    <input type="text" value="{{ lessons|by_numb_lesson:time.number|by_day:date }}" style="width: 150px;">
-                    </td>
+            <tr class="schedule-row"><td id="schedule-time">{{ forloop.counter }}. - {{ time.lesson_time }}</td>
+                {% for day, date in days %}
+                    <td id="schedule-info">
+                    {% with lesson=schedule|by_numb_lesson:time.number|by_day_lesson:day %}
+                        {% for l in lesson %}
+                            {% if forloop.counter > 1 %}
+                                .........<br>
+                            {% endif %}
+                        <span>{{ l.discipline }},</span><br>
+                        <span style="color: tomato">{{ l.cabinet }}</span><br>
+                            {% if l.sub_group %}
+                                <span>группа {{ l.sub_group }} </span><br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
                 {% endfor %}
         </tr>
             {% endfor %}

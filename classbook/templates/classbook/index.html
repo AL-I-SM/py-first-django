@@ -1,10 +1,20 @@
-Классные журналы
-<br>
-<a href="http://127.0.0.1:8000/classbook/journal/1/1/1/">Журнал</a>
-<br>
-<a href="{% url 'schedule_class' 1 %}">Расписание</a>
-<br>
-<a href="http://127.0.0.1:8000/classbook/pupils/">Ученики</a>
-<br>
-<a href="http://127.0.0.1:8000/classbook/groups/">Классы</a>
+{% extends "classbook/base.html" %}
+{#{% include 'apts/menu.html' %}#}
+{% load filters %}
+{% block content %}
+</head>
+<body>
 
+    {% csrf_token %}
+    <h1>Наша школа!</h1>
+    <br>
+    <a href="journal/1/1/1/">Журнал</a>
+    <br>
+    <a href="{% url 'schedule_class' 1 %}">Расписание</a>
+    <br>
+    <a href="pupils/">Ученики</a>
+    <br>
+    <a href="groups/">Классы</a>
+</body>
+</html>
+{% endblock content %}

@@ -7,6 +7,11 @@ days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
 
 
 @register.filter()
+def wd(day):
+    return days[int(day) - 1]
+
+
+@register.filter()
 def add_weekday(obj, key):
     return str(key) + ", " + days[datetime.date.fromisoformat(str(key)).weekday()]
 
@@ -52,12 +57,6 @@ def id_score(score_list_obj):
 
 
 @register.filter()
-def by_numb_lesson(query_obj, key):
-    """ """
-    return query_obj.filter(number=key)
-
-
-@register.filter()
 def get_curator(query_obj, key):
     """ """
     try:
@@ -66,13 +65,15 @@ def get_curator(query_obj, key):
         curator = 'нет куратора'
     return curator
 
+
 @register.filter()
-def by_day(query_obj, key):
+def by_numb_lesson(scedule_obj, numb):
     """ """
-    data_lesson = query_obj.filter(day=datetime.date.fromisoformat(str(key)).weekday()).first()
-    if data_lesson:
-        return str(data_lesson.discipline) + ', ' + str(data_lesson.cabinet)
-    else:
-        return 'нет уроков'
-        # return '<text color="gray">нет уроков</text>'
+    return [scedule for scedule in scedule_obj if scedule.number_id == numb]
+
+
+@register.filter()
+def by_day_lesson(scedule_obj, day):
+    """ """
+    return [scedule for scedule in scedule_obj if scedule.day == days.index(day)]
 

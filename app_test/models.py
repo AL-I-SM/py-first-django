@@ -2,7 +2,8 @@ from django.db import models
 from classbook.models import User
 
 
-# Create your models here.
+#TODO 'приложение заявлено как тест для учеников, а по факту - блог. Нехорошо.
+
 class Topic(models.Model):
     text = models.CharField(max_length=200)
     date_added = models.DateTimeField(auto_now_add=True)

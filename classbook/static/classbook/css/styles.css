@@ -1,4 +1,4 @@
-/* внешние границы таблицы серого цвета толщиной 1px */
+ /*внешние границы таблицы серого цвета толщиной 1px*/
 /*table {*/
 /*   border: 1px solid grey;*/
 /*}*/
@@ -8,18 +8,37 @@
 /*}*/
 /*!* границы ячеек тела таблицы *!*/
 /*td {*/
-/*   border: 1px solid grey;*/
+/*    border: 1px solid grey;*/
+/*    margin: 4 4 4 4px;*/
 /*}*/
 
-{
-  margin: 0;
-  padding: 0;
-}
-#rotate-text {
+#journal-info {
    font-size: 12px;
    white-space: nowrap;
    width: 1.5em;
-   writing-mode: vertical-lr;
+   /*writing-mode: vertical-lr;*/
+}
+.schedule-row:hover {
+   background: #e5e5e5;
+}
+ #schedule-th {
+    text-align: center;
+    padding: 2px;
+ }
+ #schedule-time {
+    padding: 2px 8px 2px 2px;
+ }
+ #schedule-info {
+    padding: 2px;
+    text-align: center;
+    font-size: 13px;
+    white-space: nowrap;
+    width: 15%;
+    border-style: solid;
+    border-width: 1px;
+    margin: 2px;
+    /*color: #0a58ca;*/
+    /*writing-mode: vertical-lr;*/
 }
 #journal-table {
    background: #ffffcc;

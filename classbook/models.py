@@ -102,7 +102,7 @@ class Schedule(models.Model):
     cabinet = models.CharField(max_length=25, null=True)
     extra_info = models.CharField(max_length=255, null=True)
     number = models.ForeignKey('TimeLessons', on_delete=models.PROTECT)
-    sub_group = models.SmallIntegerField(default=1)
+    sub_group = models.SmallIntegerField(default=None, null=True)
 
 
 class TimeLessons(models.Model):

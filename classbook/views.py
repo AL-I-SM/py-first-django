@@ -13,6 +13,28 @@ from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLe
 from .forms import SelectJournalForms, SelectTeacherScheduleForms, SelectGroupScheduleForms, PupilsForm, GroupsForm, \
     PupilEditForm
 from django.core import serializers
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import SearchFilter, OrderingFilter
+from classbook.serializers import PupilsSerializer, LessonsSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class PupilsViewSet(ModelViewSet):
+    queryset = Pupils.objects.all()
+    serializer_class = PupilsSerializer
+
+class LessonsViewSet(ModelViewSet):
+    queryset = Lessons.objects.all()
+    serializer_class = LessonsSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+   #TODO не работает этот фильтр может попробовать https://django-filter.readthedocs.io/en/stable/guide/rest_framework.html
+    filter_fields = ['group']
+   # search_fields = ['teacher', 'group', 'discipline']
+   # ordering_fields = ['teacher', 'group', 'discipline']
+
+
+def pupils_vue(request):
+    return render(request, 'pupils_api_vue.html')
 
 LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 
@@ -143,7 +165,7 @@ class ScheduleClassView(View):
         group = kwargs['group']
         group_name = Classes.objects.get(id=group).name
         schedule_select = SelectGroupScheduleForms(initial={'group': group})
-        schedule = Schedule.objects.filter(group_id=group)
+        schedule = list(Schedule.objects.filter(group_id=group))
         dt = datetime.datetime.today()
         md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
         td = datetime.timedelta(days=1)
@@ -153,7 +175,7 @@ class ScheduleClassView(View):
                 ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
         table = {'days': days, 'schedule_select': schedule_select,
-                 'lessons_time': lessons_time, 'lessons': schedule,
+                 'lessons_time': lessons_time, 'schedule': schedule,
                  'group': group_name, 'all_menu': menu}
         return render(request, 'classbook/schedule_class.html', table)
 
@@ -185,8 +207,9 @@ class ScheduleTeacherView(View):
 
 
 def index(request):
-    return redirect('journal', group=1, discipline=1, teacher=1)
-    # return render(request, 'classbook/index.html')
+    # return redirect('journal', group=1, discipline=1, teacher=1)
+    context = {'all_menu': menu}
+    return render(request, 'classbook/index.html', context)
 
 
 def journal_select(request):

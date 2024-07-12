@@ -12,26 +12,30 @@
 
     <form method="post">
     {% csrf_token %}
-          {{ select_journal }}
-          <br><br>
-          {% buttons %}
-              <button name="get_journal" value = '1' class="btn btn-primary">Показать журнал</button>
-          {% endbuttons %}
+        {{ select_journal }}
+            {% buttons %}
+                <button name="get_journal" value = '1' class="btn btn-primary">Показать журнал</button>
+            {% endbuttons %}
     </form>
-
     <form method="post">
     {% csrf_token %}
-        <input type="submit" class="btn" value="Добавить урок" name="add_lesson">
-        <input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" size="1"/>
-        <select name="lesson_type">
-            {% for type_lesson, name_of_type in types_of_lessons.items %}
-                <option value="{{ type_lesson }}">{{ name_of_type }}</option>
-            {% endfor %}
-        </select>
+        <table>
+        <tr id="journal-info"><td></td><td>Номер</td><td>Тип урока</td><td>Тема урока</td><td>Домашнее задание</td></tr>
+        <tr>
+            <br><br>
+            <td><input type="submit" class="btn" value="Добавить урок" name="add_lesson"></td>
+            <td><input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" size="1"/></td>
+            <td><select name="lesson_type">
+                {% for type_lesson, name_of_type in types_of_lessons.items %}
+                    <option value="{{ type_lesson }}">{{ name_of_type }}</option>
+                {% endfor %}
+            </select></td>
 {#        <input type="text" value="{{ ktp.lesson_type }}" name="lesson_type" size="20"/>#}
-        <input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30"/>
-        <input type="text" value="{{ ktp.home_work }}" name="home_work" size="20"/>
-    <br>
+            <td><input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30"/></td>
+            <td><input type="text" value="{{ ktp.home_work }}" name="home_work" size="20"/></td>
+        </tr>
+        </table>
+        <br>
     </form>
 {#  <form method="post" action="{% url 'score' %}">#}
     <form method="post">
@@ -40,10 +44,17 @@
             <tr>
                 <th>...</th>
                 {% for lesson in lessons %}
-                <th><div id="rotate-text">{{lesson.date}}</div></th>
+{#                <th><div id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
+                <th id="journal-info">
+                    <div style="color: midnightblue">#{{lesson.number}}</div>
+                    <div>|</div>
+                    <div>{{lesson.date.weekday|wd}}</div>
+                    <div>{{lesson.date|date:"d"}}</div>
+                    <div style="color: darkgray">{{lesson.date|date:"m"}}</div>
+                </th>
                 {% endfor %}
                 {% for _ in range_col %}
-                <th><div id="rotate-text">...</div></th>
+                <th><div>.</div><div>.</div></th>
                 {% endfor %}
             </tr>
             {% for pupil in pupils %}
@@ -63,7 +74,7 @@
 
         <table class="table table-hover">
         {% for lesson in lessons %}
-                    <tr><td></td><td>{{ forloop.counter }}. {{ lesson.number }} {{ lesson.topic}}, д/з: {{ lesson.home_work }}</td></tr>
+                    <tr><td>{{ forloop.counter }}. <a style="color: midnightblue">№{{ lesson.number }}</a> {{ lesson.topic}}, д/з: {{ lesson.home_work }}</td></tr>
         {% endfor %}
         </table>
     </form>
