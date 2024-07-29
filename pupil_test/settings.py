@@ -54,10 +54,12 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'debug_toolbar',
 
+    'social_django',
     
     'rest_framework',
     'django_filters',
     'bootstrap3',
+    'django_extensions',
 ]
 
 BOOTSTRAP3 = {
@@ -109,6 +111,11 @@ DATABASES = {
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+AUTHENTICATION_BACKENDS = (
+
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

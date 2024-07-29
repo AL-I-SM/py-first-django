@@ -2,11 +2,12 @@ from django.urls import path, re_path
 from . import views
 from .views import JournalView, ScheduleClassView, ScheduleTeacherView
 from rest_framework.routers import SimpleRouter
-from classbook.views import PupilsViewSet, LessonsViewSet
+from classbook.views import PupilsViewSet, LessonsViewSet, ClassesViewSet
 
 router = SimpleRouter()
 router.register('pupils/api', PupilsViewSet)
 router.register('lessons/api', LessonsViewSet)
+router.register('classes/api', ClassesViewSet)
 
 urlpatterns = [
     path('', views.index, name="index"),

@@ -15,20 +15,32 @@ from .forms import SelectJournalForms, SelectTeacherScheduleForms, SelectGroupSc
 from django.core import serializers
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
-from classbook.serializers import PupilsSerializer, LessonsSerializer
+from classbook.serializers import PupilsSerializer, LessonsSerializer, ClassesSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
+from rest_framework.permissions import IsAuthenticated
 
 
 class PupilsViewSet(ModelViewSet):
     queryset = Pupils.objects.all()
     serializer_class = PupilsSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    # permission_classes = [IsAuthenticated]
+    filterset_fields = ['group', ]
+
+
+class ClassesViewSet(ModelViewSet):
+    queryset = Classes.objects.all()
+    serializer_class = ClassesSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
 
 class LessonsViewSet(ModelViewSet):
     queryset = Lessons.objects.all()
     serializer_class = LessonsSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-   #TODO не работает этот фильтр может попробовать https://django-filter.readthedocs.io/en/stable/guide/rest_framework.html
-    filter_fields = ['group']
+    filterset_fields = ['group', 'teacher', 'date', ]
+
    # search_fields = ['teacher', 'group', 'discipline']
    # ordering_fields = ['teacher', 'group', 'discipline']
 
@@ -65,6 +77,7 @@ class JournalView(View):
         scores = list(Score.objects.filter(pupil__group=self.group,
                                       discipline_id=self.discipline,
                                       deleted=False))
+        # scores_2 = 
         # print(list(scores))
         pupils = Pupils.objects.filter(group_id=self.group)
         lessons = Lessons.objects.filter(group_id=self.group,
@@ -74,7 +87,7 @@ class JournalView(View):
                  'teacher': self.teacher, 'discipline': self.discipline,
                  'select_journal': select_journal, 'scores': scores,
                  'types_of_lessons': types_of_lessons, 'all_menu': menu,
-                 'range_col': range(30-len(lessons))}
+                 'range_col': range(26-len(lessons))}
         return render(request, 'classbook/journal.html', table)
 
     def post(self, request, *args, **kwargs):
@@ -171,8 +184,9 @@ class ScheduleClassView(View):
         td = datetime.timedelta(days=1)
         # sd = md + td * 5
         lessons_time = TimeLessons.objects.filter(variant=1)
-        days = (('ПН', md), ('ВТ', md + td), ('СР', md + td * 2),
-                ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
+        days = (('пн', md), ('вт', md + td), ('ср', md + td * 2),
+                ('чт', md + td * 3), ('пт', md + td * 4), ('сб', md + td * 5))
+        print(days)
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
         table = {'days': days, 'schedule_select': schedule_select,
                  'lessons_time': lessons_time, 'schedule': schedule,

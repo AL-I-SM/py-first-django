@@ -12,9 +12,9 @@
 
     <form method="post">
     {% csrf_token %}
-        {{ select_journal }}
+        <div style="float: left;">{{select_journal }}</div>
             {% buttons %}
-                <button name="get_journal" value = '1' class="btn btn-primary">Показать журнал</button>
+                <button name="get_journal" value = '1' class="btn btn-primary" style="margin-left: 3mm;">Показать журнал</button>
             {% endbuttons %}
     </form>
     <form method="post">
@@ -22,7 +22,7 @@
         <table>
         <tr id="journal-info"><td></td><td>Номер</td><td>Тип урока</td><td>Тема урока</td><td>Домашнее задание</td></tr>
         <tr>
-            <br><br>
+            
             <td><input type="submit" class="btn" value="Добавить урок" name="add_lesson"></td>
             <td><input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" size="1"/></td>
             <td><select name="lesson_type">
@@ -43,20 +43,25 @@
         <table id="journal-table">
             <tr>
                 <th>...</th>
+                <!-- заголовок таблицы -->
                 {% for lesson in lessons %}
 {#                <th><div id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
-                <th id="journal-info">
-                    <div style="color: midnightblue">#{{lesson.number}}</div>
-                    <div>|</div>
+                <th id="journal-info" style="text-align: center;">
+                    <div style="color: midnightblue">-{{lesson.number}}-</div>
+                    <div> </div>
                     <div>{{lesson.date.weekday|wd}}</div>
+                    <div style="color: darkgray" >{{lesson.date|date:"m"}}</div>
                     <div>{{lesson.date|date:"d"}}</div>
-                    <div style="color: darkgray">{{lesson.date|date:"m"}}</div>
                 </th>
                 {% endfor %}
+                <!-- заполнение остатка таблицы -->
                 {% for _ in range_col %}
-                <th><div>.</div><div>.</div></th>
+                <th id="journal-info">
+                    <div style="text-align: center;">.</div>
+                </th>
                 {% endfor %}
             </tr>
+            <!-- список учеников класса -->
             {% for pupil in pupils %}
             <tr id="journal-table-tr"><td>{{ forloop.counter }}. {{ pupil }}</td>
                 {% for lesson in lessons %}
@@ -66,8 +71,22 @@
                                name="score {{ lesson.id }} {{ pupil.id }} {{ teacher }} {{ scores|by_lesson:lesson.id|by_pupil:pupil.id|id_score }}" style="width: 24px;">
                     {% endif %}</td>
                 {% endfor %}
-        </tr>
+                <!-- аналогично, заполнение остатка таблицы -->
+                {% for _ in range_col %}
+                    <td><label for=" "></label>
+                        <input id="1" type="text" value=" " name="1" style="width: 24px;">
+                {% endfor %}</td>
+            </tr>
             {% endfor %}
+            <!-- заглушка -->
+            {% if not pupils %}
+            <tr id="journal-table-tr"><td>(нет учеников в классе)</td>
+                {% for _ in range_col %}
+                <td><label for=" "></label>
+                    <input id="1" type="text" value=" " name="1" style="width: 24px;">
+                    {% endfor %}</td>
+            {% endif %}</td>
+            <!-- заглушка -->
         </table>
         <br>
         <input type="submit" value="Отправить" name="set_scores"><br><br>

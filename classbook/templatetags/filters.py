@@ -3,7 +3,7 @@ import datetime
 
 from classbook.models import Teachers
 
-days = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
+days = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб']
 
 
 @register.filter()

@@ -41,7 +41,7 @@ def test_auth_view(auto_login_user):
 
 
 @pytest.mark.django_db
-def test_not_owner_view(auto_login_user):
+def test_owner_view(auto_login_user):
    client, user = auto_login_user()
    Topic.objects.create(owner=user)
    topic = Topic.objects.filter(owner=user).first()

@@ -44,6 +44,6 @@ class SelectJournalForms(forms.Form):
     TEACHER_CLASS_CHOICES = [(_.id, _.first_name + " " + _.middle_name + " " + _.last_name) for _ in
                              Teachers.objects.all()]
 
-    group = forms.ChoiceField(label='Класс', choices=GROUP)
-    discipline = forms.ChoiceField(label='Предмет', choices=DISCIPLINES_CHOICES)
-    teacher = forms.ChoiceField(label='Преподаватель', choices=TEACHER_CLASS_CHOICES)
+    group = forms.ChoiceField(label=' Класс', choices=GROUP)
+    discipline = forms.ChoiceField(label=' Предмет', choices=DISCIPLINES_CHOICES)
+    teacher = forms.ChoiceField(label=' Преподаватель', choices=TEACHER_CLASS_CHOICES)

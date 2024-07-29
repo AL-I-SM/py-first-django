@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  {% block title %}<title>Мир книг</title>{% endblock %}
+  {% block title %}<title>Библиотека</title>{% endblock %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 {#  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/#}
@@ -24,7 +24,7 @@
     <div class="col-1-3">
       {% block sidebar %}
       <ul class="sidebar-nav">
-      <img class="col-1-3" style="width:160px; height:160px;" src="{% static 'img/logotip.jpg' %}" alt="Мир книг">
+      <img class="col-1-3" style="width:160px; height:160px;" src="{% static 'img/logotip.jpg' %}" alt="Библиотека">
           <li><a href="{% url 'catalog_index' %}">Главная страница</a></li>
           <li><a href="{% url 'books' %}">Все книги</a></li>
           <li><a href="{% url 'authors' %}">Все авторы</a></li>
@@ -42,11 +42,11 @@
       {% endblock %}
     </div>
     <div class="col-2-3">
-    <p class="catalog-logo">Сайт "Мир книг"</p>
+    <p class="catalog-logo">Библиотека нашей школы</p>
       {% block content %}{% endblock %}
       {% block footer %}
          {% block copyright %}
-            <br><p class="modal-footer">Copyright ООО "Люди и книги", 2020. Все права защищены</p>
+            <br><p class="modal-footer">Copyright "Школа №2", 2024. Все права защищены</p>
          {% endblock %}
       {% endblock %}
     </div>
