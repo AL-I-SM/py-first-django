@@ -9,6 +9,10 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import django
+from django.utils.translation import gettext
+django.utils.translation.ugettext = gettext
+
 import debug_toolbar
 from pathlib import Path
 
@@ -57,9 +61,9 @@ INSTALLED_APPS = [
     'social_django',
     
     'rest_framework',
-    'django_filters',
     'bootstrap3',
     'django_extensions',
+    'django_filters',
 ]
 
 BOOTSTRAP3 = {

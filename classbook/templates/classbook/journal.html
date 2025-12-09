@@ -7,7 +7,7 @@
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
-    <h2>Журнал</h2>
+    <h2 style="margin-left: 33%;">Журнал</h2>
     <h3>Выбор журнала</h3>
 
     <form method="post">
@@ -22,9 +22,8 @@
         <table>
         <tr id="journal-info"><td></td><td>Номер</td><td>Тип урока</td><td>Тема урока</td><td>Домашнее задание</td></tr>
         <tr>
-            
             <td><input type="submit" class="btn" value="Добавить урок" name="add_lesson"></td>
-            <td><input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" size="1"/></td>
+            <td><input type="text" value="{{ ktp.lesson_number  }}" name="lesson_number" required="True" size="1"/></td>
             <td><select name="lesson_type">
                 {% for type_lesson, name_of_type in types_of_lessons.items %}
                     <option value="{{ type_lesson }}">{{ name_of_type }}</option>
@@ -32,7 +31,7 @@
             </select></td>
 {#        <input type="text" value="{{ ktp.lesson_type }}" name="lesson_type" size="20"/>#}
             <td><input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30"/></td>
-            <td><input type="text" value="{{ ktp.home_work }}" name="home_work" size="20"/></td>
+            <td><input type="text" value="{{ ktp.home_work }}" name="home_work" size="23"/></td>
         </tr>
         </table>
         <br>
@@ -40,6 +39,7 @@
 {#  <form method="post" action="{% url 'score' %}">#}
     <form method="post">
     {% csrf_token %}
+    <h3 style="margin-left: 30%;">{{ group_name }} класс, {{ discipline_name }}</h3>
         <table id="journal-table">
             <tr>
                 <th>...</th>
@@ -73,8 +73,8 @@
                 {% endfor %}
                 <!-- аналогично, заполнение остатка таблицы -->
                 {% for _ in range_col %}
-                    <td><label for=" "></label>
-                        <input id="1" type="text" value=" " name="1" style="width: 24px;">
+                    <td><label></label>
+                        <input type="text" value="" readonly="True" style="width: 24px;">
                 {% endfor %}</td>
             </tr>
             {% endfor %}
@@ -82,7 +82,7 @@
             {% if not pupils %}
             <tr id="journal-table-tr"><td>(нет учеников в классе)</td>
                 {% for _ in range_col %}
-                <td><label for=" "></label>
+                <td><label"></label>
                     <input id="1" type="text" value=" " name="1" style="width: 24px;">
                     {% endfor %}</td>
             {% endif %}</td>

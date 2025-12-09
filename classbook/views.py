@@ -2,7 +2,7 @@ import datetime
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 
-from pytils.translit import slugify
+# from pytils.translit import slugify
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -50,7 +50,7 @@ def pupils_vue(request):
 
 LESSONS_TIME = [(8, 00), (9, 00), (10, 00), (11, 00), (12, 00), (13, 00)]
 
-menu = {"Журнал": reverse_lazy('journal', args=[1, 1, 1]),
+menu = {"Журнал": reverse_lazy('journal-select'),
         "Расписание": reverse_lazy('schedule_class', args=[1]),
         "Ученики": reverse_lazy('pupils'),
         "Классы": reverse_lazy('groups'),
@@ -63,9 +63,9 @@ types_of_lessons = {1: "Урок",
 
 # @method_decorator(login_required)
 class JournalView(View):
-    group = 1
-    discipline = 1
-    teacher = 1
+    group = Classes.objects.first().id
+    discipline = Disciplines.objects.first().id
+    teacher = Teachers.objects.first().id
 
     def get(self, request, *args, **kwargs):
         self.group = kwargs['group']
@@ -83,9 +83,12 @@ class JournalView(View):
         lessons = Lessons.objects.filter(group_id=self.group,
                                          discipline_id=self.discipline).order_by("date")
         ktp = self.get_next_lesson()
+        group_name = Classes.objects.get(id=self.group) 
+        discipline_name = Disciplines.objects.get(id=self.discipline)
+
         table = {'lessons': lessons, 'pupils': pupils, 'ktp': ktp,
-                 'teacher': self.teacher, 'discipline': self.discipline,
-                 'select_journal': select_journal, 'scores': scores,
+                 'teacher': self.teacher, 'discipline': self.discipline, 'discipline_name': discipline_name,
+                 'select_journal': select_journal, 'scores': scores, 'group_name': group_name,
                  'types_of_lessons': types_of_lessons, 'all_menu': menu,
                  'range_col': range(26-len(lessons))}
         return render(request, 'classbook/journal.html', table)
@@ -227,7 +230,10 @@ def index(request):
 
 
 def journal_select(request):
-    return redirect('journal', group=1, discipline=1, teacher=1)
+    group = Classes.objects.first().id
+    discipline = Disciplines.objects.first().id
+    teacher = Teachers.objects.first().id
+    return redirect('journal', group=group, discipline=discipline, teacher=teacher)
 
 
 def pupils(request):

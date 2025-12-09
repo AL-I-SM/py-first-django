@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.datetime_safe import datetime
+from django.utils import timezone
+# from django.utils.datetime import datetime
 from django.views import generic
 from .models import Book, Author, BookInstance, Genre
 from .forms import AuthorsForms
