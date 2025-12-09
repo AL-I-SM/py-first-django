@@ -1,62 +1,85 @@
- /*внешние границы таблицы серого цвета толщиной 1px*/
-/*table {*/
-/*   border: 1px solid grey;*/
-/*}*/
-/*!* границы ячеек первого ряда таблицы *!*/
-/*th {*/
-/*   border: 1px solid grey;*/
-/*}*/
-/*!* границы ячеек тела таблицы *!*/
-/*td {*/
-/*    border: 1px solid grey;*/
-/*    margin: 4 4 4 4px;*/
-/*}*/
+/* Границы таблицы */
+table {
+   /* Можно оставить закомментированным или убрать, если не нужен */
+   /* border: 1px solid grey; */
+}
 
+/* Границы ячеек заголовка таблицы */
+th {
+   /* Можно оставить закомментированным или убрать, если не нужен */
+   /* border: 1px solid grey; */
+}
+
+/* Границы ячеек тела таблицы */
+td {
+   /* Можно оставить закомментированным или убрать, если не нужен */
+   /* border: 1px solid grey; */
+   /* margin: 4px; */
+}
+
+/* Стиль для блока с информацией о уроке */
 #journal-info {
    font-size: 12px;
    white-space: nowrap;
    width: 1.5em;
    /*writing-mode: vertical-lr;*/
 }
+
+/* Стиль при наведении на строку таблицы */
 .schedule-row:hover {
    background: #e5e5e5;
 }
- #schedule-th {
-    text-align: center;
-    padding: 2px;
- }
- #schedule-time {
-    padding: 2px 8px 2px 2px;
- }
- #schedule-info {
-    padding: 2px;
-    text-align: center;
-    font-size: 13px;
-    white-space: nowrap;
-    width: 15%;
-    border-style: solid;
-    border-width: 1px;
-    margin: 2px;
-    /*color: #0a58ca;*/
-    /*writing-mode: vertical-lr;*/
+
+/* Заголовок таблицы */
+#schedule-th {
+   text-align: center;
+   padding: 2px;
 }
+
+/* Стиль для времени расписания */
+#schedule-time {
+   padding: 2px 8px 2px 2px;
+}
+
+/* Информация о расписании */
+#schedule-info {
+   padding: 2px;
+   text-align: center;
+   font-size: 13px;
+   white-space: nowrap;
+   width: 15%;
+   border-style: solid;
+   border-width: 1px;
+   margin: 2px;
+   /*color: #0a58ca;*/
+   /*writing-mode: vertical-lr;*/
+}
+
+/* Стиль таблицы журнала */
 #journal-table {
    background: #ffffcc;
 }
+
+/* Стиль при наведении на строку таблицы журнала */
 #journal-table-tr:hover {
    background: #e5e5e5;
 }
+
+/* Общие стили для страницы */
 html,
 body {
   height: 100%;
 }
+
 #wrapper {
   position: relative;
   min-height: 100%;
 }
+
 #content {
   padding-bottom: 90px;
 }
+
 #journal-footer {
    background-color: #edecd6;
    position: absolute;
@@ -66,4 +89,6 @@ body {
    height: 70px;
 }
 
-
+.score-input {
+   width: 24px;
+}
