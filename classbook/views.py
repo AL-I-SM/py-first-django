@@ -19,6 +19,7 @@ from classbook.serializers import PupilsSerializer, LessonsSerializer, ClassesSe
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 from rest_framework.permissions import IsAuthenticated
+from django.views.generic import ListView
 
 
 class PupilsViewSet(ModelViewSet):
@@ -201,7 +202,7 @@ class ScheduleClassView(View):
                         group=request.POST['group'])
 
 
-class ScheduleTeacherView(View):
+class ScheduleTeacherView(View): # наследование от верхнего?
 
     def get(self, request, *args, **kwargs):
         teacher = kwargs['teacher']
@@ -211,8 +212,8 @@ class ScheduleTeacherView(View):
         md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
         td = datetime.timedelta(days=1)
         lessons_time = TimeLessons.objects.filter(variant=1)
-        days = (('ПН', md), ('ВТ', md + td), ('СР', md + td * 2),
-                ('ЧТ', md + td * 3), ('ПТ', md + td * 4), ('СБ', md + td * 5))
+        days = (('пн', md), ('вт', md + td), ('ср', md + td * 2),
+                ('чт', md + td * 3), ('пт', md + td * 4), ('сб', md + td * 5))
         table = {'days': days, 'schedule_select': schedule_select,
                  'lessons_time': lessons_time, 'lessons': schedule,
                  'all_menu': menu}
@@ -335,3 +336,30 @@ def group_edit(request, *args, **kwargs):
 #             new_score.save()
 #     return redirect('journal', group=2, discipline=2, teacher=9)
 #     # return HttpResponse(request.GET.keys())
+
+class KTPListView(ListView):
+    model = KTP
+    template_name = 'ktp_list.html'
+    context_object_name = 'ktp_list'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        class_id = self.request.GET.get('class')
+        discipline_id = self.request.GET.get('discipline')
+        if class_id:
+            queryset = queryset.filter(klass_id=class_id)
+        if discipline_id:
+            queryset = queryset.filter(discipline_id=discipline_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['classes'] = Classes.objects.all()
+        context['disciplines'] = Disciplines.objects.all()
+        return context
+
+class KTPUpdateView(UpdateView):
+    model = KTP
+    fields = ['discipline', 'lesson_number', 'home_work', 'topic', 'section']
+    template_name = 'classbook\ktp_edit.html'
+    success_url = reverse_lazy('classbook\ktp_list')  # перенаправление после редактирования

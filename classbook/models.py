@@ -67,6 +67,7 @@ class KTP(models.Model):
     home_work = models.CharField(max_length=255)
     topic = models.CharField(max_length=255)
     section = models.CharField(max_length=255)
+    klass = models.ForeignKey('Classes', on_delete=models.PROTECT, verbose_name="Класс") 
 
     def __str__(self):
         return str(self.lesson_number)

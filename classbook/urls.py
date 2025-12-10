@@ -3,6 +3,7 @@ from . import views
 from .views import JournalView, ScheduleClassView, ScheduleTeacherView
 from rest_framework.routers import SimpleRouter
 from classbook.views import PupilsViewSet, LessonsViewSet, ClassesViewSet
+from .views import KTPListView, KTPUpdateView
 
 router = SimpleRouter()
 router.register('pupils/api', PupilsViewSet)
@@ -21,7 +22,9 @@ urlpatterns = [
     path('schedule_class/<int:group>/', ScheduleClassView.as_view(), name="schedule_class"),
     path('schedule_techer/<int:teacher>/', ScheduleTeacherView.as_view(), name="schedule_teacher"),
     path('journal/<int:group>/<int:discipline>/<int:teacher>/', JournalView.as_view(), name="journal"),
-    
+    path('ktp/', KTPListView.as_view(), name='ktp_list'),
+    path('ktp/<int:pk>/edit/', KTPUpdateView.as_view(), name='ktp_edit'),
+
     # re_path('score', views.score, name="score"),
 ]
 

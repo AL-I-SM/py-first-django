@@ -1,0 +1,42 @@
+<h1>Список КТП</h1>
+
+<form method="get">
+    <label>Класс:
+        <select name="class">
+            <option value="">Все</option>
+            {% for cls in classes %}
+            <option value="{{ cls.id }}" {% if request.GET.class == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Предмет:
+        <select name="discipline">
+            <option value="">Все</option>
+            {% for d in disciplines %}
+            <option value="{{ d.id }}" {% if request.GET.discipline == d.id|stringformat:"s" %}selected{% endif %}>{{ d }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button type="submit">Фильтровать</button>
+</form>
+
+<table>
+    <tr>
+        <th>№ урока</th>
+        <th>Класс</th>
+        <th>Дисциплина</th>
+        <th>Тема</th>
+        <th>Домашнее задание</th>
+        <th>Редактировать</th>
+    </tr>
+    {% for item in ktp_list %}
+    <tr>
+        <td>{{ item.lesson_number }}</td>
+        <td>{{ item.klass }}</td>
+        <td>{{ item.discipline }}</td>
+        <td>{{ item.topic }}</td>
+        <td>{{ item.home_work }}</td>
+        <td><a href="{% url 'ktp_edit' item.pk %}">Редактировать</a></td>
+    </tr>
+    {% endfor %}
+</table>
