@@ -1,5 +1,4 @@
 {% extends "classbook/base.html" %}
-
 {% load filters %}
 {% block header %}
 {% endblock header %}
@@ -46,7 +45,7 @@
                     <th>...</th>
                     <!-- заголовки уроков -->
                     {% for lesson in lessons %}
-    {#              <th><div class="rotate-text" id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
+    {#              <th><div class="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
                         <th id="journal-info" class="cell-date">
                             <div class="n-lesson">№{{lesson.number}}</div>
                         <div style="color: rgb(236, 15, 15);">{{lesson.date.weekday|wd}}</div>
@@ -92,7 +91,10 @@
             </table>
             <br>
             <input type="submit" value="Отправить" name="set_scores"><br><br>
-
+            <div class="info">
+(при нажатии "добавить урок" в БД добавляется Урок с текущей датой, учителем, и указанными полями урока.
+Номер урока может быть произвольным, но из КТП в поля подгружается запись с номером урока, которая соответсвует следующей записи по максимальному номеру уже проведенных уроков) 
+            </div>
             <form method="post">
                     {% csrf_token %}
                     <div class="rectangle-container">
@@ -125,10 +127,16 @@
                     </div>
                     <br>
                 </form>
-
-            <table class="lessons-info-table">
+            
+            <table class="lessons-info-table" style="border-collapse: collapse; width: 100%;">
                 {% for lesson in lessons %}
-                    <tr><td>{{ forloop.counter }}. <a style="color: midnightblue">№{{ lesson.number }}</a> {{ lesson.topic}}, д/з: {{ lesson.home_work }}</td></tr>
+                    <tr style="border-bottom: 1px solid #ccc;">
+                        <td style="padding: 4px;">{{ forloop.counter }}.</td>
+                        <td style="padding: 4px;"><a style="color: rgb(151, 151, 151);">№{{ lesson.number }}</a></td>
+                        <td style="padding: 4px;">{{ lesson.topic }}</td>
+                        <td style="color: rgb(151, 151, 151); width: 35;">д/з: </td>
+                        <td>{{ lesson.home_work }}</td>
+                    </tr>
                 {% endfor %}
             </table>
         </form>

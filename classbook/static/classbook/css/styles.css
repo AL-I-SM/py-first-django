@@ -31,7 +31,7 @@ td {
 }
 
 /* Заголовок таблицы */
-#schedule-th {
+.schedule-th {
    text-align: center;
    padding: 2px;
 }
@@ -57,7 +57,7 @@ td {
 
 /* Стиль таблицы журнала */
 #journal-table {
-   background: #ffffcc;
+   background: #fffec6;
 }
 
 /* Стиль при наведении на строку таблицы журнала */
@@ -155,7 +155,7 @@ body {
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 18px;
+    
     width: 80px;
   }
 
@@ -163,7 +163,7 @@ body {
     padding: 6px 12px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 18px;
+    
     width: 200px;
   }
 
@@ -188,5 +188,12 @@ body {
   }
   .cell-date {
    text-align: center;
-   }
+  }
+  .info {
+   max-width: 800px;
+   color: rgb(155, 155, 155); 
+   text-align: justify;
+   font-size: 12px;
+  }
+
 
