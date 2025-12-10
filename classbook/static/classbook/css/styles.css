@@ -135,8 +135,17 @@ body {
 
   /* Строки таблицы */
   .journal-table tbody td {
-    padding: 5px 5px;
+    padding: 4px 6px;
     border-bottom: 1px solid #e0e0e0;
+    
+    border-radius: 8px;
+  }
+
+  .journal-table select {
+    padding: 8px 8px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
   }
 
   /* Размеры для input и select для более аккуратного вида */
@@ -144,15 +153,15 @@ body {
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 14px;
+    font-size: 18px;
     width: 80px;
   }
 
   .input-medium {
-    padding: 8px 12px;
+    padding: 6px 12px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 14px;
+    font-size: 18px;
     width: 200px;
   }
 
