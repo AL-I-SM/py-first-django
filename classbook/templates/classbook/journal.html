@@ -1,5 +1,5 @@
 {% extends "classbook/base.html" %}
-{% load bootstrap3 %}
+
 {% load filters %}
 {% block header %}
 {% endblock header %}
@@ -11,54 +11,43 @@
     <h3>Выбор журнала</h3>
 
     <form method="post">
-    <div class="journal-controls">
-        {{ select_journal }}
-        {% buttons %}
-        <button name="get_journal" value='1' class="btn btn-primary">Показать журнал</button>
-        {% endbuttons %}
-    </div>
-    </form>
-    <!-- Таблица с формой -->
-    <form method="post">
         {% csrf_token %}
-        <table class="main-table">
+        <div class="rectangle-container">
+        <table class="journal-table">
             <thead>
                 <tr>
-                    <th></th>
-                    <th>Номер</th>
-                    <th>Тип урока</th>
-                    <th>Тема урока</th>
-                    <th>Домашнее задание</th>
+                    {% for field in select_journal %}
+                    <th>{{ field.label_tag }}</th>
+                    {% endfor %} 
+                    <th></th> 
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><input type="submit" class="btn btn-secondary" value="Добавить урок" name="add_lesson"></td>
-                    <td><input type="text" value="{{ ktp.lesson_number }}" name="lesson_number" required size="3" class="input-small"/></td>
-                    <td>
-                        <select name="lesson_type" class="select-medium">
-                            {% for type_lesson, name_of_type in types_of_lessons.items %}
-                                <option value="{{ type_lesson }}">{{ name_of_type }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td><input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30" class="input-medium"/></td>
-                    <td><input type="text" value="{{ ktp.home_work }}" name="home_work" size="23" class="input-small"/></td>
-                </tr>
-            </tbody>
+            <tr>
+                {% for field in select_journal %}
+                    <td value="{{ 123 }}">{{ field }}</td>
+                {% endfor %}
+                    <td><input name="get_journal" type="submit" class="btn btn-primary" value="Показать журнал" name="add_lesson"></td>
+            
+            </tr>
+        </tbody>
         </table>
-        <br>
+        </div>
     </form>
+
+    <!-- Таблица с формой -->
+     
+    
         {#  <form method="post" action="{% url 'score' %}">#}
         <form method="post">
             {% csrf_token %}
             <h3 class="class-info">{{ group_name }} класс, {{ discipline_name }}</h3>
-            <table id="journal-table" class="journal-table">
+            <table id="journal-table">
                 <tr>
                     <th>...</th>
                     <!-- заголовки уроков -->
                     {% for lesson in lessons %}
-{#                <th><div id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
+{#                  <th><div class="rotate-text" id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
                         <th id="journal-info" style="text-align: center;">
                             <div style="color: midnightblue">-{{lesson.number}}-</div>
                             <div> </div>
@@ -106,6 +95,39 @@
             </table>
             <br>
             <input type="submit" value="Отправить" name="set_scores"><br><br>
+
+            <form method="post">
+                    {% csrf_token %}
+                    <div class="rectangle-container">
+                    <table class="journal-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Номер</th>
+                                <th>Тип урока</th>
+                                <th>Тема урока</th>
+                                <th>Домашнее задание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="submit" class="btn btn-primary" value="Добавить урок" name="add_lesson"></td>
+                                <td><input type="text" value="{{ ktp.lesson_number }}" name="lesson_number" required size="3" class="input-small"/></td>
+                                <td>
+                                    <select name="lesson_type" class="select-medium">
+                                        {% for type_lesson, name_of_type in types_of_lessons.items %}
+                                            <option value="{{ type_lesson }}">{{ name_of_type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td><input type="text" value="{{ ktp.topic }}" name="lesson_topic" size="30" class="input-medium"/></td>
+                                <td><input type="text" value="{{ ktp.home_work }}" name="home_work" size="23" class="input-small"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    <br>
+                </form>
 
             <table class="lessons-info-table">
                 {% for lesson in lessons %}
