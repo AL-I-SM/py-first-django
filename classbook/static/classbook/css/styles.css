@@ -58,6 +58,7 @@ td {
 /* Стиль таблицы журнала */
 #journal-table {
    background: #fffec6;
+
 }
 
 /* Стиль при наведении на строку таблицы журнала */
@@ -122,6 +123,7 @@ body {
   }
   .journal-table {
     border-radius: 15px;
+
   }
 
   /* Заголовки таблицы */
@@ -191,9 +193,14 @@ body {
   }
   .info {
    max-width: 800px;
-   color: rgb(155, 155, 155); 
+   color: rgb(218, 218, 218); 
    text-align: justify;
    font-size: 12px;
   }
-
+  .info:hover {
+   color: rgb(0, 0, 0);
+  }
+  .lessons-info-table {
+   font-size: 13px;
+  }
 
