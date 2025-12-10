@@ -120,7 +120,9 @@ body {
     font-size: 14px;
     cursor: pointer;
   }
-
+  .journal-table {
+    border-radius: 15px;
+  }
 
   /* Заголовки таблицы */
   .journal-table thead th {
@@ -175,4 +177,16 @@ body {
   }
   .rotate-text {
    transform: rotate(270deg);
+   color: darkgray;
+   width: 24px;
+   line-height: 4;
   }
+  .n-lesson {
+   color: midnightblue; 
+   font-size: 8px;
+   padding: 2px;
+  }
+  .cell-date {
+   text-align: center;
+   }
+

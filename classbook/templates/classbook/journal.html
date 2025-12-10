@@ -37,7 +37,7 @@
     <!-- Таблица с формой -->
      
     
-        {#  <form method="post" action="{% url 'score' %}">#}
+    {#  <form method="post" action="{% url 'score' %}">#}
         <form method="post">
             {% csrf_token %}
             <h3 class="class-info">{{ group_name }} класс, {{ discipline_name }}</h3>
@@ -46,13 +46,11 @@
                     <th>...</th>
                     <!-- заголовки уроков -->
                     {% for lesson in lessons %}
-{#                  <th><div class="rotate-text" id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
-                        <th id="journal-info" style="text-align: center;">
-                            <div style="color: midnightblue">-{{lesson.number}}-</div>
-                            <div> </div>
-                    <div>{{lesson.date.weekday|wd}}</div>
-                            <div style="color: darkgray" >{{lesson.date|date:"m"}}</div>
-                            <div>{{lesson.date|date:"d"}}</div>
+    {#              <th><div class="rotate-text" id="rotate-text">{{lesson.date|date:"d-m"}}{{lesson.date|date:"d-m"}}</div></th>#}
+                        <th id="journal-info" class="cell-date">
+                            <div class="n-lesson">№{{lesson.number}}</div>
+                        <div style="color: rgb(236, 15, 15);">{{lesson.date.weekday|wd}}</div>
+                            <div class="rotate-text" >{{lesson.date|date:"d"}}-{{lesson.date|date:"m"}}</div>
                         </th>
                     {% endfor %}
                     <!-- остаток таблицы -->
