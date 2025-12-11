@@ -1,29 +1,39 @@
+{% extends "classbook/base.html" %}
+{% load filters %}
+{% block header %}
+{% endblock header %}
+{% block content %}
+    {% load static %}
+<link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
 <h1>Список КТП</h1>
 
-<table>
-    <tr>
-        <th>№ урока</th>
-        <th>Дисциплина</th>
-        <th>Класс</th>
-        <th>Раздел</th>
-        <th>Тема</th>
-        <th>Домашнее задание</th>
-        <th></th>
-    </tr>
+<div class="rectangle-container">
+<table class="journal-table">
+    <thead>
+        <tr>
+            <th>№ урока</th>
+            <th>Дисциплина</th>
+            <th>Класс</th>
+            <th>Раздел</th>
+            <th>Тема</th>
+            <th>Домашнее задание</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
     {% for item in ktp_list %}
     <tr>
         <td>{{ item.lesson_number }}</td>
-        <td>{{ item.discipline }}</td>
         <td>{{ item.klass }}</td>
+        <td>{{ item.discipline }}</td>
         <td>{{ item.section }}</td>
         <td>{{ item.topic }}</td>
         <td>{{ item.home_work }}</td>
-        <td>
-            <!-- Кнопка редактирования - иконка -->
+        <td style="white-space: nowrap;">
+            <!-- Иконки для редактирования и удаления -->
             <button onclick="showForm({{ item.id }})" title="Редактировать" style="border:none; background:none; cursor:pointer;">
                 📝
             </button>
-            <!-- Кнопка удаления -->
             <form method="post" action="{% url 'delete_ktp' item.id %}" style="display:inline;">
                 {% csrf_token %}
                 <button type="submit" title="Удалить" style="border:none; background:none; cursor:pointer; color:red;">
@@ -35,51 +45,71 @@
     <!-- Форма для редактирования, скрытая по умолчанию -->
     <tr id="edit-form-{{ item.id }}" style="display:none;">
         <td colspan="7">
-		
-		    <form method="post" action="{% url 'update_ktp' item.id %}">
+            <form method="post" action="{% url 'update_ktp' item.id %}">
                 {% csrf_token %}
                 <label><input type="hidden" name="ktp_id" value="{{ item.id }}"></label>
                 <label><input type="hidden" name="lesson_number" value="{{ item.lesson_number }}"></label>
                 <label><input type="hidden" name="discipline" value="{{ item.discipline.id }}"></label>
                 <label><input type="hidden" name="klass_id" value="{{ item.klass.id }}"></label>
-  
-                <label>Разел: <input type="text" name="section" value="{{ item.section }}"></label>
-                <label>Тема: <input type="text" name="topic" value="{{ item.topic }}"></label>
-                <label>Домашнее задание: <input type="text" name="home_work" value="{{ item.home_work }}"></label>
-                <button type="submit">Сохранить</button>
-                <button type="button" onclick="hideForm({{ item.id }})">Отмена</button>
-            </form>
-		
+                <div class="vertical-align">
+                    <label>Раздел: <input type="text" name="section" size="80" class="input-large" value="{{ item.section }}"></label>
+                    <label>Тема: <input type="text" name="topic" size="82" class="input-large" value="{{ item.topic }}"></label>
+                    <label>Домашнее задание: <input type="text" size=70% class="input-large" name="home_work" value="{{ item.home_work }}"></label>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <button type="button" onclick="hideForm({{ item.id }})" class="btn btn-secondary">Отмена</button>
+                </div>
             </form>
         </td>
     </tr>
     {% endfor %}
+</tbody>
 </table>
+</div>
 
 <!-- Форма для добавления новой записи -->
 <h2>Добавить новую КТП</h2>
+<div class="rectangle-container">
 <form method="post" action="{% url 'add_ktp' %}">
     {% csrf_token %}
-    <label>№ урока: <input type="number" name="lesson_number" required></label>
-    <label>Дисциплина:
-        <select name="discipline" required>
-            {% for discipline in disciplines %}
-            <option value="{{ discipline.id }}">{{ discipline }}</option>
-            {% endfor %}
-        </select>
-    </label>
-    <label>Класс:
-        <select name="klass" required>
-            {% for klass in classes %}
-            <option value="{{ klass.id }}">{{ klass }}</option>
-            {% endfor %}
-        </select>
-    </label>
-    <label>Раздел: <input type="text" name="section" required></label>
-    <label>Тема: <input type="text" name="topic" required></label>
-    <label>Домашнее задание: <input type="text" name="home_work" required></label>
-    <button type="submit">Добавить</button>
+    <table class="journal-table">
+        <thead>
+            <tr>
+                 <th>Номер</th>
+                 <th>Дисциплина</th>
+                <th>Класс</th>
+                <th>Раздел</th>
+                <th>Тема</th>
+                <th>Домашнее задание</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="number" name="lesson_number" class="input-very-small "  required size="3"></td>
+                <td>
+                    <select name="discipline" class="journal-table select" required>
+                        {% for discipline in disciplines %}
+                        <option value="{{ discipline.id }}">{{ discipline }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select name="klass" class="journal-table select" required>
+                        {% for klass in classes %}
+                        <option value="{{ klass.id }}">{{ klass }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="text" name="section" class="input-small" ></td>
+                <td><input type="text" name="topic" class="input-medium" ></td>
+                <td><input type="text" name="home_work" class="input-medium"></td>
+                <td><input type="submit" class="btn btn-primary" value="Добавить" name="add_ktp"></td>
+            </tr>
+        </tbody>
+    </table>
 </form>
+</div>
 
 <script>
 function showForm(id) {
@@ -88,8 +118,8 @@ function showForm(id) {
     });
     document.getElementById('edit-form-' + id).style.display = 'table-row';
 }
-
 function hideForm(id) {
     document.getElementById('edit-form-' + id).style.display = 'none';
 }
 </script>
+{% endblock content %}

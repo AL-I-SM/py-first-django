@@ -347,6 +347,7 @@ class KTPListInlineEditView(View):
             'ktp_list': ktp_list,
             'disciplines': disciplines,
             'classes': classes,
+            'all_menu': menu,
         }
         return render(request, 'classbook\ktp_list_inline.html', context)
 
