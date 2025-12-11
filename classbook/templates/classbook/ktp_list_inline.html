@@ -1,0 +1,95 @@
+<h1>Список КТП</h1>
+
+<table>
+    <tr>
+        <th>№ урока</th>
+        <th>Дисциплина</th>
+        <th>Класс</th>
+        <th>Раздел</th>
+        <th>Тема</th>
+        <th>Домашнее задание</th>
+        <th></th>
+    </tr>
+    {% for item in ktp_list %}
+    <tr>
+        <td>{{ item.lesson_number }}</td>
+        <td>{{ item.discipline }}</td>
+        <td>{{ item.klass }}</td>
+        <td>{{ item.section }}</td>
+        <td>{{ item.topic }}</td>
+        <td>{{ item.home_work }}</td>
+        <td>
+            <!-- Кнопка редактирования - иконка -->
+            <button onclick="showForm({{ item.id }})" title="Редактировать" style="border:none; background:none; cursor:pointer;">
+                📝
+            </button>
+            <!-- Кнопка удаления -->
+            <form method="post" action="{% url 'delete_ktp' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" title="Удалить" style="border:none; background:none; cursor:pointer; color:red;">
+                    🗑️
+                </button>
+            </form>
+        </td>
+    </tr>
+    <!-- Форма для редактирования, скрытая по умолчанию -->
+    <tr id="edit-form-{{ item.id }}" style="display:none;">
+        <td colspan="7">
+		
+		    <form method="post" action="{% url 'update_ktp' item.id %}">
+                {% csrf_token %}
+                <label><input type="hidden" name="ktp_id" value="{{ item.id }}"></label>
+                <label><input type="hidden" name="lesson_number" value="{{ item.lesson_number }}"></label>
+                <label><input type="hidden" name="discipline" value="{{ item.discipline.id }}"></label>
+                <label><input type="hidden" name="klass_id" value="{{ item.klass.id }}"></label>
+  
+                <label>Разел: <input type="text" name="section" value="{{ item.section }}"></label>
+                <label>Тема: <input type="text" name="topic" value="{{ item.topic }}"></label>
+                <label>Домашнее задание: <input type="text" name="home_work" value="{{ item.home_work }}"></label>
+                <button type="submit">Сохранить</button>
+                <button type="button" onclick="hideForm({{ item.id }})">Отмена</button>
+            </form>
+		
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Форма для добавления новой записи -->
+<h2>Добавить новую КТП</h2>
+<form method="post" action="{% url 'add_ktp' %}">
+    {% csrf_token %}
+    <label>№ урока: <input type="number" name="lesson_number" required></label>
+    <label>Дисциплина:
+        <select name="discipline" required>
+            {% for discipline in disciplines %}
+            <option value="{{ discipline.id }}">{{ discipline }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Класс:
+        <select name="klass" required>
+            {% for klass in classes %}
+            <option value="{{ klass.id }}">{{ klass }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Раздел: <input type="text" name="section" required></label>
+    <label>Тема: <input type="text" name="topic" required></label>
+    <label>Домашнее задание: <input type="text" name="home_work" required></label>
+    <button type="submit">Добавить</button>
+</form>
+
+<script>
+function showForm(id) {
+    document.querySelectorAll("[id^='edit-form-']").forEach(function(row) {
+        row.style.display = 'none';
+    });
+    document.getElementById('edit-form-' + id).style.display = 'table-row';
+}
+
+function hideForm(id) {
+    document.getElementById('edit-form-' + id).style.display = 'none';
+}
+</script>

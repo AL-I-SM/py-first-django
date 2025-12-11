@@ -5,7 +5,7 @@ from django.views.generic import UpdateView
 # from pytils.translit import slugify
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Pupils, Days, Score, Disciplines, Schedule, Teachers, TimeLessons, Lessons, KTP, SCORE_CHOICES, \
@@ -20,6 +20,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 from rest_framework.permissions import IsAuthenticated
 from django.views.generic import ListView
+from django.views.decorators.http import require_POST
 
 
 class PupilsViewSet(ModelViewSet):
@@ -95,9 +96,7 @@ class JournalView(View):
         return render(request, 'classbook/journal.html', table)
 
     def post(self, request, *args, **kwargs):
-        # какие-нибудь параметры можно хранить и в сессии
-        # request.session['teacher'] = request.POST['teacher']
-        ## request.session.get("teacher")
+
         if request.POST.get('set_scores'):
             self.discipline = kwargs['discipline']
             self.teacher = kwargs['teacher']
@@ -337,29 +336,62 @@ def group_edit(request, *args, **kwargs):
 #     return redirect('journal', group=2, discipline=2, teacher=9)
 #     # return HttpResponse(request.GET.keys())
 
-class KTPListView(ListView):
-    model = KTP
-    template_name = 'ktp_list.html'
-    context_object_name = 'ktp_list'
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        class_id = self.request.GET.get('class')
-        discipline_id = self.request.GET.get('discipline')
-        if class_id:
-            queryset = queryset.filter(klass_id=class_id)
-        if discipline_id:
-            queryset = queryset.filter(discipline_id=discipline_id)
-        return queryset
+class KTPListInlineEditView(View):
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['classes'] = Classes.objects.all()
-        context['disciplines'] = Disciplines.objects.all()
-        return context
+    def get(self, request):
+        ktp_list = KTP.objects.all()
+        disciplines = Disciplines.objects.all()
+        classes = Classes.objects.all()
+        context = {
+            'ktp_list': ktp_list,
+            'disciplines': disciplines,
+            'classes': classes,
+        }
+        return render(request, 'classbook\ktp_list_inline.html', context)
 
-class KTPUpdateView(UpdateView):
-    model = KTP
-    fields = ['discipline', 'lesson_number', 'home_work', 'topic', 'section']
-    template_name = 'classbook\ktp_edit.html'
-    success_url = reverse_lazy('classbook\ktp_list')  # перенаправление после редактирования
+@require_POST
+def add_ktp(request):
+    lesson_number = request.POST.get('lesson_number')
+    discipline_id = request.POST.get('discipline')
+    klass_id = request.POST.get('klass')
+    section = request.POST.get('section')
+    topic = request.POST.get('topic')
+    home_work = request.POST.get('home_work')
+
+    discipline = get_object_or_404(Disciplines, pk=discipline_id)
+    klass = get_object_or_404(Classes, pk=klass_id)
+
+    KTP.objects.create(
+        lesson_number=lesson_number,
+        discipline=discipline,
+        klass=klass,
+        section=section,
+        topic=topic,
+        home_work=home_work
+    )
+    return redirect('ktp_list_inline')  # Название вашего URL
+
+
+@require_POST
+def update_ktp(request, pk):
+    ktp = get_object_or_404(KTP, pk=pk)
+    ktp.lesson_number = request.POST.get('lesson_number')
+    discipline_id = request.POST.get('discipline')
+    klass_id = request.POST.get('klass_id')
+    ktp.section = request.POST.get('section')
+    ktp.topic = request.POST.get('topic')
+    ktp.home_work = request.POST.get('home_work')
+
+    ktp.discipline = get_object_or_404(Disciplines, pk=discipline_id)
+    ktp.klass = get_object_or_404(Classes, pk=klass_id)
+
+    ktp.save()
+    return redirect('ktp_list_inline')
+
+
+@require_POST
+def delete_ktp(request, pk):
+    ktp = get_object_or_404(KTP, pk=pk)
+    ktp.delete()
+    return redirect('ktp_list_inline')
