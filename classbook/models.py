@@ -105,6 +105,12 @@ class Schedule(models.Model):
     number = models.ForeignKey('TimeLessons', on_delete=models.PROTECT)
     sub_group = models.SmallIntegerField(default=None, null=True)
 
+    class Meta:
+        verbose_name = "Расписание"
+
+    def __str__(self):
+        return self.cabinet + " - " + self.discipline.name + " - " + str(self.teacher) + " - группа " + self.group.name
+
 
 class TimeLessons(models.Model):
     number = models.SmallIntegerField()
@@ -123,3 +129,5 @@ class Score(models.Model):
     extra = models.CharField(max_length=250, null=True)
     lesson = models.ForeignKey('Lessons', on_delete=models.DO_NOTHING)
     deleted = models.BooleanField(default=0)
+
+    
