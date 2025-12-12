@@ -6,12 +6,12 @@ from .forms import TopicForm, EntryForm, Entry
 from django.contrib.auth.decorators import login_required
 
 
-menu = {"Админка": '/admin/',
-        "Плиткой": '/projects/',
-        "Блог": '/blog/',
-        "Участники": '/users/login/',
-        "Темы": '/topics/',
-        "Библиотека": '/catalog/',
+menu = {"Админка": 'admin:index',
+        "Плиткой": 'projects:project_index',
+        "Блог": 'blog:blog_index',
+        "Участники": 'users:login',
+        "Темы": 'apts:topics',
+        "Библиотека": 'catalog:catalog_index',
         }
 
 
