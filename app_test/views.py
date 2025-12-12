@@ -6,14 +6,27 @@ from .forms import TopicForm, EntryForm, Entry
 from django.contrib.auth.decorators import login_required
 
 
-menu = {"Админка": '/admin/',
-        "Плиткой": '/projects/',
-        "Блог": '/blog/',
-        "Участники": '/users/login/',
-        "Темы": '/topics/',
-        "Библиотека": '/catalog/',
+menu = {"Админка": 'admin/',
+        "Библиотека": 'catalog/',
+        "Журнал": 'classbook/',
+        "Блог": 'blog/',
+        "Участники": 'users/login/',
+        "Темы": 'topics/',
         }
-
+'''
+<h4><a href="admin/">'admin' - Админка средствами Django</a></h4>
+<h4><a href="classbook/">'classbook' - Классный журнал</a></h4>
+<h4><a href="catalog/">'catalog' - Книжная библиотека</a></h4>
+<h4><a href="projects/">'projects' - Тут сделать фото-галерею!</a></h4>
+<h4><a href="topics/">'topics' - Блога (основная база пользователей)</a></h4>
+<h4><a href="blog/">'blog'- Блога</a></h4>
+<h4><a href="users/login/">'users' - Авторизация пользователей</a></h4>
+<h4><a href="players/dashboard/">'players' - Простая форма отправки данных + Авторизация</a></h4>
+<h4><a href="cards/">'cards' - Непонятный проект из Githab</a></h4>
+<h4><a href="days/">'days' - в разработке</a></h4>
+<h4><a href="quizz/">'quizz' - в разработке</a></h4>
+<br> 
+'''
 
 def index(request):
     return render(request, 'apts/index.html', {'all_menu': menu})

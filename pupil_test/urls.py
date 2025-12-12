@@ -19,8 +19,8 @@ from django.urls import re_path, path, include
 urlpatterns = [
     path('', include(('app_test.urls', 'app_test'), namespace='apts')),
     path('admin/', admin.site.urls),
-    path('projects/', include('projects.urls')),
-    path('blog/', include("blog.urls")),
+    path('projects/', include(('projects.urls', 'projects'), namespace='projects')),
+    path('blog/', include('blog.urls')),
     path('users/', include(('users.urls', 'users'), namespace='users')),
     path('catalog/', include('catalog.urls')),
     path('cards/', include("cards.urls")),
