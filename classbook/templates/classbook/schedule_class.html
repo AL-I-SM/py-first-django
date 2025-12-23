@@ -2,13 +2,12 @@
 {% load bootstrap3 %}
 {% load filters %}
 {% block header %}
-
 {% endblock header %}
+<h2>Расписание для {{ group }} класса</h2>
 {% block content %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
+<link rel="stylesheet" href="{% static 'classbook/css/styles.css' %}">
 
-    <h2>Расписание для {{ group }} класса</h2>
 
     <form method="post">
     {% csrf_token %}
@@ -20,7 +19,6 @@
 
     <form method="get">
         <table>
-{#        <table>#}
         <tr><th>...</th>
             {% for day, date in days %}
             <th id="schedule-th">{{ day }}<br>{{ date|date:'d-m' }}</th>

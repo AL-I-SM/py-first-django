@@ -19,15 +19,20 @@
             <table>
             <tr><th>...</th>
                 {% for day, date in days %}
-                <th>{{ day }}, {{ date }}</th>
+                <th id="schedule-th">{{ day }}<br>{{ date|date:'d-m' }}</th>
                 {% endfor %}
             </tr>
                 {% for time in lessons_time %}
-                <tr><td>{{ time.lesson_time }}</td>
+                <tr class="schedule-row">
+                    <td td id="schedule-time">{{ forloop.counter }}. - {{ time.lesson_time }}</td>
                     {% for day, date in days %}
-                        <td>
-                        <input type="text" value="{{ lessons|by_numb_lesson:time.number|by_day_lesson:day }}" style="width: 150px;">
+                        <td id="schedule-info"> 
+                        {{ lessons|by_numb_lesson:time.number|by_day_lesson:day|get_discipline }}
+                        <br>
+                        <span style="color: tomato">{{ lessons|by_numb_lesson:time.number|by_day_lesson:day|get_cabinet }}</span>
                         </td>
+                        
+                    </td>
                     {% endfor %}
             </tr>
                 {% endfor %}

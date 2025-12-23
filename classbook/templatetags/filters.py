@@ -77,3 +77,29 @@ def by_day_lesson(scedule_obj, day):
     """ """
     return [scedule for scedule in scedule_obj if scedule.day == days.index(day)]
 
+
+@register.filter()
+def get_discipline(scedule_obj):
+    """ """
+    return (scedule_obj.pop().discipline) if scedule_obj else ''
+
+
+@register.filter()
+def get_cabinet(scedule_obj):
+    """ """
+    return (scedule_obj.pop().cabinet) if scedule_obj else ''
+
+
+@register.filter()
+def get_discipline_and_cabinet(scedule_obj):
+    """ """
+    if scedule_obj:
+        scedule_obj = scedule_obj.pop()
+        return str(scedule_obj.cabinet) + ' ' + str(scedule_obj.discipline)
+    return (scedule_obj.pop().cabinet) if scedule_obj else ''
+
+
+@register.filter()
+def by_teacher(scedule_obj, teacher):
+    """ """
+    return (scedule_obj.pop().teacher) if scedule_obj else ''
