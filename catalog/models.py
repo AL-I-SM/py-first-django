@@ -34,7 +34,7 @@ class Author(models.Model):
         return self.last_name
 
     def get_absolute_url(self):
-        return reverse('catalog:author-detail', args=[str(self.id)])
+        return reverse('author-detail', args=[str(self.id)])
 
     def author_books(self):
         return [book.title for book in self.book_set.all()]
@@ -71,7 +71,7 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         # Возвращает url-адрес для доступа к определенному экземпляру книги.
-        return reverse('catalog:book-detail', args=[str(self.id)])
+        return reverse('book-detail', args=[str(self.id)])
 
 
 class Status(models.Model):

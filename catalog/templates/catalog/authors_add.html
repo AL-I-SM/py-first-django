@@ -9,8 +9,8 @@
                 <td>{{ author.id }}</td>
                 <td>{{ author.first_name }}</td>
                 <td>{{ author.last_name }}</td>
-                <td><a href="{% url 'catalog:author_edit' author.id %}">Изменить</a>
-                    <a href="{% url 'catalog:author_delete' author.id %}">Удалить</a></td>
+                <td><a href="{% url 'author_edit' author.id %}">Изменить</a>
+                    <a href="{% url 'author_delete' author.id %}">Удалить</a></td>
             </tr>
             {% endfor %}
         {% endif %}
