@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 from . import views
-from .views import JournalView, ScheduleClassView, ScheduleTeacherView, KTPListInlineEditView
+from .views import JournalView, ScheduleClassView, ScheduleClassViewAll, ScheduleTeacherView, KTPListInlineEditView
 from rest_framework.routers import SimpleRouter
 from classbook.views import PupilsViewSet, LessonsViewSet, ClassesViewSet
 
@@ -20,6 +20,7 @@ urlpatterns = [
     path('group/<int:group>/', views.group_edit, name='group_edit'),
     path('journal/', views.journal_select, name="journal-select"),
     path('schedule_class/<int:group>/', ScheduleClassView.as_view(), name="schedule_class"),
+    path('schedule_class_all/', ScheduleClassViewAll.as_view(), name="schedule_class_all"),
     path('schedule_techer/<int:teacher>/', ScheduleTeacherView.as_view(), name="schedule_teacher"),
     path('journal/<int:group>/<int:discipline>/<int:teacher>/', JournalView.as_view(), name="journal"),
     path('ktp/', KTPListInlineEditView.as_view(), name='ktp_list_inline'),

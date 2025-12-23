@@ -189,7 +189,6 @@ class ScheduleClassView(View):
         lessons_time = TimeLessons.objects.filter(variant=1)
         days = (('пн', md), ('вт', md + td), ('ср', md + td * 2),
                 ('чт', md + td * 3), ('пт', md + td * 4), ('сб', md + td * 5))
-        print(days)
         # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
         table = {'days': days, 'schedule_select': schedule_select,
                  'lessons_time': lessons_time, 'schedule': schedule,
@@ -200,6 +199,27 @@ class ScheduleClassView(View):
         return redirect('schedule_class',
                         group=request.POST['group'])
 
+
+class ScheduleClassViewAll(View):
+
+    def get(self, request, *args, **kwargs):
+        schedule = list(Schedule.objects.all())
+        all_groups = Classes.objects.all()
+        dt = datetime.datetime.today()
+        md = datetime.date(dt.year, dt.month, dt.day) - datetime.timedelta(days=datetime.datetime.today().weekday())
+        td = datetime.timedelta(days=1)
+        # sd = md + td * 5
+        lessons_time = TimeLessons.objects.filter(variant=1)
+        days = (('пн', md), ('вт', md + td), ('ср', md + td * 2),
+                ('чт', md + td * 3), ('пт', md + td * 4), ('сб', md + td * 5))
+        # days = Days.objects.all().filter(date__range=[md, sd]).order_by("date")
+        table = {'days': days, 'lessons_time': lessons_time, 
+                 'schedule': schedule,
+                 'groups': all_groups, 'all_menu': menu}
+        return render(request, 'classbook/schedule_class_all.html', table)
+
+    def post(self, request, *args, **kwargs):
+        return redirect('schedule_class_all')
 
 class ScheduleTeacherView(View): # наследование от верхнего?
 

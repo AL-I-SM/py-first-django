@@ -2,7 +2,7 @@
 {% load bootstrap3 %}
 {% load filters %}
 {% block header %}
-<h2>Расписание для "{{ group }}" класса</h2>
+<h2>Расписание для всех классов</h2>
 {% endblock header %}
 {% block content %}
 {% load static %}
@@ -13,13 +13,15 @@
     {% csrf_token %}
         <div>{{ schedule_select }}</div>
         {% buttons %}
-            <div><button name="Кнопка" class="btn btn-primary">Показать расписание</button></div>
+            <div><button name="Кнопка" class="btn btn-primary">Cохранить расписание</button></div>
         {% endbuttons %}
     </form>
 
     <form method="get">
+        {% for group in groups %}
         <table>
-        <tr><th>...</th>
+        <br>
+        <tr>Класс "{{ group }}"<th>...</th>
             {% for day, date in days %}
             <th id="schedule-th">{{ day }}<br>{{ date|date:'d-m' }}</th>
             {% endfor %}
@@ -28,25 +30,25 @@
             <tr class="schedule-row"><td id="schedule-time">{{ forloop.counter }}. - {{ time.lesson_time }}</td>
                 {% for day, date in days %}
                     <td id="schedule-info">
-                    {% with lesson=schedule|by_numb_lesson:time.number|by_day_lesson:day %}
+                    {% with lesson=schedule|by_group:group|by_numb_lesson:time.number|by_day_lesson:day %}
                         {% for l in lesson %}
                             {% if forloop.counter > 1 %}
                                 .........<br>
                             {% endif %}
                         <span>{{ l.discipline }},</span><br>
-                        <span style="color: tomato">{{ l.cabinet }}</span><br>
-                        <span style="color: green">{{ l.teacher }}</span><br>
+                        <span style="color: tomato">{{ l.cabinet }},</span><br>
                             {% if l.sub_group %}
                                 <span style="color: blue">группа {{ l.sub_group }} </span><br>
                             {% endif %}
                         {% endfor %}
                     {% endwith %}
                 {% endfor %}
-        </tr>
+            </tr>
             {% endfor %}
-        </table><br>
+        </table>
+        {% endfor %}
+        <br>
     </form>
-    <div>Перейки к расписанию <a href="{% url 'schedule_teacher' 9 %}">для учителя</a></div>
-    <div>Перейки к расписанию <a href="{% url 'schedule_class_all' %}">для всех классов</a></div>
+     <div>Перейки к расписанию <a href="{% url 'schedule_class' 1 %}">для отдельного класса</a></div>
 
 {% endblock content%}

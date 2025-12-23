@@ -103,3 +103,9 @@ def get_discipline_and_cabinet(scedule_obj):
 def by_teacher(scedule_obj, teacher):
     """ """
     return (scedule_obj.pop().teacher) if scedule_obj else ''
+
+
+@register.filter()
+def by_group(scedule_obj, key):
+    """ """
+    return [scedule for scedule in scedule_obj if scedule.group == key]
