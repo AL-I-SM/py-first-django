@@ -14,5 +14,6 @@
         {% buttons %}
             <button name="submit" class="btn btn-primary">log in</button>
         {% endbuttons %}
+    <input type="hidden" name="next" value="{% url 'projects:index' %}">
     </form>
 {% endblock content%}

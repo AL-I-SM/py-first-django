@@ -1,10 +1,16 @@
-{% extends "apts/base.html" %}
+{% extends "base.html" %}
 {% block content %}
     <form method="post" action="{% url 'users:register' %}">
         {% csrf_token %}
         {{ form.as_p }}
 
-    <button name="submit">register</button>
-    <input type="hidden" name="next" value="{% url 'apts:index' %}" />
+        {% if form.errors %}
+            <div class="errors">
+            {{ form.errors }}
+            </div>
+        {% endif %}
+    
+        <button name="submit">register</button>
+    <input type="hidden" name="next" value="{% url 'index' %}" />
     </form>
 {% endblock content%}
