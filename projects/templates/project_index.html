@@ -4,72 +4,199 @@
 <h2 style="text-align: center;">Все тренировочные проекты</h2>
 <br>
 <div class="container my-4">
-  <div class="row justify-content-center">
-    {% for project in projects %}
-      <div class="col-md-4 mb-4 d-flex justify-content-center">
-        <div class="card" style="width: 200px;">
-            <a href="{{ project.link }}">
-            <img class="card-img-top" src="{% static project.image %}" style="width: 100%; height: auto; object-fit: contain;" alt="{{ project.title }}">
-            </a>
-            <div class="card-body text-center">
-            <h5 style="font-weight: bold;">{{ project.title }}</h5>
-            <p style="color: gray;">{{ project.description }}</p>
-           
-          </div>
+    <div class="row justify-content-center">
+        {% for project in projects %}
+        {% if forloop.counter0 == 4 %} {# 0 — первая, 1 — вторая карточка #}
+        <!-- Здесь вставляем часы -->
+        <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 250px; padding: 0px;">
+                <!-- Часы -->
+                <div class="clock" style="width: 200px; height: 200px; position: absolute;">
+                    <div class="hand hour" id="hour"></div>
+                    <div class="hand minute" id="minute"></div>
+                    <div class="hand second" id="second"></div>
+                    <div class="marks"></div>
+                </div>
+            </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+        {% else %}
+        <!-- Обычная карточка -->
+        <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 200px;">
+                <a href="{{ project.link }}">
+                    <img class="card-img-top" src="{% static project.image %}"
+                        style="width: 100%; height: auto; object-fit: contain;" alt="{{ project.title }}">
+                </a>
+                <div class="card-body text-center">
+                    <h5 style="font-weight: bold;">{{ project.title }}</h5>
+                    <p style="color: gray;">{{ project.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
 </div>
 
 <style>
-  .snowflake {
-    position: absolute;
-    top: -10px;
-    color: white;
-    font-size: 20px;
-    z-index: 9999;
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.9;
-    text-shadow: 0 0 2px #02c4dd, 0 0 4px #849ad8;
-    /* несколько анимаций: падение, качание и вращение */
-    animation: fallAndSwingAndSpin 1s linear forwards;
-}
+    .snowflake {
+        position: absolute;
+        top: -10px;
+        color: white;
+        font-size: 20px;
+        z-index: 9999;
+        user-select: none;
+        pointer-events: none;
+        opacity: 0.9;
+        text-shadow: 0 0 2px #02c4dd, 0 0 4px #849ad8;
+        /* несколько анимаций: падение, качание и вращение */
+        animation: fallAndSwingAndSpin 1s linear forwards;
+    }
 
-@keyframes fallAndSwingAndSpin {
-  0% {
-    transform: translateY(0px) translateX(0) rotate(0deg);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(560px) translateX(120px) rotate(180deg);
-  }
-  100% {
-    transform: translateY(1000px) translateX(240px) rotate(360deg);
-    opacity: 0;
-  }
-}
+    .clock {
+        position: relative;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        background: linear-gradient(135deg, #ece9e6, #ffffff);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .hand {
+        position: absolute;
+        bottom: 100px;
+        left: 100px;
+        transform-origin: bottom;
+        background: #333;
+        /* Цвет стрелок */
+    }
+
+    .hour {
+        width: 4px;
+        height: 50px;
+        position: absolute;
+        bottom: 100px;
+        left: 100px;
+        border-radius: 2px;
+        background: linear-gradient(135deg, #444, #222);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .minute {
+        width: 3px;
+        height: 70px;
+        position: absolute;
+        bottom: 100px;
+        left: 100px;
+        border-radius: 1.5px;
+        background: linear-gradient(135deg, #8d8c8c, #444);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .second {
+        width: 2px;
+        height: 80px;
+        position: absolute;
+        bottom: 100px;
+        left: 100px;
+        background: red;
+        border-radius: 1px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .mark {
+        position: absolute;
+        background: #8d323e;
+        top: 95px;
+        left: 95px;
+    }
+
+    .mark-hour {
+        height: 1px;
+        width: 0px;
+        background: #000;
+    }
+
+    .mark-minute {
+        height: 1px;
+        width: 0 px;
+        background: #c7c7c7;
+    }
+
+    @keyframes fallAndSwingAndSpin {
+        0% {
+            transform: translateY(0px) translateX(0) rotate(0deg);
+            opacity: 1;
+        }
+
+        50% {
+            transform: translateY(560px) translateX(120px) rotate(180deg);
+        }
+
+        100% {
+            transform: translateY(1000px) translateX(240px) rotate(360deg);
+            opacity: 0;
+        }
+    }
 </style>
 
 <script>
-  function createSnowflake() {
-    const snowflake = document.createElement('div');
-    snowflake.className = 'snowflake';
-    snowflake.innerHTML = '❄';
-    snowflake.style.left = Math.random() * window.innerWidth + 'px';
-    snowflake.style.fontSize = (15 + Math.random() * 25) + 'px';
-    snowflake.style.opacity = Math.random() * 0.8 + 0.2;
-    snowflake.style.animationDuration = (5 + Math.random() * 5) + 's';
+    function createSnowflake() {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.innerHTML = '❄';
+        snowflake.style.left = Math.random() * window.innerWidth + 'px';
+        snowflake.style.fontSize = (15 + Math.random() * 25) + 'px';
+        snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+        snowflake.style.animationDuration = (5 + Math.random() * 5) + 's';
 
-    document.body.appendChild(snowflake);
+        document.body.appendChild(snowflake);
 
-    snowflake.addEventListener('animationend', () => {
-      snowflake.remove();
-    });
-  }
+        snowflake.addEventListener('animationend', () => {
+            snowflake.remove();
+        });
+    }
 
-  setInterval(createSnowflake, 300);
+    setInterval(createSnowflake, 300);
+
+    function updateClock() {
+        const now = new Date();
+
+        const seconds = now.getSeconds();
+        const minutes = now.getMinutes();
+        const hours = now.getHours();
+
+        const secondDeg = seconds * 6;
+        const minuteDeg = minutes * 6 + seconds * 0.1;
+        const hourDeg = hours * 30 + minutes * 0.5;
+
+        document.getElementById('second').style.transform = `rotate(${secondDeg}deg)`;
+        document.getElementById('minute').style.transform = `rotate(${minuteDeg}deg)`;
+        document.getElementById('hour').style.transform = `rotate(${hourDeg}deg)`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const marksContainer = document.querySelector('.marks');
+
+    // Добавляем 12 отметок часов
+    for (let i = 1; i <= 12; i++) {
+        const mark = document.createElement('div');
+        mark.className = 'mark mark-hour';
+        mark.style.transform = `rotate(${i * 30}deg) translateY(-94px)`;
+        marksContainer.appendChild(mark);
+    }
+
+    // Добавляем 60 отметок минут (кроме тех, что совпадают с часами)
+    for (let i = 1; i <= 60; i++) {
+        if (i % 5 !== 0) {
+            const mark = document.createElement('div');
+            mark.className = 'mark mark-minute';
+            mark.style.transform = `rotate(${(i * 6)}deg) translateY(-90px)`;
+            marksContainer.appendChild(mark);
+        }
+    }
+
 </script>
 
 {% endblock content %}
