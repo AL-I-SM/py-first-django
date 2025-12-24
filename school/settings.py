@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'app_test',
     'blog',
     'users',
-    'players',
     'catalog',
     'cards',
     'classbook',
