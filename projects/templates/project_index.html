@@ -1,19 +1,75 @@
 {% extends "base.html" %}
 {% load static %}
-{% block page_content %}
-<h1>Projects</h1>
-<div class="container-fluid";>
-{% for project in projects %}
-    <div class="col-md-2">
-        <img class="card-img-top" src="{% static project.image %}" width="200" height="200">
-            <div class="card-body">
-                <h5 class="card-title">{{ project.title }}</h5>
-                <p class="card-text">{{ project.description }}</p>
-                <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-primary">
-                    Read More
-                </a>
-            </div>
-     </div>
-        {% endfor %}
+{% block content %}
+<h2 style="text-align: center;">Все тренировочные проекты</h2>
+<br>
+<div class="container my-4">
+  <div class="row justify-content-center">
+    {% for project in projects %}
+      <div class="col-md-4 mb-4 d-flex justify-content-center">
+        <div class="card" style="width: 200px;">
+            <a href="{{ project.link }}">
+            <img class="card-img-top" src="{% static project.image %}" style="width: 100%; height: auto; object-fit: contain;" alt="{{ project.title }}">
+            </a>
+            <div class="card-body text-center">
+            <h5 style="font-weight: bold;">{{ project.title }}</h5>
+            <p style="color: gray;">{{ project.description }}</p>
+           
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
-{% endblock %}
+
+<style>
+  .snowflake {
+    position: absolute;
+    top: -10px;
+    color: white;
+    font-size: 20px;
+    z-index: 9999;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.9;
+    text-shadow: 0 0 2px #02c4dd, 0 0 4px #849ad8;
+    /* несколько анимаций: падение, качание и вращение */
+    animation: fallAndSwingAndSpin 1s linear forwards;
+}
+
+@keyframes fallAndSwingAndSpin {
+  0% {
+    transform: translateY(0px) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(560px) translateX(120px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(1000px) translateX(240px) rotate(360deg);
+    opacity: 0;
+  }
+}
+</style>
+
+<script>
+  function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    snowflake.innerHTML = '❄';
+    snowflake.style.left = Math.random() * window.innerWidth + 'px';
+    snowflake.style.fontSize = (15 + Math.random() * 25) + 'px';
+    snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+    snowflake.style.animationDuration = (5 + Math.random() * 5) + 's';
+
+    document.body.appendChild(snowflake);
+
+    snowflake.addEventListener('animationend', () => {
+      snowflake.remove();
+    });
+  }
+
+  setInterval(createSnowflake, 300);
+</script>
+
+{% endblock content %}

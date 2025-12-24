@@ -14,12 +14,11 @@ menu = {"Админка": 'admin/',
 
 
 def index(request):
-    projects = Project.objects.all()
     context = {
-        'projects': projects,
         'all_menu': menu
     }
     return render(request, 'projects/index.html', context)
+
 
 def project_index(request):
     projects = Project.objects.all()
