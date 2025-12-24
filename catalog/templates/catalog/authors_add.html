@@ -2,11 +2,10 @@
 {% block content %}
     <h3>Список авторов в БД</h3>
     <table>
-        <thead><th>Id</th><th>Имя</th><th>Фамилия</th></thead>
+        <thead><th>Имя</th><th>Фамилия</th></thead>
         {% if author %}
             {% for author in author.all %}
             <tr>
-                <td>{{ author.id }}</td>
                 <td>{{ author.first_name }}</td>
                 <td>{{ author.last_name }}</td>
                 <td><a href="{% url 'author_edit' author.id %}">Изменить</a>

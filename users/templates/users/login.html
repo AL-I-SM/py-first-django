@@ -1,4 +1,4 @@
-{% extends "apts/base.html" %}
+{% extends "base.html" %}
 {% load bootstrap3 %}
 {%  block header %}
     <h2>Log in ... </h2>
@@ -14,6 +14,5 @@
         {% buttons %}
             <button name="submit" class="btn btn-primary">log in</button>
         {% endbuttons %}
-    <input type="hidden" name="next" value="{% url 'apts:index' %}" />
     </form>
 {% endblock content%}

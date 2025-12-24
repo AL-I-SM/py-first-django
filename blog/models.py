@@ -1,26 +1,28 @@
 from django.db import models
+from classbook.models import User
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=20)
+#TODO 'приложение заявлено как тест для учеников, а по факту - блог. Нехорошо.
 
-    def __str__(self):
-        return self.name
-
-
-class Post(models.Model):
-    title = models.CharField(max_length=250)
-    body = models.TextField()
-    created_on = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField('Category', related_name='posts')
+class Topic(models.Model):
+    text = models.CharField(max_length=200)
+    date_added = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.title
+        return self.text
 
 
-class Comment (models.Model):
-    author = models.CharField(max_length=60)
-    body = models.TextField()
-    created_on = models.DateTimeField(auto_now_add=True)
-    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+class Entry(models.Model):
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    text = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'entries'
+
+    def __str__(self):
+        if len(self.text) > 50:
+            return self.text[:50] + "..."
+        else:
+            return self.text + " :)"

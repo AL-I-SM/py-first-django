@@ -1,4 +1,4 @@
-{% extends "apts/base.html" %}
+{% extends "base.html" %}
 {% block header %}
     <h1>Темы блога:</h1>
 {% endblock header %}
@@ -6,11 +6,11 @@
     <ul>
     {% for topic in topics %}
         <li>
-            <a href="{% url 'apts:topic' topic.id %}">{{ topic }}</a>
+            <a href="{% url 'topic' topic.id %}">{{ topic }}</a>
         </li>
     {% empty %}
         <li>No topics have been added yet</li>
     {% endfor %}
-    <br><a href="{% url 'apts:new_topic' %}"> Add new topic:</a>
+    <br><a href="{% url 'new_topic' %}"> Add new topic:</a>
     </ul>
 {% endblock content%}

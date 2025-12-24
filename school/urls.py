@@ -1,4 +1,4 @@
-"""pupil_test URL Configuration
+"""school URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import re_path, path, include
 
 urlpatterns = [
-    path('', include(('app_test.urls', 'app_test'), namespace='apts')),
-    path('admin/', admin.site.urls),
+    path('', include(('projects.urls', 'projects'), namespace='projects')),
     path('projects/', include(('projects.urls', 'projects'), namespace='projects')),
+    # path('', include(('app_test.urls', 'app_test'), namespace='apts')),
+    path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path('users/', include(('users.urls', 'users'), namespace='users')),
-    path('catalog/', include(('catalog.urls'))),
+    path('catalog/', include('catalog.urls')),
     path('cards/', include("cards.urls")),
     path('classbook/', include("classbook.urls")),
     re_path(r'^players/', include(('players.urls', 'players'), namespace='players')),

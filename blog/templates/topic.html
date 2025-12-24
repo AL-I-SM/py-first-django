@@ -1,18 +1,18 @@
-{% extends "apts/base.html" %}
+{% extends "base.html" %}
 
 {% block header %}
     <h3>Тема: {{ topic }}, владелец:<b> {{ person }}</b></h3>
 {% endblock header %}
 {% block content %}
     <p>
-    <a href="{% url 'apts:new_entry' topic.id %}">Добавить новую запись</a>
+    <a href="{% url 'new_entry' topic.id %}">Добавить новую запись</a>
     </p>
     {% for entry in entries %}
         <div class="panel panel-default">
             <div class="panel-heading">
                 {{ entry.date_added|date:'M d, Y H:i' }}
                 <small>
-                    <a href="{% url 'apts:edit_entry' entry.id %}">Редактировать запись</a>
+                    <a href="{% url 'edit_entry' entry.id %}">Редактировать запись</a>
                 </small>
             </div>
             <div class="panel-body">

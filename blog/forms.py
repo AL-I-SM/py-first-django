@@ -1,36 +1,19 @@
 from django import forms
-from django.forms.utils import ErrorList
+
+from .models import Topic, Entry
 
 
-class CommentForm(forms.Form):
-    def __init__(
-            self,
-            data=None,
-            files=None,
-            auto_id="id_%s",
-            prefix=None,
-            initial=None,
-            error_class=ErrorList,
-            label_suffix=None,
-            empty_permitted=False,
-            field_order=None,
-            use_required_attribute=None,
-            renderer=None,
-    ):
-        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, field_order,
-                         use_required_attribute, renderer)
-        self.cleaned_data = None
+class TopicForm(forms.ModelForm):
+    class Meta:
+        model = Topic
+        fields = ['text']
+        labels = {'text': ''}
 
-    author = forms.CharField(
-        max_length=60,
-        widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "placeholder": "Your Name"
-        })
-    )
-    body = forms.CharField(widget=forms.Textarea(
-        attrs={
-            "class": "form-control",
-            "placeholder": "Leave a comment!"
-        })
-    )
+
+class EntryForm(forms.ModelForm):
+    class Meta:
+        model = Entry
+        fields = ['text']
+        labels = {'text': ''}
+        widgets = {'text': forms.Textarea(attrs={'cols': 80})}
+

@@ -1,47 +1,103 @@
 from django.shortcuts import render
-from blog.models import Post, Comment
-from .forms import CommentForm
+from django.http import HttpResponseRedirect, Http404
+from django.urls import reverse, reverse_lazy
+from .models import Topic
+from .forms import TopicForm, EntryForm, Entry
+from django.contrib.auth.decorators import login_required
 
 
-def blog_index(request):
-    posts = Post.objects.all().order_by('-created_on')
-    contex = {
-        "posts": posts,
-    }
-    return render(request, "blog_index.html", contex)
+menu = {}
+'''
+<h4><a href="admin/">'admin' - Админка средствами Django</a></h4>
+<h4><a href="classbook/">'classbook' - Классный журнал</a></h4>
+<h4><a href="catalog/">'catalog' - Книжная библиотека</a></h4>
+<h4><a href="projects/">'projects' - Тут сделать фото-галерею!</a></h4>
+<h4><a href="topics/">'topics' - Блога (основная база пользователей)</a></h4>
+<h4><a href="blog/">'blog'- Блога</a></h4>
+<h4><a href="users/login/">'users' - Авторизация пользователей</a></h4>
+<h4><a href="players/dashboard/">'players' - Простая форма отправки данных + Авторизация</a></h4>
+<h4><a href="cards/">'cards' - Непонятный проект из Githab</a></h4>
+<h4><a href="days/">'days' - в разработке</a></h4>
+<h4><a href="quizz/">'quizz' - в разработке</a></h4>
+<br> 
+'''
+
+def index(request):
+    return render(request, 'topics.html', {'all_menu': menu})
 
 
-def blog_category(request, category):
-    posts = Post.objects.filter(categories__name__contains=category).order_by('-created_on')
-    # TODO categories__name__contains
-    context = {
-        "category": category,
-        "posts": posts
-    }
-    return render(request, "blog_category.html", context)
+@login_required
+def topics(request):
+    # topics = Topic.objects.all().order_by('date_added')
+    if request.user.is_superuser:
+        topics = Topic.objects.all().order_by('date_added')
+    else:
+        topics = Topic.objects.filter(owner=request.user).order_by('date_added')
+    context = {'topics': topics,
+               'all_menu': menu}
+    return render(request, 'topics.html', context)
 
 
-def blog_detail(request, pk):
-    post = Post.objects.get(pk=pk)
+@login_required
+def topic(request, topic_id):
+    topic = Topic.objects.get(id=topic_id)
+    topics = Topic.objects.all().order_by('date_added')
+    if not request.user.is_superuser:
+        if topic.owner != request.user:
+            raise Http404
+    entries = topic.entry_set.order_by('-date_added')
+    context = {'topic': topic, 'topics': topics, 'entries': entries,
+               'user': request.user, 'person': topic.owner, 'all_menu': menu}
+    return render(request, 'topic.html', context)
 
-    form = CommentForm()
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
+
+@login_required
+def new_topic(request):
+    if request.method != 'POST':
+        form = TopicForm()
+    else:
+        form = TopicForm(request.POST)
         if form.is_valid():
+            new_topic = form.save(commit=False)
+            new_topic.owner = request.user
+            new_topic.save()
+        return HttpResponseRedirect(reverse('topics'))
+    context = {'form': form}
+    return render(request, 'new_topic.html', context)
 
-            comment = Comment(
-                author=form.cleaned_data["author"],
-                body=form.cleaned_data["body"],
-                post=post
-            )
-            comment.save()
 
-    comments = Comment.objects.filter(post=post)
-    context = {
-        "post": post,
-        "comments": comments,
-        "form": form,
-    }
+@login_required
+def new_entry(request, topic_id):
+    topic = Topic.objects.get(id=topic_id)
+    if topic.owner != request.user:
+        raise Http404
+    if request.method != 'POST':
+        form = EntryForm()
+    else:
+        form = EntryForm(data=request.POST)
+        if form.is_valid():
+            new_entry = form.save(commit=False)
+            new_entry.topic = topic
+            if topic.owner == request.user:
+                new_entry.save()
+        return HttpResponseRedirect(reverse('topic', args=[topic_id]))
+    context = {'topic': topic, 'form': form}
+    return render(request, 'new_entry.html', context)
 
-    return render(request, "blog_detail.html", context)
 
+@login_required
+def edit_entry(request, entry_id):
+    entry = Entry.objects.get(id=entry_id)
+    topic = entry.topic
+    if topic.owner != request.user:
+        raise Http404
+
+    if request.method != 'POST':
+        form = EntryForm(instance=entry)
+    else:
+        form = EntryForm(instance=entry, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('topic', args=[topic.id]))
+    context = {'entry': entry, 'topic': topic, 'form': form}
+    return render(request, 'edit_entry.html', context)
