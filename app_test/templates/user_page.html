@@ -3,11 +3,20 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Рейтинг в реальном времени</title>
+    <title>Ответы и Рейтинг</title>
     <style>
-        table {
-            width: 50%;
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        #ratingTable {
+            width: 60%;
             border-collapse: collapse;
+            margin-top: 30px;
         }
 
         th,
@@ -24,7 +33,15 @@
 </head>
 
 <body>
-    <h1>Общий рейтинг</h1>
+    <h1>Ответьте на вопрос</h1>
+
+    <div class="question">
+        <p>Что такое столица Франции?</p>
+        <input type="text" id="answerInput" placeholder="Ваш ответ" />
+        <button onclick="sendAnswer()">Отправить</button>
+    </div>
+
+    <h2>Общий рейтинг</h2>
     <table id="ratingTable">
         <thead>
             <tr>
@@ -33,16 +50,12 @@
                 <th>Время (сек)</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Строки рейтинга будут добавляться сюда -->
-        </tbody>
+        <tbody></tbody>
     </table>
 
     <script>
-        // Укажите URL WebSocket
         const socket = new WebSocket('ws://' + window.location.host + '/ws/rating/');
 
-        // Обработчик открытия соединения
         socket.onopen = () => {
             console.log('WebSocket подключен');
         };
@@ -52,27 +65,16 @@
             console.error('WebSocket ошибка:', error);
         };
 
-        // Обработчик получения сообщений
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data)
-            if (data === 'update') {
-                // Обновляем таблицу
-                updateRatingTable(data.content);
-            }
             if (Array.isArray(data)) {
                 updateRatingTable(data);
             }
         };
 
-        // Обновление таблицы рейтинга
         function updateRatingTable(ratingData) {
             const tbody = document.getElementById('ratingTable').getElementsByTagName('tbody')[0];
-
-            // Очистить существующие строки
             tbody.innerHTML = '';
-
-            // ratingData — массив объектов [{user: 'name', score: 10, time: 15}, ...]
             ratingData.forEach(item => {
                 const row = tbody.insertRow();
                 row.insertCell().textContent = item.user;
@@ -81,8 +83,16 @@
             });
         }
 
-        // Можно также отправлять сообщения, если потребуется
-        // socket.send(JSON.stringify({message: 'что-то'}));
+        function sendAnswer() {
+            const answer = document.getElementById('answerInput').value.trim();
+            if (!answer) {
+                alert('Пожалуйста, введите ответ');
+                return;
+            }
+            // Отправляем ответ на сервер через WebSocket
+            socket.send(JSON.stringify({ answer: answer, user: 'Ваше имя' }));
+            document.getElementById('answerInput').value = '';
+        }
     </script>
 </body>
 

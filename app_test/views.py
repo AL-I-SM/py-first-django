@@ -11,6 +11,9 @@ import random
 def index(request):
     return render(request, 'index.html')
 
+def user_quiz(request):
+    return render(request, 'user_page.html')
+
 def start_updating():
     def update_loop():
         channel_layer = get_channel_layer()
@@ -38,7 +41,6 @@ def start_updating():
 # Когда кто-то отвечает правильно, вы отправляете сообщение в группу:
 
 import asyncio
-from channels.layers import get_channel_layer
 
 async def send_update():
     channel_layer = get_channel_layer()
