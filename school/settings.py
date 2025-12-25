@@ -40,6 +40,8 @@ LOGIN_URL = '/users/login/'
 
 INSTALLED_APPS = [
 
+    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # мои приложения
+    
     'projects',
     'app_test',
     'blog',
@@ -99,6 +102,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'school.wsgi.application'
+ASGI_APPLICATION = 'school.asgi.application'
 
 
 # Database
@@ -171,3 +175,9 @@ EMAIL_PORT = 1025
 APPEND_SLASH = False
 
 AUTH_USER_MODEL = 'classbook.User'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}

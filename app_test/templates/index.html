@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Рейтинг в реальном времени</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Общий рейтинг</h1>
+    <table id="ratingTable">
+        <thead>
+            <tr>
+                <th>Пользователь</th>
+                <th>Очки</th>
+                <th>Время (сек)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Строки рейтинга будут добавляться сюда -->
+        </tbody>
+    </table>
+
+    <script>
+        // Укажите URL WebSocket
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/rating/');
+
+        // Обработчик открытия соединения
+        socket.onopen = () => {
+            console.log('WebSocket подключен');
+        };
+
+        // Обработчик ошибок
+        socket.onerror = (error) => {
+            console.error('WebSocket ошибка:', error);
+        };
+
+        // Обработчик получения сообщений
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'update') {
+                // Обновляем таблицу
+                updateRatingTable(data.content);
+            }
+        };
+
+        // Обновление таблицы рейтинга
+        function updateRatingTable(ratingData) {
+            const tbody = document.getElementById('ratingTable').getElementsByTagName('tbody')[0];
+
+            // Очистить существующие строки
+            tbody.innerHTML = '';
+
+            // ratingData — массив объектов [{user: 'name', score: 10, time: 15}, ...]
+            ratingData.forEach(item => {
+                const row = tbody.insertRow();
+
+                const cellUser = row.insertCell();
+                cellUser.textContent = item.user;
+
+                const cellScore = row.insertCell();
+                cellScore.textContent = item.score;
+
+                const cellTime = row.insertCell();
+                cellTime.textContent = item.time;
+            });
+        }
+
+        // Можно также отправлять сообщения, если потребуется
+        // socket.send(JSON.stringify({message: 'что-то'}));
+    </script>
+</body>
+
+</html>

@@ -1,21 +1,22 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <p>Взятые книги</p>
+<p>Взятые книги</p>
 
-    {% if bookinstance_list %}
-    <ul>
+{% if bookinstance_list %}
+<ul>
 
-      {% for bookinst in bookinstance_list %}
-      <li style="{% if bookinst.is_overdue %}
-                                   color:red;{% endif %}">
-        <a href="{% url 'catalog:book-detail' bookinst.book.pk %}">
-                                {{bookinst.book.title}}</a>
-                         ({{ bookinst.due_back }})</li>
-      {% endfor %}
-    </ul>
+{% for bookinst in bookinstance_list %}
+    <li style="{% if bookinst.is_overdue %}color: red;{% endif %}">
+        <a href="{% url 'book-detail' bookinst.book.pk %}">
+            {{ bookinst.book.title }}
+        </a>
+        ({{ bookinst.due_back }})
+    </li>
+{% endfor %}
+</ul>
 
-    {% else %}
-      <p>Нет книг со статусом бронь.</p>
-    {% endif %}
+{% else %}
+<p>Нет книг со статусом бронь.</p>
+{% endif %}
 {% endblock %}
