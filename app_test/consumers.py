@@ -9,8 +9,8 @@ class RatingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.users_and_ratings = {}
         self.user = self.scope["user"]._wrapped 
-        # self.group_name = 'rating_updates'
-        self.group_name = "quiz_group"
+        self.group_name = 'rating_updates'
+        # self.group_name = "quiz_group"
 
         await self.channel_layer.group_add(
             self.group_name,
@@ -53,7 +53,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
         if message_type == 'auth':
             self.users_and_ratings.update({user: {"score": 0, 
-                                                  "time": 0}})
+                                               "time": 0}})
             
             await self.channel_layer.group_send(
                 'rating_updates',
