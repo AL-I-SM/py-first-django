@@ -1,6 +1,7 @@
+from channels.auth import AuthMiddlewareStack
 from django.urls import re_path
-from . import consumers
+from .consumers import RatingConsumer
 
 websocket_urlpatterns = [
-    re_path(r'ws/rating/$', consumers.RatingConsumer.as_asgi()),
+    re_path(r'ws/rating/$', AuthMiddlewareStack(RatingConsumer.as_asgi())),
 ]

@@ -36,9 +36,14 @@
     <h1>Ответьте на вопрос</h1>
 
     <div class="question">
-        <p>Что такое столица Франции?</p>
+        <p>Cтолица Франции?</p>
         <input type="text" id="answerInput" placeholder="Ваш ответ" />
+        <input type="text" id="playUser" placeholder="Ваше имя" />
         <button onclick="sendAnswer()">Отправить</button>
+    </div>
+
+    <div class="start">
+        <button onclick="appendUser()">Подключится к тесту</button>
     </div>
 
     <h2>Общий рейтинг</h2>
@@ -92,6 +97,10 @@
             // Отправляем ответ на сервер через WebSocket
             socket.send(JSON.stringify({ answer: answer, user: 'Ваше имя' }));
             document.getElementById('answerInput').value = '';
+        }
+
+        function appendUser() {
+            socket.send(JSON.stringify({ type: "auth", user: "{{ user|escapejs }}" }));
         }
     </script>
 </body>

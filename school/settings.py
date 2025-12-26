@@ -181,3 +181,5 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
+
+DATABASE_ROUTERS = ['app_test.routers.AuthRouter']

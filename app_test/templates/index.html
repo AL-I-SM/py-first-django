@@ -25,6 +25,7 @@
 
 <body>
     <h1>Общий рейтинг</h1>
+    <button onclick="window.location.href='{% url 'questions' %}'" class="btn btn-primary">Присоедениться</button>
     <table id="ratingTable">
         <thead>
             <tr>
@@ -56,7 +57,7 @@
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log(data)
-            if (data === 'update') {
+            if (data === 'rating_updates') {
                 // Обновляем таблицу
                 updateRatingTable(data.content);
             }
