@@ -18,7 +18,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.CharField(max_length=255)
     answered_at = models.DateTimeField(auto_now_add=True)
-    is_correct = models.BooleanField()
+    is_correct = models.BooleanField(null=True)
     
 
 class UserProgress(models.Model):

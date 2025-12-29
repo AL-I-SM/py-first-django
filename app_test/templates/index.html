@@ -56,24 +56,22 @@
 
         // Обработчик получения сообщений
         socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
 
+            const data = JSON.parse(event.data);
             if (data.type === 'rating_updates') {
                 // Обновляем таблицу
-                console.log(111);
+                console.log('обновление рейтинга');
                 updateRatingTable(data.content);
             }
 
             if (data.type === 'rating_table') {
                 // Обновляем таблицу
-                console.log(111);
+                console.log('получена таблица рейтнига');
                 updateRatingTable(data.content);
             }
 
-            console.log(Array.isArray(data));
             if (Array.isArray(data)) {
                 console.log('is array!');
-                updateRatingTable(data);
             }
         };
 

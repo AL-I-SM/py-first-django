@@ -41,8 +41,10 @@
 
     <div class="question">
         <p id="testQuestion" hidden>Вопрос</p>
+        <div id="questionId" hidden></div>
+        <div text='' id="answerOptions" hidden></div>
         <input type="text" id="answerInput" hidden placeholder="Ваш ответ" />
-        <button id="submitButton" hidden onclick="getNextQuestion()">Отправить ответ</button>
+        <button id="submitButton" hidden onclick="sendAnswer()">Отправить ответ</button>
     </div>
 
     <div class="start">
@@ -117,14 +119,14 @@
             }
         }
 
-        function sendAnswer() {
+        function sendAnswer(question_id) {
             const answer = document.getElementById('answerInput').value.trim();
             if (!answer) {
                 alert('Пожалуйста, введите ответ');
                 return;
             }
             // Отправляем ответ на сервер через WebSocket
-            socket.send(JSON.stringify({ answer: answer, user: 'Ваше имя' }));
+            socket.send(JSON.stringify({ type: "answer", answer: answer, user: 'Ваше имя', "question_id": question_id }));
             document.getElementById('answerInput').value = '';
         }
 
@@ -140,6 +142,7 @@
 
         function startTest() {
             console.log('начало теста');
+            document.getElementById('answerOptions').hidden = false;
             document.getElementById('submitButton').hidden = false;
             document.getElementById('answerInput').hidden = false;
             document.getElementById('testQuestion').hidden = false;
@@ -148,19 +151,81 @@
 
         }
 
+        function sendAnswer() {
+
+            const radios = document.querySelectorAll('input[name="answer"]');
+            let answer = '';
+
+            if (radios.length > 0) {
+                // Есть радиокнопки
+                radios.forEach(r => {
+                    if (r.checked) answer = r.value;
+                });
+            } 
+            else {
+                // Поле для ввода
+                answer = document.getElementById('answerInput').value;
+            }
+
+            questionId = document.getElementById('questionId').textContent;
+            
+            socket.send(JSON.stringify({
+                type: "answer",
+                user: "{{ user|escapejs }}", 
+                answer: answer,
+                question_id: questionId
+            }));
+            console.log('ответ отправлен: ', answer, 'id :', questionId);
+            getNextQuestion();
+        }
+
         function getNextQuestion() {
-            console.log('запрос следующий вопрос');
+            console.log('запрос: следующий вопрос');
             socket.send(JSON.stringify({ type: "next_question", user: "{{ user|escapejs }}" }));
         }
 
         function updateDataQuestion(questionData) {
             console.log('обновлен вопрос');
+
+            options = questionData.options;
+
+            const optionsContainer = document.getElementById('answerOptions');
             const testQuestion = document.getElementById('testQuestion');
             const answerInput = document.getElementById('answerInput');
-            const submitButton = document.getElementById('submitButton');
+            const questionId = document.getElementById('questionId');
 
+            optionsContainer.innerHTML = '';
+
+            questionId.textContent = questionData.question_id;
             testQuestion.textContent = questionData.text;
+
             answerInput.value = "";
+
+            if (options && options.length > 0) {
+                // Есть варианты — создаем радиокнопки
+                options.forEach((option, index) => {
+                    const label = document.createElement('label');
+                    label.id = 'radioBlock';
+                    label.style.display = 'block';
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'answer';
+                    radio.value = option;
+                    if (index === 0) radio.checked = true; // по умолчанию выбран первый
+
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(option));
+                    optionsContainer.appendChild(label);
+                });
+                // Показываем блок с радиокнопками
+                document.getElementById('radioBlock').hidden = false;
+                // скрываем поле для ввода
+                document.getElementById('answerInput').hidden = true;
+            } else {
+                // Нет вариантов — показываем поле для ввода
+                document.getElementById('answerInput').hidden = false;
+                document.getElementById('answerInput').value = '';
+            }
         }
 
         function endTest(questionData) {
@@ -168,6 +233,7 @@
             const waitInfo = document.getElementById('waitInfo');
             waitInfo.textContent = "тест закончен";
 
+            document.getElementById('answerOptions').hidden = true;
             document.getElementById('submitButton').hidden = true;
             document.getElementById('answerInput').hidden = true;
             document.getElementById('testQuestion').hidden = true;

@@ -3,6 +3,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from .models import UserProgress, Answer, Question
+import datetime
+from classbook.models import User
 
 
 class RatingConsumer(AsyncWebsocketConsumer):
@@ -130,6 +132,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     'options': question_obj.options,
                     'number': question_obj.number,
                     'correct': question_obj.correct_answer,
+                    'question_id': question_obj.id
                 }
 
                 print(question)
@@ -149,20 +152,54 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     }
                 )
 
+        if message_type == 'answer':
+            answer = data.get("answer")
+            question_id = data.get("question_id")
+            print(f'получен ответ: {answer}') 
+
+            try:
+                student = await database_sync_to_async(User.objects.get)(username=user)
+            except User.DoesNotExist:
+                student = None
+
+            is_correct = None
+            try:
+                question_obj =  await database_sync_to_async(Question.objects.get)(id=question_id)
+                correct_answer = question_obj.correct_answer
+                if answer:
+                    if answer == correct_answer:
+                        is_correct = True
+                    else:
+                        is_correct = False   
+
+            except User.DoesNotExist:
+                student = None
+
+            # Записываем ответ
+            await database_sync_to_async(Answer.objects.create)(
+                user=student,
+                question_id=question_id,
+                answer=answer,
+                answered_at=datetime.datetime.now(),
+                is_correct=is_correct
+
+            )
+           
+            data = {
+                'type': 'rating_updates',           # соответствует обработчику на JS
+                'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
+            }
+
+            await self.channel_layer.group_send(
+                'rating',                           # название канала группы
+                {
+                    'type': 'send_rating_update',
+                    'message': json.dumps(data)
+                }
+            )
+        
         '''
 
-        answer = data.get('answer')
-        question_id = data.get('question_id')
-
-        question = await self.get_question_obj(question_id)
-
-        # Записываем ответ
-        await database_sync_to_async(Answer.objects.create)(
-            user=self.user,
-            question=question,
-            answer=answer,
-            time_answered=timezone.now()
-        )
 
         # Обновляем прогресс
         next_question = await self.get_next_question(self.student, question)
