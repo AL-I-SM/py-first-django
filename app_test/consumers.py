@@ -6,10 +6,12 @@ from .models import UserProgress, Answer, Question
 
 
 class RatingConsumer(AsyncWebsocketConsumer):
+    
+    users_and_ratings = {}
+    
     async def connect(self):
-        self.users_and_ratings = {}
         self.user = self.scope["user"]._wrapped 
-        self.group_name = 'rating_updates' # важно!
+        self.group_name = 'rating' # важно!
         # self.group_name = "quiz_group"
         self.channel_layer = get_channel_layer() #???
 
@@ -38,7 +40,11 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
 
     async def send_rating_update(self, event):
-        print(222)
+        print('данне общего рейтинга обновлены')
+        await self.send(text_data=event['message'])
+
+    async def send_rating_table(self, event):
+        print('таблица рейтинга отправлена')
         await self.send(text_data=event['message'])
 
     
@@ -48,9 +54,12 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
+        
         data = json.loads(text_data)
         message_type = data.get("type")
         user = data.get('user', 'Аноним')
+
+        print(self.users_and_ratings, self.channel_layer)
 
         if message_type == 'auth':
             self.users_and_ratings.update({user: {"score": 0, 
@@ -62,7 +71,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
             }
 
             await self.channel_layer.group_send(
-                'rating_updates',
+                'rating',                           # название канала группы
                 {
                     'type': 'send_rating_update',
                     'message': json.dumps(data)
@@ -70,12 +79,25 @@ class RatingConsumer(AsyncWebsocketConsumer):
             )
             print(self.users_and_ratings)
         
-        if message_type == 'rate':
+        if message_type == 'next':
             pass
         
+        if message_type == 'table':
+            print('запрошена таблица рейтинга') 
+            data = {
+                'type': 'rating_table',             # соответствует обработчику на JS
+                'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
+            }
 
+            await self.channel_layer.group_send(
+                'rating',
+                {
+                    'type': 'send_rating_table',
+                    'message': json.dumps(data)
+                }
+            )
         '''
-        data = json.loads(text_data)
+
         answer = data.get('answer')
         question_id = data.get('question_id')
 

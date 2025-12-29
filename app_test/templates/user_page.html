@@ -29,6 +29,10 @@
         th {
             background-color: #f0f0f0;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -36,14 +40,14 @@
     <h1>Ответьте на вопрос</h1>
 
     <div class="question">
-        <p>Cтолица Франции?</p>
-        <input type="text" id="answerInput" placeholder="Ваш ответ" />
-        <input type="text" id="playUser" placeholder="Ваше имя" />
-        <button onclick="sendAnswer()">Отправить</button>
+        <input type="text" id="answerInput" hidden placeholder="Ваш ответ" />
+        <button id="submitButton" hidden onclick="appendUser()">Отправить ответ</button>
     </div>
 
     <div class="start">
-        <button onclick="appendUser()">Подключится к тесту</button>
+        <p id="waitInfo">- Ожидание начала теста -</p>
+        <button id="submitButton" onclick="startTest()">Отправить ответ</button>
+  
     </div>
 
     <h2>Общий рейтинг</h2>
@@ -63,6 +67,7 @@
 
         socket.onopen = () => {
             console.log('WebSocket подключен');
+            getUserTable();
         };
 
         // Обработчик ошибок
@@ -72,20 +77,31 @@
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (Array.isArray(data)) {
-                updateRatingTable(data);
+            if (data.type === 'rating_updates') {
+                // Обновляем таблицу
+                console.log('обновление рейтинга');
+                updateRatingTable(data.content);
+            }
+            if (data.type === 'rating_table') {
+                // Обновляем таблицу
+                console.log('получена таблица рейтнига');
+                updateRatingTable(data.content);
             }
         };
 
         function updateRatingTable(ratingData) {
             const tbody = document.getElementById('ratingTable').getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
-            ratingData.forEach(item => {
+            for (const key in ratingData) {
                 const row = tbody.insertRow();
-                row.insertCell().textContent = item.user;
-                row.insertCell().textContent = item.score;
-                row.insertCell().textContent = item.time;
-            });
+                const userName = key;             // 'computer', 'computer1'
+                const userData = ratingData[key]; // объект с score и time
+
+                row.insertCell().textContent = userName;
+                row.insertCell().textContent = userData.score;
+                row.insertCell().textContent = userData.time;
+
+            }
         }
 
         function sendAnswer() {
@@ -101,6 +117,17 @@
 
         function appendUser() {
             socket.send(JSON.stringify({ type: "auth", user: "{{ user|escapejs }}" }));
+        }
+
+        function getUserTable() {
+            socket.send(JSON.stringify({ type: "table", user: "{{ user|escapejs }}" }));
+        }
+
+        function startTest() {
+            console.log('начало теста');
+            document.getElementById('submitButton').hidden = false;
+            document.getElementById('answerInput').hidden = false;
+            document.getElementById('waitInfo').hidden = true;
         }
     </script>
 </body>

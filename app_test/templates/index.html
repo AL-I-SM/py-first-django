@@ -25,7 +25,7 @@
 
 <body>
     <h1>Общий рейтинг</h1>
-    <button onclick="window.location.href='{% url 'questions' %}'" class="btn btn-primary">Присоедениться</button>
+    <button onclick="joinAndRedirect()" class="btn btn-primary">Присоединиться</button>
     <table id="ratingTable">
         <thead>
             <tr>
@@ -46,6 +46,7 @@
         // Обработчик открытия соединения
         socket.onopen = () => {
             console.log('WebSocket подключен');
+            getUserTable();
         };
 
         // Обработчик ошибок
@@ -62,6 +63,13 @@
                 console.log(111);
                 updateRatingTable(data.content);
             }
+
+            if (data.type === 'rating_table') {
+                // Обновляем таблицу
+                console.log(111);
+                updateRatingTable(data.content);
+            }
+
             console.log(Array.isArray(data));
             if (Array.isArray(data)) {
                 console.log('is array!');
@@ -76,7 +84,6 @@
             // Очистить существующие строки
             tbody.innerHTML = '';
 
-            // ratingData — массив объектов [{user: 'name', score: 10, time: 15}, ...]
             for (const key in ratingData) {
                 const row = tbody.insertRow();
                 const userName = key;             // 'computer', 'computer1'
@@ -90,6 +97,17 @@
 
         }
 
+        function getUserTable() {
+            socket.send(JSON.stringify({ type: "table", user: "{{ user|escapejs }}" }));
+        }
+
+        function joinAndRedirect() {
+            appendUser(); 
+            window.location.href = '{% url "questions" %}'; 
+        }
+        function appendUser() {
+            socket.send(JSON.stringify({ type: "auth", user: "{{ user|escapejs }}" }));
+        }
         // Можно также отправлять сообщения, если потребуется
         // socket.send(JSON.stringify({message: 'что-то'}));
     </script>
