@@ -5,6 +5,7 @@ from classbook.models import Disciplines
 
 class Question(models.Model):
     text = models.TextField()
+    number = models.IntegerField()
     # Варианты ответов, например, через отдельную модель или JSONField
     options = models.JSONField()
     correct_answer = models.CharField(max_length=255)
@@ -15,7 +16,7 @@ class Question(models.Model):
 class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    correct_answer = models.CharField(max_length=255)
+    answer = models.CharField(max_length=255)
     answered_at = models.DateTimeField(auto_now_add=True)
     is_correct = models.BooleanField()
     

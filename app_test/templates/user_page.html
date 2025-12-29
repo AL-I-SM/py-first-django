@@ -40,14 +40,15 @@
     <h1>Ответьте на вопрос</h1>
 
     <div class="question">
+        <p id="testQuestion" hidden>Вопрос</p>
         <input type="text" id="answerInput" hidden placeholder="Ваш ответ" />
-        <button id="submitButton" hidden onclick="appendUser()">Отправить ответ</button>
+        <button id="submitButton" hidden onclick="getNextQuestion()">Отправить ответ</button>
     </div>
 
     <div class="start">
         <p id="waitInfo">- Ожидание начала теста -</p>
-        <button id="submitButton" onclick="startTest()">Отправить ответ</button>
-  
+        <button id="submitButton" onclick="startTest()">Начать вручную</button>
+
     </div>
 
     <h2>Общий рейтинг</h2>
@@ -82,10 +83,22 @@
                 console.log('обновление рейтинга');
                 updateRatingTable(data.content);
             }
+
             if (data.type === 'rating_table') {
                 // Обновляем таблицу
                 console.log('получена таблица рейтнига');
                 updateRatingTable(data.content);
+            }
+
+            if (data.type === 'next_question') {
+                // Обновляем вопрос
+                console.log('получен новый вопрос');
+                updateDataQuestion(data.content);
+            }
+
+            if (data.type === 'end_test') {
+                // Закончить тест
+                endTest(data.content);
             }
         };
 
@@ -116,6 +129,8 @@
         }
 
         function appendUser() {
+            const waitInfo = document.getElementById('waitInfo');
+            waitInfo.textContent = "тест закончен";
             socket.send(JSON.stringify({ type: "auth", user: "{{ user|escapejs }}" }));
         }
 
@@ -127,8 +142,39 @@
             console.log('начало теста');
             document.getElementById('submitButton').hidden = false;
             document.getElementById('answerInput').hidden = false;
+            document.getElementById('testQuestion').hidden = false;
             document.getElementById('waitInfo').hidden = true;
+            getNextQuestion()
+
         }
+
+        function getNextQuestion() {
+            console.log('запрос следующий вопрос');
+            socket.send(JSON.stringify({ type: "next_question", user: "{{ user|escapejs }}" }));
+        }
+
+        function updateDataQuestion(questionData) {
+            console.log('обновлен вопрос');
+            const testQuestion = document.getElementById('testQuestion');
+            const answerInput = document.getElementById('answerInput');
+            const submitButton = document.getElementById('submitButton');
+
+            testQuestion.textContent = questionData.text;
+            answerInput.value = "";
+        }
+
+        function endTest(questionData) {
+            console.log('тест закончен');
+            const waitInfo = document.getElementById('waitInfo');
+            waitInfo.textContent = "тест закончен";
+
+            document.getElementById('submitButton').hidden = true;
+            document.getElementById('answerInput').hidden = true;
+            document.getElementById('testQuestion').hidden = true;
+            document.getElementById('waitInfo').hidden = false;
+
+        }
+
     </script>
 </body>
 

@@ -47,10 +47,14 @@ class RatingConsumer(AsyncWebsocketConsumer):
         print('таблица рейтинга отправлена')
         await self.send(text_data=event['message'])
 
+    async def send_question_data(self, event):
+        print('следующий вопрос отправлен')
+        await self.send(text_data=event['message'])
     
+
     @database_sync_to_async
-    def get_question_obj(self, question_id):
-        return Question.objects.get(id=question_id)
+    def get_question(self, number, subject_id, packet):
+        return Question.objects.get(number=number, subject_id=subject_id, packet=packet)
 
 
     async def receive(self, text_data):
@@ -63,7 +67,10 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
         if message_type == 'auth':
             self.users_and_ratings.update({user: {"score": 0, 
-                                                  "time": 0}})
+                                                  "time": 0,
+                                                  "number": 0,
+                                                  "subject_id": 1,
+                                                  "packet": 1}})
             
             data = {
                 'type': 'rating_updates',           # соответствует обработчику на JS
@@ -79,9 +86,6 @@ class RatingConsumer(AsyncWebsocketConsumer):
             )
             print(self.users_and_ratings)
         
-        if message_type == 'next':
-            pass
-        
         if message_type == 'table':
             print('запрошена таблица рейтинга') 
             data = {
@@ -96,6 +100,55 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     'message': json.dumps(data)
                 }
             )
+
+        if message_type == 'next_question':
+            
+            number = self.users_and_ratings[user]['number']
+            number += 1
+            subject_id = self.users_and_ratings[user]['subject_id']
+            packet = self.users_and_ratings[user]['packet'] 
+            
+            question_obj = False
+            try:
+                question_obj = await self.get_question(number=number, subject_id=1, packet=1)
+            except:
+
+                data = {
+                    'type': 'end_test',                # соответствует обработчику на JS
+                    'content': 'user_rating'           # данные (должны быть сериализуемы в JSON)
+                }
+                await self.channel_layer.group_send(
+                'rating',
+                {
+                    'type': 'send_question_data',
+                    'message': json.dumps(data)
+                }
+            )
+            if question_obj:
+                question = {
+                    'text': question_obj.text,
+                    'options': question_obj.options,
+                    'number': question_obj.number,
+                    'correct': question_obj.correct_answer,
+                }
+
+                print(question)
+                
+                self.users_and_ratings[user]['number'] = number
+
+                data = {
+                    'type': 'next_question',             # соответствует обработчику на JS
+                    'content': question                  # данные (должны быть сериализуемы в JSON)
+                }
+
+                await self.channel_layer.group_send(
+                    'rating',
+                    {
+                        'type': 'send_question_data',
+                        'message': json.dumps(data)
+                    }
+                )
+
         '''
 
         answer = data.get('answer')
@@ -143,14 +196,6 @@ class RatingConsumer(AsyncWebsocketConsumer):
             # Если вопросов нет или завершено
             await self.send(json.dumps({"message": "Тест завершен"}))
         '''
-
-
-    async def send_question(self, question):
-        await self.send(text_data=json.dumps({
-            'question': question.text,
-            'options': question.options,
-            'question_id': question.id
-        }))
 
 
     async def update_progress(self, event):
