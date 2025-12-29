@@ -9,8 +9,9 @@ class RatingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.users_and_ratings = {}
         self.user = self.scope["user"]._wrapped 
-        self.group_name = 'rating_updates'
+        self.group_name = 'rating_updates' # важно!
         # self.group_name = "quiz_group"
+        self.channel_layer = get_channel_layer() #???
 
         await self.channel_layer.group_add(
             self.group_name,
@@ -38,7 +39,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
     async def send_rating_update(self, event):
         print(222)
-        await self.send(text_data=json.dumps(event['message']))
+        await self.send(text_data=event['message'])
 
     
     @database_sync_to_async
@@ -53,13 +54,18 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
         if message_type == 'auth':
             self.users_and_ratings.update({user: {"score": 0, 
-                                               "time": 0}})
+                                                  "time": 0}})
             
+            data = {
+                'type': 'rating_updates',           # соответствует обработчику на JS
+                'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
+            }
+
             await self.channel_layer.group_send(
                 'rating_updates',
                 {
                     'type': 'send_rating_update',
-                    'message': json.dumps(self.users_and_ratings)
+                    'message': json.dumps(data)
                 }
             )
             print(self.users_and_ratings)
@@ -68,13 +74,6 @@ class RatingConsumer(AsyncWebsocketConsumer):
             pass
         
 
-        await self.channel_layer.group_send(
-                'rating_updates',
-                {
-                    'type': 'send_rating_update',
-                    'message': json.dumps(self.users_and_ratings)
-                }
-            )
         '''
         data = json.loads(text_data)
         answer = data.get('answer')

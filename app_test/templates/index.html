@@ -56,12 +56,15 @@
         // Обработчик получения сообщений
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log(data)
-            if (data === 'rating_updates') {
+
+            if (data.type === 'rating_updates') {
                 // Обновляем таблицу
+                console.log(111);
                 updateRatingTable(data.content);
             }
+            console.log(Array.isArray(data));
             if (Array.isArray(data)) {
+                console.log('is array!');
                 updateRatingTable(data);
             }
         };
@@ -74,12 +77,17 @@
             tbody.innerHTML = '';
 
             // ratingData — массив объектов [{user: 'name', score: 10, time: 15}, ...]
-            ratingData.forEach(item => {
+            for (const key in ratingData) {
                 const row = tbody.insertRow();
-                row.insertCell().textContent = item.user;
-                row.insertCell().textContent = item.score;
-                row.insertCell().textContent = item.time;
-            });
+                const userName = key;             // 'computer', 'computer1'
+                const userData = ratingData[key]; // объект с score и time
+
+                row.insertCell().textContent = userName;
+                row.insertCell().textContent = userData.score;
+                row.insertCell().textContent = userData.time;
+
+            }
+
         }
 
         // Можно также отправлять сообщения, если потребуется
