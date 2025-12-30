@@ -11,6 +11,12 @@ from asgiref.sync import sync_to_async
 
 class RatingConsumer(AsyncWebsocketConsumer):
     
+
+    # завершение теста, когда все прошли
+    # страница преподвателя
+    # передать общее количество вопросов и пройденный вопрос или вообще весь болк сразу
+    # красивости
+      
     users_and_rating = {}
     # ratings = {}
     start_time = datetime.now()
