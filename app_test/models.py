@@ -19,14 +19,15 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.CharField(max_length=255)
     answered_at_client = models.DateTimeField(null=True)
-    answered_at_server = models.DateTimeField(auto_now_add=True, null=True)
+    answered_at_server = models.DateTimeField(null=True)
     is_correct = models.BooleanField(null=True)
     
 
 class UserProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     score = models.IntegerField(default=0)
-    time_taken = models.DurationField(null=True, blank=True)
+    time_taken =  models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField()
     packet = models.IntegerField()
     # last_answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
     # Можно добавить поле для текущего вопроса, итд

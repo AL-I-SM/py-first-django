@@ -49,7 +49,7 @@
 
     <div class="start">
         <p id="waitInfo">- Ожидание начала теста -</p>
-        <button id="submitButton" onclick="startTest()">Начать вручную</button>
+        <button id="submitButton" onclick="manualStartTest()">Начать вручную</button>
 
     </div>
 
@@ -97,6 +97,10 @@
                 console.log('получен новый вопрос');
                 updateDataQuestion(data.content);
             }
+            
+            if (data.type === 'start') {
+                startTest(data.content);
+            }
 
             if (data.type === 'end_test') {
                 // Закончить тест
@@ -135,6 +139,13 @@
             }));
         }
 
+        function manualStartTest() {
+            socket.send(JSON.stringify({ 
+                type: "start",
+                user: "{{ user|escapejs }}"
+            }));
+        }
+        
         function startTest() {
             console.log('начало теста');
             document.getElementById('answerOptions').hidden = false;
@@ -142,8 +153,11 @@
             document.getElementById('answerInput').hidden = false;
             document.getElementById('testQuestion').hidden = false;
             document.getElementById('waitInfo').hidden = true;
+            socket.send(JSON.stringify({ 
+                type: "start",
+                user: "{{ user|escapejs }}"
+            }));
             getNextQuestion()
-
         }
 
         function sendAnswer() {
