@@ -9,11 +9,12 @@ from classbook.models import User
 
 class RatingConsumer(AsyncWebsocketConsumer):
     
-    users_and_ratings = {}
+    users_and_rating = {}
+    # ratings = {}
     
     async def connect(self):
         self.user = self.scope["user"]._wrapped 
-        self.group_name = 'rating' # важно!
+        self.group_name = 'rating' ###
         # self.group_name = "quiz_group"
         self.channel_layer = get_channel_layer() #???
 
@@ -39,7 +40,6 @@ class RatingConsumer(AsyncWebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-
 
     async def send_rating_update(self, event):
         print('данне общего рейтинга обновлены')
@@ -67,7 +67,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
         }
 
         await self.channel_layer.group_send(
-            'rating',
+            self.group_name,
             {
                 'type': type_data,
                 'message': json.dumps(data)
@@ -81,22 +81,22 @@ class RatingConsumer(AsyncWebsocketConsumer):
         message_type = data.get("type")
         user = data.get('user', 'Аноним')
 
-        print(self.users_and_ratings, self.channel_layer)
+        print(self.users_and_rating, self.channel_layer)
 
         if message_type == 'auth':
-            self.users_and_ratings.update({user: {"score": 0, 
+            self.users_and_rating.update({user: {"score": 0, 
                                                   "time": 0,
                                                   "number": 0,
                                                   "subject_id": 1,
                                                   "packet": 1}})
             
-            await self.send_to_layer_group(self.users_and_ratings,
+            await self.send_to_layer_group(self.users_and_rating,
                                            'rating_updates', 'send_rating_update')
 
             '''
             data = {
                 'type': 'rating_updates',           # соответствует обработчику на JS
-                'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
+                'content': self.users_and_rating   # данные (должны быть сериализуемы в JSON)
             }
 
             await self.channel_layer.group_send(
@@ -106,19 +106,19 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     'message': json.dumps(data)
                 }
             )
-            print(self.users_and_ratings)
+            print(self.users_and_rating)
             '''
         
         if message_type == 'table':
             print('запрошена таблица рейтинга') 
             
-            await self.send_to_layer_group(self.users_and_ratings,
+            await self.send_to_layer_group(self.users_and_rating,
                                            'rating_table', 'send_rating_table')
 
             '''
             data = {
                 'type': 'rating_table',             # соответствует обработчику на JS
-                'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
+                'content': self.users_and_rating   # данные (должны быть сериализуемы в JSON)
             }
 
             await self.channel_layer.group_send(
@@ -129,29 +129,37 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 }
             )
             '''
+        
         if message_type == 'next_question':
             
-            number = self.users_and_ratings[user]['number']
+            number = self.users_and_rating[user]['number']
             number += 1
-            subject_id = self.users_and_ratings[user]['subject_id']
-            packet = self.users_and_ratings[user]['packet'] 
+            subject_id = self.users_and_rating[user]['subject_id']
+            packet = self.users_and_rating[user]['packet'] 
+            score = self.users_and_rating[user]['score'] 
             
             question_obj = False
             try:
                 question_obj = await self.get_question(number=number, subject_id=1, packet=1)
             except:
+            
+                await self.send_to_layer_group(score,
+                                              'end_test', 'send_rating_update')
 
+                '''
                 data = {
                     'type': 'end_test',                # соответствует обработчику на JS
-                    'content': 'user_rating'           # данные (должны быть сериализуемы в JSON)
+                    'content': score                   # данные (должны быть сериализуемы в JSON)
                 }
                 await self.channel_layer.group_send(
-                'rating',
-                {
-                    'type': 'send_question_data',
-                    'message': json.dumps(data)
-                }
-            )
+                    'rating',
+                    {
+                        'type': 'send_question_data',
+                        'message': json.dumps(data)
+                    }
+                )
+            '''
+            
             if question_obj:
                 question = {
                     'text': question_obj.text,
@@ -163,7 +171,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
                 print(question)
                 
-                self.users_and_ratings[user]['number'] = number
+                self.users_and_rating[user]['number'] = number
                 
                 await self.send_to_layer_group(question,
                                                'next_question', 'send_question_data')
@@ -186,7 +194,10 @@ class RatingConsumer(AsyncWebsocketConsumer):
         if message_type == 'answer':
             answer = data.get("answer")
             question_id = data.get("question_id")
-            print(f'получен ответ: {answer}') 
+            answered_at = data.get("answered_at")
+            print(f'получен ответ: {answer} в {answered_at}') 
+            
+            answered_at_server = data.get("answered_at") # datetime.datetime.now(),
 
             try:
                 student = await database_sync_to_async(User.objects.get)(username=user)
@@ -200,29 +211,32 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 if answer:
                     if answer == correct_answer:
                         is_correct = True
+
+                        
                     else:
                         is_correct = False   
 
-            except User.DoesNotExist:
-                student = None
+            except Question.DoesNotExist:
+                question_obj = None
 
             # Записываем ответ
             await database_sync_to_async(Answer.objects.create)(
                 user=student,
                 question_id=question_id,
                 answer=answer,
-                answered_at=datetime.datetime.now(),
+                answered_at_server=answered_at_server,
+                answered_at_client=answered_at,
                 is_correct=is_correct
-
             )
-           
-            await self.send_to_layer_group(self.users_and_ratings,
+
+            # Обновляем рейтинг
+            await self.send_to_layer_group(self.users_and_rating,
                                            'rating_updates', 'send_rating_update')
 
             '''
             data = {
                 'type': 'rating_updates',           # соответствует обработчику на JS
-                'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
+                'content': self.users_and_rating   # данные (должны быть сериализуемы в JSON)
             }
 
             await self.channel_layer.group_send(
@@ -235,56 +249,3 @@ class RatingConsumer(AsyncWebsocketConsumer):
         
             '''
         
-        '''
-
-
-        # Обновляем прогресс
-        next_question = await self.get_next_question(self.student, question)
-        if next_question:
-            # Обновляем прогресс
-            await database_sync_to_async(
-                lambda: UserProgress.objects.filter(student=self.student).update(current_question=next_question)
-            )
-            # Отправляем следующий вопрос
-            await self.send_question(next_question)
-        else:
-            # Тест завершен
-            await self.send(json.dumps({"message": "Тест завершен"}))
-            # Можно отключить или оставить для общего прогресса
-
-        # Рассылаем обновление прогресса всем
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                'type': 'update_progress',
-                'student': self.student.username,
-                'status': 'answered'
-            }
-        )
-        
-        ###
-        current_question = progress.current_question
-        if current_question:
-            await self.send_question(current_question)
-        else:
-            # Если вопросов нет или завершено
-            await self.send(json.dumps({"message": "Тест завершен"}))
-        '''
-
-
-    async def update_progress(self, event):
-        # Обработка обновления прогресса для всех
-        await self.send(text_data=json.dumps({
-            'message': f"{event['student']} ответил и переходит к следующему вопросу."
-        }))
-
-
-    @database_sync_to_async
-    def get_next_question(self, user, current_question):
-        # Логика получения следующего вопроса
-        questions = list(Question.objects.all().order_by('id'))
-        try:
-            index = questions.index(current_question)
-            return questions[index + 1]
-        except (ValueError, IndexError):
-            return None

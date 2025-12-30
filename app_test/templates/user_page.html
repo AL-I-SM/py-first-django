@@ -119,25 +119,20 @@
             }
         }
 
-        function sendAnswer(question_id) {
-            const answer = document.getElementById('answerInput').value.trim();
-            if (!answer) {
-                alert('Пожалуйста, введите ответ');
-                return;
-            }
-            // Отправляем ответ на сервер через WebSocket
-            socket.send(JSON.stringify({ type: "answer", answer: answer, user: 'Ваше имя', "question_id": question_id }));
-            document.getElementById('answerInput').value = '';
-        }
-
         function appendUser() {
             const waitInfo = document.getElementById('waitInfo');
             waitInfo.textContent = "тест закончен";
-            socket.send(JSON.stringify({ type: "auth", user: "{{ user|escapejs }}" }));
+            socket.send(JSON.stringify({
+                type: "auth",
+                user: "{{ user|escapejs }}"
+            }));
         }
 
         function getUserTable() {
-            socket.send(JSON.stringify({ type: "table", user: "{{ user|escapejs }}" }));
+            socket.send(JSON.stringify({
+                type: "table",
+                user: "{{ user|escapejs }}"
+            }));
         }
 
         function startTest() {
@@ -154,26 +149,36 @@
         function sendAnswer() {
 
             const radios = document.querySelectorAll('input[name="answer"]');
+            const answered_at = new Date();
+
             let answer = '';
+
+            console.log('время: ', answered_at);
 
             if (radios.length > 0) {
                 // Есть радиокнопки
                 radios.forEach(r => {
                     if (r.checked) answer = r.value;
                 });
-            } 
+            }
             else {
                 // Поле для ввода
                 answer = document.getElementById('answerInput').value;
             }
 
+            if (!answer) {
+                alert('Пожалуйста, введите ответ');
+                return;
+            }
+
             questionId = document.getElementById('questionId').textContent;
-            
+
             socket.send(JSON.stringify({
                 type: "answer",
-                user: "{{ user|escapejs }}", 
+                user: "{{ user|escapejs }}",
                 answer: answer,
-                question_id: questionId
+                question_id: questionId,
+                answered_at: answered_at
             }));
             console.log('ответ отправлен: ', answer, 'id :', questionId);
             getNextQuestion();

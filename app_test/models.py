@@ -11,13 +11,15 @@ class Question(models.Model):
     correct_answer = models.CharField(max_length=255)
     packet = models.IntegerField()
     subject = models.ForeignKey(Disciplines, on_delete=models.PROTECT)
+    score = models.IntegerField()
 
 
 class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.CharField(max_length=255)
-    answered_at = models.DateTimeField(auto_now_add=True)
+    answered_at_client = models.DateTimeField(null=True)
+    answered_at_server = models.DateTimeField(auto_now_add=True, null=True)
     is_correct = models.BooleanField(null=True)
     
 
