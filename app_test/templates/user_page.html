@@ -94,17 +94,22 @@
 
             if (data.type === 'next_question') {
                 // Обновляем вопрос
-                console.log('получен новый вопрос');
-                updateDataQuestion(data.content);
+                console.log(data.user)
+                if (data.user === "{{ user|escapejs }}") {
+                    console.log('получен новый вопрос');
+                    updateDataQuestion(data.content);
+                }
             }
-            
+
             if (data.type === 'start') {
                 startTest(data.content);
             }
 
             if (data.type === 'end_test') {
                 // Закончить тест
+                if (data.user === "{{ user|escapejs }}") {
                 endTest(data.content);
+                }
             }
         };
 
@@ -140,12 +145,12 @@
         }
 
         function manualStartTest() {
-            socket.send(JSON.stringify({ 
+            socket.send(JSON.stringify({
                 type: "start",
                 user: "{{ user|escapejs }}"
             }));
         }
-        
+
         function startTest() {
             console.log('начало теста');
             document.getElementById('answerOptions').hidden = false;
@@ -153,7 +158,7 @@
             document.getElementById('answerInput').hidden = false;
             document.getElementById('testQuestion').hidden = false;
             document.getElementById('waitInfo').hidden = true;
-            socket.send(JSON.stringify({ 
+            socket.send(JSON.stringify({
                 type: "start",
                 user: "{{ user|escapejs }}"
             }));

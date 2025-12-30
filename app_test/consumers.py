@@ -53,9 +53,10 @@ class RatingConsumer(AsyncWebsocketConsumer):
     def get_question(self, number, subject_id, packet):
         return Question.objects.get(number=number, subject_id=subject_id, packet=packet)
     
-    async def send_to_layer_group(self, content, type, type_data):
+    async def send_to_layer_group(self, user, content, type, type_data):
 
         data = {
+            'user': user,
             'type': type,                       # соответствует обработчику на JS
             'content': content                  # данные (должны быть сериализуемы в JSON)
         }
@@ -80,7 +81,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
             # можно еще принимать вермя старта от каждого клиента
             if not self.started:
                 self.started = True
-                await self.send_to_layer_group(str(datetime.now()),
+                await self.send_to_layer_group(user, str(datetime.now()),
                                               'start', 'send_rating_update')
 
         if message_type == 'auth':
@@ -90,7 +91,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                                                   "subject_id": 1,
                                                   "packet": 1}})
             
-            await self.send_to_layer_group(self.users_and_rating,
+            await self.send_to_layer_group(user, self.users_and_rating,
                                            'rating_updates', 'send_rating_update')
 
             '''
@@ -112,7 +113,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
         if message_type == 'table':
             print('запрошена таблица рейтинга') 
             
-            await self.send_to_layer_group(self.users_and_rating,
+            await self.send_to_layer_group(user, self.users_and_rating,
                                            'rating_table', 'send_rating_table')
 
             '''
@@ -145,7 +146,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 question_obj = await self.get_question(number, subject_id, packet)
             except Exception as e:
                 print(f'данне вопроса не получены: {e}')
-                await self.send_to_layer_group(score,
+                await self.send_to_layer_group(user, score,
                                               'end_test', 'send_rating_update')
 
                 '''
@@ -175,6 +176,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
             if question_obj:
                 question = {
+                    
                     'text': question_obj.text,
                     'options': question_obj.options,
                     'number': question_obj.number,
@@ -186,7 +188,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 
                 self.users_and_rating[user]['number'] = number
                 
-                await self.send_to_layer_group(question,
+                await self.send_to_layer_group(user, question,
                                                'next_question', 'send_question_data')
 
                 '''
@@ -252,7 +254,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 self.users_and_rating[user]['score'] += question_obj.score
 
             # Обновляем рейтинг
-            await self.send_to_layer_group(self.users_and_rating,
+            await self.send_to_layer_group(user, self.users_and_rating,
                                            'rating_updates', 'send_rating_update')
 
             '''
