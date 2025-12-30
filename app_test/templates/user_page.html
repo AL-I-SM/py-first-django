@@ -2,68 +2,140 @@
 <html lang="ru">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Ответы и Рейтинг</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8" />
+<title>Ответы и Рейтинг</title>
+<style>
+    body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
 
-        .question {
-            margin-bottom: 20px;
-        }
+    h1, h2 {
+        text-align: center;
+        color: #2c3e50;
+    }
 
-        #ratingTable {
-            width: 60%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
+    /* Стиль карточки для вопроса */
+    .question {
+        background-color: #ffffff;
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: box-shadow 0.3s ease;
+    }
 
-        th,
-        td {
-            border: 1px solid #333;
-            padding: 8px;
-            text-align: left;
-        }
+    .question:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
 
-        th {
-            background-color: #f0f0f0;
-        }
+    #testQuestion {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        font-weight: 600;
+        color: #34495e;
+    }
 
-        .hidden {
-            display: none;
-        }
-    </style>
+    /* Кнопка */
+    button {
+        background-color: #2980b9;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #3498db;
+    }
+
+    /* Раздел ожидания */
+    .start {
+        max-width: 700px;
+        margin: 20px auto;
+        text-align: center;
+        background-color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    #waitInfo {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        color: #7f8c8d;
+    }
+
+    /* Таблица рейтинга */
+    #ratingTable {
+        width: 80%;
+        max-width: 900px;
+        margin: 40px auto;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background-color: #fff;
+    }
+
+    #ratingTable th,
+    #ratingTable td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    #ratingTable th {
+        background-color: #34495e;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    /* Анимация при наведении на строки таблицы */
+    #ratingTable tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+</style>
 </head>
 
 <body>
-    <h1>Ответьте на вопрос</h1>
 
-    <div class="question">
-        <p id="testQuestion" hidden>Вопрос</p>
-        <div id="questionId" hidden></div>
-        <div text='' id="answerOptions" hidden></div>
-        <input type="text" id="answerInput" hidden placeholder="Ваш ответ" />
-        <button id="submitButton" hidden onclick="sendAnswer()">Отправить ответ</button>
-    </div>
+<h1>Ответьте на вопрос</h1>
 
-    <div class="start">
-        <p id="waitInfo">- Ожидание начала теста -</p>
-        <button id="submitButton" onclick="manualStartTest()">Начать вручную</button>
+<div class="question">
+    <p id="testQuestion" hidden>Вопрос</p>
+    <div id="questionId" hidden></div>
+    <div id="answerOptions" hidden></div>
+    <input type="text" id="answerInput" hidden placeholder="Ваш ответ" />
+    <button id="submitButton" hidden onclick="sendAnswer()">Отправить ответ</button>
+</div>
 
-    </div>
+<div class="start">
+    <p id="waitInfo">- Ожидание начала теста -</p>
+    <button onclick="manualStartTest()">Начать вручную</button>
+</div>
 
-    <h2>Общий рейтинг</h2>
-    <table id="ratingTable">
-        <thead>
-            <tr>
-                <th>Пользователь</th>
-                <th>Очки</th>
-                <th>Время (сек)</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<h2>Общий рейтинг</h2>
+<table id="ratingTable">
+    <thead>
+        <tr>
+            <th>Пользователь</th>
+            <th>Очки</th>
+            <th>Время (сек)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+</body>
+</html>
 
     <script>
         const socket = new WebSocket('ws://' + window.location.host + '/ws/rating/');
