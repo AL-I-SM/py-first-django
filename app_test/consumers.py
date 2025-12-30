@@ -59,6 +59,22 @@ class RatingConsumer(AsyncWebsocketConsumer):
         return Question.objects.get(number=number, subject_id=subject_id, packet=packet)
 
 
+    async def send_to_layer_group(self, content, type, type_data):
+
+        data = {
+            'type': type,                       # соответствует обработчику на JS
+            'content': content                  # данные (должны быть сериализуемы в JSON)
+        }
+
+        await self.channel_layer.group_send(
+            'rating',
+            {
+                'type': type_data,
+                'message': json.dumps(data)
+            }
+        )
+
+
     async def receive(self, text_data):
         
         data = json.loads(text_data)
@@ -74,6 +90,10 @@ class RatingConsumer(AsyncWebsocketConsumer):
                                                   "subject_id": 1,
                                                   "packet": 1}})
             
+            await self.send_to_layer_group(self.users_and_ratings,
+                                           'rating_updates', 'send_rating_update')
+
+            '''
             data = {
                 'type': 'rating_updates',           # соответствует обработчику на JS
                 'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
@@ -87,9 +107,15 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 }
             )
             print(self.users_and_ratings)
+            '''
         
         if message_type == 'table':
             print('запрошена таблица рейтинга') 
+            
+            await self.send_to_layer_group(self.users_and_ratings,
+                                           'rating_table', 'send_rating_table')
+
+            '''
             data = {
                 'type': 'rating_table',             # соответствует обработчику на JS
                 'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
@@ -102,7 +128,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     'message': json.dumps(data)
                 }
             )
-
+            '''
         if message_type == 'next_question':
             
             number = self.users_and_ratings[user]['number']
@@ -138,7 +164,11 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 print(question)
                 
                 self.users_and_ratings[user]['number'] = number
+                
+                await self.send_to_layer_group(question,
+                                               'next_question', 'send_question_data')
 
+                '''
                 data = {
                     'type': 'next_question',             # соответствует обработчику на JS
                     'content': question                  # данные (должны быть сериализуемы в JSON)
@@ -151,6 +181,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                         'message': json.dumps(data)
                     }
                 )
+                '''
 
         if message_type == 'answer':
             answer = data.get("answer")
@@ -185,6 +216,10 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
             )
            
+            await self.send_to_layer_group(self.users_and_ratings,
+                                           'rating_updates', 'send_rating_update')
+
+            '''
             data = {
                 'type': 'rating_updates',           # соответствует обработчику на JS
                 'content': self.users_and_ratings   # данные (должны быть сериализуемы в JSON)
@@ -197,6 +232,8 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     'message': json.dumps(data)
                 }
             )
+        
+            '''
         
         '''
 
