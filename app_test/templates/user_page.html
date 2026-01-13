@@ -58,7 +58,7 @@
         }
 
         /* Раздел ожидания */
-        .sendAnswer {
+        .buttonForm {
             max-width: 700px;
             margin: 20px auto;
             text-align: center;
@@ -117,12 +117,12 @@
         <input type="text" id="answerInput" hidden placeholder="Ваш ответ" />
     </div>
 
-    <div class="sendAnswer">
+    <div class="buttonForm">
         <button id="submitButton" hidden onclick="sendAnswer()">Отправить ответ</button>
         <p id="waitInfo">- Ожидание начала теста -</p>
     </div>
 
-    <div class="sendAnswer" id="startTest">
+    <div class="buttonForm" id="startTest">
         <button onclick="manualStartTest()">Начать вручную</button>
     </div>
 
