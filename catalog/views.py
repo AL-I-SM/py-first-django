@@ -1,17 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 # from django.utils.datetime import datetime
 from django.views import generic
-from .models import Book, Author, BookInstance, Genre
+from .models import Book, Author, BookInstance, Genre, Status
 from .forms import AuthorsForms
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from rest_framework import generics
 from .serializers import BookSerializer
+from datetime import datetime
 
 
 class BookAPIView(generics.ListAPIView):
@@ -64,6 +65,34 @@ def author_delete(request, id):
         return HttpResponseRedirect("/authors_add")
     except Author.DoesNotExist:
         return HttpResponseNotFound("<h2>Автор не найден</h2>")
+
+
+@login_required
+def reserve_book(request, id):
+    book_instance = BookInstance.objects.get(id=id)
+    # Проверка, что книга не забронирована
+    # if book_instance.status and book_instance.status.name != 'бронь':
+    print(book_instance)
+        # Обновляем статус
+    book_instance.status = Status.objects.get(name='бронь')
+    book_instance.borrower = request.user
+    book_instance.due_back = datetime.now()
+    book_instance.save()
+    return redirect(reverse('book-detail', args=[book_instance.book_id]))
+
+
+@login_required
+def return_book(request, id):
+    book_instance = BookInstance.objects.get(id=id)
+    # Проверка, что книга не забронирована
+    # if book_instance.status and book_instance.status.name != 'бронь':
+    print(book_instance)
+        # Обновляем статус
+    book_instance.status = Status.objects.get(name='выдана')
+    book_instance.borrower = request.user
+    book_instance.save()
+    return redirect(reverse('myborrowed'))
+  
 
 
 class BookCreate(CreateView):

@@ -9,6 +9,9 @@ urlpatterns = [
     path('author_edit/<int:id>/', views.author_edit, name="author_edit"),
     path('author_delete/<int:id>/', views.author_delete, name="author_delete"),
     path('author_create/', views.author_create, name="author_create"),
+    re_path(r'reserve/(?P<id>\d+)$', views.reserve_book, name='reserve_book'),
+    re_path(r'return/(?P<id>\d+)$', views.return_book, name='return_book'),
+    
     # path('admin/', admin.site.urls),
     re_path(r'^books/$', views.BookListView.as_view(), name='books'),
     re_path(r'^books/(?P<pk>\d+)$', views.BookDetailView.as_view(), name='book-detail'),

@@ -20,9 +20,14 @@
                  {% elif copy.status == 2 %} text-danger
                  {% else %} text-warning
                  {% endif %}"> {{ copy.get_status_display }}</p>
-       <p><strong>Издательство:</strong> {{copy.imprint}}</p>
-       <p class="text-muted"><strong>Инвентарный номер:</strong> {{copy.id}}</p>
-       <p><strong>Статус экземпляра книги в БД:</strong> {{copy.status}}</p>
+      <p><strong>Издательство:</strong> {{copy.imprint}}</p>
+      <p class="text-muted"><strong>Инвентарный номер:</strong> {{copy.inv_nom}}</p>
+      <p><strong>Статус экземпляра книги в БД:</strong> {{copy.status}}</p>
+      {% if copy.status.name != 'бронь' %}
+         <a href="{% url 'reserve_book' copy.pk %}">забронировать</a>
+      {% else %}
+         <p>книга забронирована</p>
+      {% endif %}
     {% endfor %}
   </div>
 {% endblock %}   .
