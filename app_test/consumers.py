@@ -33,7 +33,6 @@ class RatingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"]._wrapped 
         self.group_name = 'rating' ###
-        # self.group_name = "quiz_group"
         self.channel_layer = get_channel_layer() #???
 
         await self.channel_layer.group_add(
@@ -51,16 +50,12 @@ class RatingConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def send_rating_update(self, event):
-        print('данне общего рейтинга обновлены')
-        await self.send(text_data=event['message'])
-
     async def send_rating_table(self, event):
         print('таблица рейтинга отправлена')
         await self.send(text_data=event['message'])
 
     async def send_question_data(self, event):
-        print('следующий вопрос отправлен')
+        print('вопрос отправлен')
         await self.send(text_data=event['message'])
        
     @database_sync_to_async
@@ -94,11 +89,11 @@ class RatingConsumer(AsyncWebsocketConsumer):
         if message_type == 'start':
 
             # можно еще принимать вермя старта от каждого клиента
-            # if self.group_name not in self.groups_started:
-
+            
+            # добавляет начавшийся тест и время его начала в общий словарь
             self.groups_started.update({self.group_name: datetime.now()})
             await self.send_to_layer_group(user, str(datetime.now()),
-                                            'start', 'send_rating_update')
+                                            'start', 'send_rating_table')
 
         if message_type == 'auth':
             self.users_and_rating.update({user: {"score": 0, 
@@ -108,7 +103,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                                                  "packet": 1}})
             
             await self.send_to_layer_group(user, self.users_and_rating,
-                                           'rating_updates', 'send_rating_update')
+                                           'rating_updates', 'send_rating_table')
        
         if message_type == 'table':
             print('запрошена таблица рейтинга') 
@@ -132,6 +127,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
             '''
         
         if message_type == 'question':
+            # если тест начался, то он в словаре, иначе вопрос не отправляется
             if self.group_name in self.groups_started:
         
                 number_inc = 1 if data.get("state") == 'next' else 0
@@ -150,7 +146,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 except Exception as e:
                     print(f'данне вопроса не получены: {e}')
                     await self.send_to_layer_group(user, score,
-                                                'end_test', 'send_rating_update')
+                                                'end_test', 'send_rating_table')
 
                     student = await database_sync_to_async(User.objects.get)(username=user)
                     # get_or_create
@@ -166,6 +162,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     # удалить пользователя из теста
                     del self.users_and_rating[user]
                     print("пользователь закончил тест")
+                    
                     if not self.users_and_rating:
                         del self.groups_started[self.group_name]
 
@@ -236,4 +233,4 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
             # Обновляем рейтинг
             await self.send_to_layer_group(user, self.users_and_rating,
-                                           'rating_updates', 'send_rating_update')
+                                           'rating_updates', 'send_rating_table')
