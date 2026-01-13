@@ -1,19 +1,49 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Список авторов в БД</h1>
-    {% if author_list %}
-    <ul>
-      {% for author in author_list %}
-      <li>
-        <a href="{{ author.get_absolute_url }}">
-                 {{ author.first_name }}
-                 {{ author.last_name }}</a>
-                 ({{ author.date_of_birth }} - {{ author.date_of_birth }})
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-      <p>В базе данных нет авторов</p>
-    {% endif %}
+<style>
+
+/* Элемент списка */
+  .authors {
+    background-color: #ffffff;
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    list-style: none;
+    color: #2980b9;
+    text-align: center;
+  }
+
+  /* При наведении на элемент */
+  .authors:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  /* Статус авторов (даты) */
+  span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.95em;
+    color: #555;
+  }
+</style>
+
+<h1>Список авторов в базе данных</h1>
+{% if author_list %}
+<ul>
+  {% for author in author_list %}
+  <li class="authors">
+    <a href="{{ author.get_absolute_url }}">{{ author.first_name }} {{ author.last_name }}</a>
+    <span>({{ author.date_of_birth }} - {{ author.date_of_birth }})</span>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>В базе данных нет авторов</p>
+{% endif %}
 {% endblock %}

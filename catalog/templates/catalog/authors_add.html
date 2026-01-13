@@ -1,25 +1,134 @@
 {% extends "base_generic.html" %}
 {% block content %}
-    <h3>Список авторов в БД</h3>
+<style>
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* скрыты по умолчанию */
+    .action-icons {
+        opacity: 0;
+        transition: opacity 0.3s;
+        margin-left: 10px;
+    }
+
+    /* иконки при наведении на строку */
+    li:hover .action-icons {
+        opacity: 1;
+    }
+
+    /* Стиль для ссылок с иконками, убираем стандартный стиль */
+    .action-icons a {
+        text-decoration: none;
+        margin: 0 5px;
+        font-size: 1.2em;
+        /* увеличиваем размер символов */
+        color: black;
+    }
+
+    /* Общие стили для блока */
+    form {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    /* Ячейки таблицы: лейблы и поля */
+    td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    /* Лейблы */
+    td:first-child {
+        width: 30%;
+        font-weight: bold;
+        padding-right: 15px;
+    }
+
+    /* Поля формы */
+    td:last-child {
+        width: 70%;
+    }
+
+    /* Стили для input и textarea */
+    input[type="text"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+        transition: border-color 0.2s;
+        overflow: auto;
+    }
+
+    /* Фокус на поля */
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #66afe9;
+        outline: none;
+        box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+    }
+
+    /* Кнопка */
+    input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 20px;
+    }
+
+    /* Эффект при наведении */
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+</style>
+
+
+<h2>Список авторов в БД</h2>
+
+
+{% if author %}
+<ul>
+    {% for author in author.all %}
+    <li>
+        {{ author.first_name }} {{ author.last_name }}
+        <span class="action-icons">
+            <a href="{% url 'author_edit' author.id %}" title="Редактировать">✎</a>
+            <a href="{% url 'author_delete' author.id %}" title="Удалить">🗑️</a>
+        </span>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>В базе данных нет авторов</p>
+{% endif %}
+
+<h2>Добавить в БД автора книги</h2>
+<form method="POST" action="/author_create/">
+    {% csrf_token %}
     <table>
-        <thead><th>Имя</th><th>Фамилия</th></thead>
-        {% if author %}
-            {% for author in author.all %}
-            <tr>
-                <td>{{ author.first_name }}</td>
-                <td>{{ author.last_name }}</td>
-                <td><a href="{% url 'author_edit' author.id %}">Изменить</a>
-                    <a href="{% url 'author_delete' author.id %}">Удалить</a></td>
-            </tr>
-            {% endfor %}
-        {% endif %}
+        {{ form.as_table }}
     </table>
-  <h3>Добавить в БД автора книги</h3>
-    <form method="POST" action="/author_create/">
-        {% csrf_token %}
-        <table>
-            {{ form }}
-        </table>
-        <input type="submit" value="Сохранить">
-    </form>
+    <div style="text-align: center;">
+        <input type="submit" value="Сохранить" />
+    </div>
+</form>
 {% endblock %}

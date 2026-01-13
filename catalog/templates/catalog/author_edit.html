@@ -1,27 +1,25 @@
 {% extends "base_generic.html" %}
+
 {% block content %}
 
-    <h3>Список авторов в БД</h3>
-    <h4>{{ author.first_name }} {{ author.last_name }}</h4>
-    <form method="POST">
-        {% csrf_token %}
-            <p> <label>Измените имя</label>
-                <input type="text" name="first_name"
-                value="{{ author.first_name }}" />
-            </p>
-            <p><label>Измените фамилию</label>
-                <input type="text" name="last_name"
-                value="{{ author.last_name }}" />
-            </p>
-            <p> <label>Дата рождения</label>
-                <input type="date" name="date_of_birth"
-                value="{{ author.date_of_birth }}" />
-            </p>
-            <p> <label>Дата смерти</label>
-                <input type="date" name="date_of_death"
-                value="{{ author.date_of_death }}" />
-            </p>
 
-        <input type="submit" value="Сохранить">
-    </form>
+<h3>Список авторов в БД</h3>
+<h4>{{ author.first_name }} {{ author.last_name }}</h4>
+<form method="POST">
+    {% csrf_token %}
+    <p> <label>Измените имя</label>
+        <input type="text" name="first_name" value="{{ author.first_name }}" />
+    </p>
+    <p><label>Измените фамилию</label>
+        <input type="text" name="last_name" value="{{ author.last_name }}" />
+    </p>
+    <p> <label>Дата рождения</label>
+        <input type="date" name="date_of_birth" value="{{ author.date_of_birth }}" />
+    </p>
+    <p> <label>Дата смерти</label>
+        <input type="date" name="date_of_death" value="{{ author.date_of_death }}" />
+    </p>
+
+    <input type="submit" value="Сохранить">
+</form>
 {% endblock %}

@@ -1,34 +1,72 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Название книги: {{ book.title }}</h1>
+<style>
+   /* Элемент списка */
+   .authors {
+      background-color: #ffffff;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      list-style: none;
+      text-align: center;
+   }
 
-  <p><strong>Жанр:</strong> {{ book.genre }}</p>
-  <p><strong>Аннотация:</strong> {{ book.summary }}</p>
-  <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-  <p><strong>Язык:</strong> {{ book.language }}</p>
-     {% for author in book.author.all %}
-        <p><strong>Автор:</strong>
-            <a href="{{ author.get_absolute_url }}">{{ author.first_name }}
-                      {{author.last_name}}</a></p>
-     {% endfor %}
+   /* При наведении на элемент */
+   .authors:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+   }
+
+   span {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.95em;
+      color: #555;
+   }
+
+   h4 {
+      text-align: center;
+   }
+</style>
+
+<h2>Название книги: {{ book.title }}</h2>
+
+<p><strong>Жанр:</strong> {{ book.genre }}</p>
+<p><strong>Аннотация:</strong> {{ book.summary }}</p>
+<p><strong>ISBN:</strong> {{ book.isbn }}</p>
+<p><strong>Язык:</strong> {{ book.language }}</p>
+{% for author in book.author.all %}
+<p><strong>Автор:</strong>
+   <a href="{{ author.get_absolute_url }}">{{ author.first_name }}
+      {{author.last_name}}</a>
+      <span>({{ author.date_of_birth }} - {{ author.date_of_death }})</span>
+</p>
+{% endfor %}
 
 <div style="margin-left:20px;margin-top:20px">
-    <h4>Количество экземпляров книг в БД</h4>
-    {% for copy in book.bookinstance_set.all %}
-       <hr><p class="{% if copy.status == 1 %} text-success
+   <h4>Количество экземпляров книг в БД</h4>
+   <ul>
+      {% for copy in book.bookinstance_set.all %}
+      <span class="{% if copy.status == 1 %} text-success
                  {% elif copy.status == 2 %} text-danger
                  {% else %} text-warning
-                 {% endif %}"> {{ copy.get_status_display }}</p>
-      <p><strong>Издательство:</strong> {{copy.imprint}}</p>
-      <p class="text-muted"><strong>Инвентарный номер:</strong> {{copy.inv_nom}}</p>
-      <p><strong>Статус экземпляра книги в БД:</strong> {{copy.status}}</p>
+                 {% endif %} authors"> {{ copy.get_status_display }}
+         <strong>Издательство:</strong> {{copy.imprint}}
+         <p class="text-muted"><strong>Инвентарный номер:</strong> {{copy.inv_nom}}</p>
+         <p><strong>Статус экземпляра книги в БД:</strong> {{copy.status}}</p>
+      </span>
       {% if copy.status.name != 'бронь' %}
-         <a href="{% url 'reserve_book' copy.pk %}">забронировать</a>
+      <a href="{% url 'reserve_book' copy.pk %}">забронировать</a>
       {% else %}
-         <p>книга забронирована</p>
+      <p>книга забронирована</p>
       {% endif %}
-    {% endfor %}
-  </div>
-{% endblock %}   .
-<p><strong>Автор:</strong> <a href="">{{ author.first_name }}  {{author.last_name}}</a></p>
+      {% endfor %}
+   </ul>
+</div>
+{% endblock %} .
+<p><strong>Автор:</strong> <a href="">{{ author.first_name }} {{author.last_name}}</a></p>
