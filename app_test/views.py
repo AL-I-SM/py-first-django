@@ -11,7 +11,7 @@ import random
 menu = {}
   
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'quiz.html')
 
 
 @login_required
@@ -19,7 +19,7 @@ def user_quiz(request):
 
     context = {'user': request.user,
                'all_menu': menu}
-    return render(request, 'user_page.html', context)
+    return render(request, 'quiz_user_page.html', context)
 
 
 
