@@ -23,8 +23,8 @@ class RatingConsumer(AsyncWebsocketConsumer):
     # должны быть доработки вроде users_and_rating['название канала'],
     # или что-то аналогичное для работы нескольких тестов одновременно
     users_and_rating = {}
-    groups_started = set()
-    start_time = datetime.now()
+    groups_started = {}
+    
 
     def __init__(self , *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -92,13 +92,13 @@ class RatingConsumer(AsyncWebsocketConsumer):
         print(self.users_and_rating, self.channel_layer)
 
         if message_type == 'start':
-            self.start_time = datetime.now()
 
             # можно еще принимать вермя старта от каждого клиента
-            if self.group_name not in self.groups_started:
-                self.groups_started.add(self.group_name)
-                await self.send_to_layer_group(user, str(datetime.now()),
-                                              'start', 'send_rating_update')
+            # if self.group_name not in self.groups_started:
+
+            self.groups_started.update({self.group_name: datetime.now()})
+            await self.send_to_layer_group(user, str(datetime.now()),
+                                            'start', 'send_rating_update')
 
         if message_type == 'auth':
             self.users_and_rating.update({user: {"score": 0, 
@@ -166,6 +166,8 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     # удалить пользователя из теста
                     del self.users_and_rating[user]
                     print("пользователь закончил тест")
+                    if not self.users_and_rating:
+                        del self.groups_started[self.group_name]
 
 
                 if question_obj:
@@ -215,7 +217,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
             format = "%Y-%m-%dT%H:%M:%S.%fZ"
             time_answer = datetime.strptime(answered_at, format).replace(tzinfo=timezone.utc)
-            start = self.start_time.astimezone(zoneinfo.ZoneInfo("Europe/Moscow"))
+            start =  self.groups_started[self.group_name].astimezone(zoneinfo.ZoneInfo("Europe/Moscow"))
             seconds = abs((time_answer - start).total_seconds())
             self.users_and_rating[user]['time'] = seconds
 

@@ -122,8 +122,8 @@
         <p id="waitInfo">- Ожидание начала теста -</p>
     </div>
 
-    <div class="sendAnswer">
-        <button id="startTest" onclick="manualStartTest()">Начать вручную</button>
+    <div class="sendAnswer" id="startTest">
+        <button onclick="manualStartTest()">Начать вручную</button>
     </div>
 
     <h2>Общий рейтинг</h2>
@@ -286,6 +286,7 @@
         document.getElementById('answerInput').hidden = false;
         document.getElementById('testQuestion').hidden = false;
         document.getElementById('waitInfo').hidden = true;
+        document.getElementById('startTest').hidden = true;
 
         options = questionData.options;
 
@@ -338,7 +339,7 @@
         document.getElementById('answerInput').hidden = true;
         document.getElementById('testQuestion').hidden = true;
         document.getElementById('waitInfo').hidden = false;
-
+        
     }
 
 </script>
