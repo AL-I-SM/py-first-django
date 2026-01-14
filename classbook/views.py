@@ -367,7 +367,7 @@ class KTPListInlineEditView(View):
         classes = Classes.objects.all()
 
         page_number = request.GET.get('page', 1)
-        paginator = Paginator(ktp_list, 20)
+        paginator = Paginator(ktp_list, 10)
         ktp_page = paginator.get_page(page_number)
 
         context = {
