@@ -1,77 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
     <meta charset="UTF-8" />
     <title>Рейтинг в реальном времени</title>
-    <style>
-        h1,
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        /* Кнопка */
-        button {
-            background-color: #2980b9;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #3498db;
-        }
-
-        .buttonForm {
-            max-width: 700px;
-            margin: 20px auto;
-            text-align: center;
-            background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Таблица рейтинга */
-        #ratingTable {
-            width: 80%;
-            max-width: 900px;
-            margin: 40px auto;
-            border-collapse: collapse;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        #ratingTable th,
-        #ratingTable td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-
-        #ratingTable th {
-            background-color: #34495e;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        /* Анимация при наведении на строки таблицы */
-        #ratingTable tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-    </style>
+    <script src="{% static 'js/quiz.js' %}"></script>
 </head>
+
 
 <body>
     <div>- Присоединиться могут только авторизированные пользователи. </div>
-    <div>- Несложно доработать до возможности паралелльного тестирования в разних классах/групах/предметах/по коду подключения</div>
+    <div>- Несложно доработать до возможности паралелльного тестирования в разних классах/групах/предметах/по коду
+        подключения</div>
 
     <div class="buttonForm">
         <button onclick="joinAndRedirect()" class="btn btn-primary">Присоединиться</button>
@@ -89,76 +33,16 @@
         <tbody></tbody>
     </table>
 
-    <script>
-        // Укажите URL WebSocket
-        const socket = new WebSocket('ws://' + window.location.host + '/ws/rating/');
 
-        // Обработчик открытия соединения
-        socket.onopen = () => {
-            console.log('WebSocket подключен');
-            getUserTable();
-        };
-
-        // Обработчик ошибок
-        socket.onerror = (error) => {
-            console.error('WebSocket ошибка:', error);
-        };
-
-        // Обработчик получения сообщений
-        socket.onmessage = (event) => {
-
-            const data = JSON.parse(event.data);
-            if (data.type === 'rating_updates') {
-                // Обновляем таблицу
-                console.log('обновление рейтинга');
-                updateRatingTable(data.content);
-            }
-
-            if (data.type === 'rating_table') {
-                // Обновляем таблицу
-                console.log('получена таблица рейтнига');
-                updateRatingTable(data.content);
-            }
-
-            if (Array.isArray(data)) {
-                console.log('is array!');
-            }
-        };
-
-        // Обновление таблицы рейтинга
-        function updateRatingTable(ratingData) {
-            const tbody = document.getElementById('ratingTable').getElementsByTagName('tbody')[0];
-
-            // Очистить существующие строки
-            tbody.innerHTML = '';
-
-            for (const key in ratingData) {
-                const row = tbody.insertRow();
-                const userName = key;             // 'computer', 'computer1'
-                const userData = ratingData[key]; // объект с score и time
-
-                row.insertCell().textContent = userName;
-                row.insertCell().textContent = userData.score;
-                row.insertCell().textContent = userData.time;
-
-            }
-
-        }
-
-        function getUserTable() {
-            socket.send(JSON.stringify({ type: "table", user: "{{ user|escapejs }}" }));
-        }
-
-        function joinAndRedirect() {
-            appendUser();
-            window.location.href = '{% url "questions" %}';
-        }
-        function appendUser() {
-            socket.send(JSON.stringify({ type: "auth", user: "{{ user|escapejs }}" }));
-        }
-        // Можно также отправлять сообщения, если потребуется
-        // socket.send(JSON.stringify({message: 'что-то'}));
-    </script>
 </body>
 
 </html>
+
+<script>
+
+    var currentUser = "{{ user|escapejs }}";
+    var urlQuestions ='{% url "questions" %}';
+
+</script>
+
+{% endblock %}
