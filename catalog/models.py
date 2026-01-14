@@ -42,17 +42,17 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200,
-                             help_text="Введите название книги",
+                             help_text="",
                              verbose_name="Название книги")
     genre = models.ForeignKey('Genre', on_delete=models.CASCADE,
-                              help_text=" Выберите жанр для книги",
+                              help_text="",
                               verbose_name="Жанр книги", null=True)
     language = models.ForeignKey('Language',
                                  on_delete=models.CASCADE,
-                                 help_text="Выберите язык книги",
+                                 help_text="",
                                  verbose_name="Язык книги", null=True)
     author = models.ManyToManyField('Author',
-                                    help_text="Выберите автора книги",
+                                    help_text="",
                                     verbose_name="Автор книги")
     summary = models.TextField(max_length=1000,
                                help_text="Введите краткое описание книги",

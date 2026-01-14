@@ -25,10 +25,10 @@
                   <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
                             <li><a>Hello, <b> {{ user }} </b></a></li>
-							<li><form class="btn btn-secondary" method="post" action="{% url 'users:logout' %}">
+							<li><form class="no-style-form" method="post" action="{% url 'users:logout' %}">
 							  {% csrf_token %}
-							  <button type="submit">Выйти</button>
-							</form>
+							  <button class="btn btn-secondary" type="submit">Выйти</button>
+                            </form>
 							</li>
                         {% else %}
                             <li><a href="{% url 'users:register' %}">register</a></li>

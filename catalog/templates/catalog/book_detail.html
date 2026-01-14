@@ -1,38 +1,6 @@
 {% extends "base_generic.html" %}
-
+{% load static %}
 {% block content %}
-<style>
-   /* Элемент списка */
-   .authors {
-      background-color: #ffffff;
-      margin-bottom: 15px;
-      padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-      list-style: none;
-      text-align: center;
-   }
-
-   /* При наведении на элемент */
-   .authors:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.1em;
-   }
-
-   span {
-      display: block;
-      margin-top: 8px;
-      font-size: 0.95em;
-      color: #555;
-   }
-
-   h4 {
-      text-align: center;
-   }
-</style>
 
 <h2>Название книги: {{ book.title }}</h2>
 
@@ -48,18 +16,18 @@
 </p>
 {% endfor %}
 
-<div style="margin-left:20px;margin-top:20px">
+<div>
    <h4>Количество экземпляров книг в БД</h4>
    <ul>
       {% for copy in book.bookinstance_set.all %}
-      <span class="{% if copy.status == 1 %} text-success
+      <div class="{% if copy.status == 1 %} text-success
                  {% elif copy.status == 2 %} text-danger
                  {% else %} text-warning
-                 {% endif %} authors"> {{ copy.get_status_display }}
+                 {% endif %} inst"> {{ copy.get_status_display }}
          <strong>Издательство:</strong> {{copy.imprint}}
          <p class="text-muted"><strong>Инвентарный номер:</strong> {{copy.inv_nom}}</p>
          <p><strong>Статус экземпляра книги в БД:</strong> {{copy.status}}</p>
-      </span>
+   </div>
       {% if copy.status.name != 'бронь' %}
       <a href="{% url 'reserve_book' copy.pk %}">забронировать</a>
       {% else %}
