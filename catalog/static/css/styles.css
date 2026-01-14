@@ -124,9 +124,17 @@ textarea:focus {
     border-color: #66afe9;
     box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
     outline: none;
+}
 
 .danger {
     color: red;
+}
+
+.no-style-form {
+    width: auto;
+    padding: 0;
+    font: inherit;
+    margin: 7px;
 }
 
 form {
@@ -218,12 +226,4 @@ td:last-child {
 
 td:last-child {
     width: 70%;
-}
-
-.no-style-form {
-
-    width: auto;
-    padding: 0;
-    font: inherit;
-    margin: 7px;
 }

@@ -23,7 +23,7 @@
       <div class="{% if copy.status == 1 %} text-success
                  {% elif copy.status == 2 %} text-danger
                  {% else %} text-warning
-                 {% endif %} inst"> {{ copy.get_status_display }}
+                 {% endif %} books-inst"> {{ copy.get_status_display }}
          <strong>Издательство:</strong> {{copy.imprint}}
          <p class="text-muted"><strong>Инвентарный номер:</strong> {{copy.inv_nom}}</p>
          <p><strong>Статус экземпляра книги в БД:</strong> {{copy.status}}</p>
