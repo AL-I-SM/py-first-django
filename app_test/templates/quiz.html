@@ -9,14 +9,17 @@
     <meta charset="UTF-8" />
     <title>Рейтинг в реальном времени</title>
     <script src="{% static 'js/quiz.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'app_test/css/styles.css' %}" />
 </head>
 
 
 <body>
+    <div>- Работает через Django channels. При обновлении страцны текущий вопрос охранятеся </div>
+    <div>- Нужны некоторые доработки в логие тестоы и расширения функционала </div>
     <div>- Присоединиться могут только авторизированные пользователи. </div>
+    <div>- Для локальнойо проверки работы можно открыть в несколько браузеров и подключить несколько пользователей</div>
     <div>- Несложно доработать до возможности паралелльного тестирования в разних классах/групах/предметах/по коду
         подключения</div>
-
     <div class="buttonForm">
         <button onclick="joinAndRedirect()" class="btn btn-primary">Присоединиться</button>
     </div>
@@ -41,7 +44,7 @@
 <script>
 
     var currentUser = "{{ user|escapejs }}";
-    var urlQuestions ='{% url "questions" %}';
+    var urlQuestions = '{% url "questions" %}';
 
 </script>
 
