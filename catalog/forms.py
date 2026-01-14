@@ -1,17 +1,17 @@
 from django import forms
 from datetime import date
 from django.forms import ModelForm
-from .models import Book
+from .models import Book, Author
 
 
-class AuthorsForms(forms.Form):
-    first_name = forms.CharField(label="Имя автора")
-    last_name = forms.CharField(label="Фамилия автора")
-    date_of_birth = forms.DateField(label="Дата рождения", initial=format(date.today()),
-                                    widget=forms.widgets.DateInput(attrs={type: 'date'}))
-    date_of_death = forms.DateField(label="Дата смерти", initial=format(date.today()),
-                                    widget=forms.widgets.DateInput(attrs={type: 'date'}))
-
+class AuthorsForms(forms.ModelForm):
+    class Meta:
+        model = Author
+        fields = '__all__'
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'date_of_death': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 class BookModelForm(ModelForm):
     class Meta:
