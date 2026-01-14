@@ -1,69 +1,69 @@
 /* Границы таблицы */
 table {
-   /* Можно оставить закомментированным или убрать, если не нужен */
-   /* border: 1px solid grey; */
+  /* Можно оставить закомментированным или убрать, если не нужен */
+  /* border: 1px solid grey; */
 }
 
 /* Границы ячеек заголовка таблицы */
 th {
-   /* Можно оставить закомментированным или убрать, если не нужен */
-   /* border: 1px solid grey; */
+  /* Можно оставить закомментированным или убрать, если не нужен */
+  /* border: 1px solid grey; */
 }
 
 /* Границы ячеек тела таблицы */
 td {
-   /* Можно оставить закомментированным или убрать, если не нужен */
-   /* border: 1px solid grey; */
-   /* margin: 4px; */
+  /* Можно оставить закомментированным или убрать, если не нужен */
+  /* border: 1px solid grey; */
+  /* margin: 4px; */
 }
 
 /* Стиль для блока с информацией о уроке */
 #journal-info {
-   font-size: 12px;
-   white-space: nowrap;
-   width: 1.5em;
-   /*writing-mode: vertical-lr;*/
+  font-size: 12px;
+  white-space: nowrap;
+  width: 1.5em;
+  /*writing-mode: vertical-lr;*/
 }
 
 /* Стиль при наведении на строку таблицы */
 .schedule-row:hover {
-   background: #e5e5e5;
+  background: #e5e5e5;
 }
 
 /* Заголовок таблицы */
 .schedule-th {
-   text-align: center;
-   padding: 2px;
+  text-align: center;
+  padding: 2px;
 }
 
 /* Стиль для времени расписания */
 #schedule-time {
-   padding: 2px 8px 2px 2px;
+  padding: 2px 8px 2px 2px;
 }
 
 /* Информация о расписании */
 #schedule-info {
-   padding: 2px;
-   text-align: center;
-   font-size: 13px;
-   white-space: nowrap;
-   width: 15%;
-   border-style: solid;
-   border-width: 1px;
-   margin: 2px;
-   /*color: #0a58ca;*/
-   /*writing-mode: vertical-lr;*/
+  padding: 2px;
+  text-align: center;
+  font-size: 13px;
+  white-space: nowrap;
+  width: 15%;
+  border-style: solid;
+  border-width: 1px;
+  margin: 2px;
+  /*color: #0a58ca;*/
+  /*writing-mode: vertical-lr;*/
 }
 
 /* Стиль таблицы журнала */
 #journal-table {
-   background: #fffec6;
+  background: #fffec6;
 
 }
 
 /* Стиль при наведении на строку таблицы журнала */
 #journal-table-tr:hover {
-   background: #e5e5e5;
+  background: #e5e5e5;
 }
 
 /* Общие стили для страницы */
@@ -82,145 +82,167 @@ body {
 }
 
 #journal-footer {
-   background-color: #edecd6;
-   position: absolute;
-   bottom: 0;
-   left: 0;
-   width: 100%;
-   height: 70px;
+  background-color: #edecd6;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
 }
-   .score-input {
-      width: 24px;
-   }
 
-   .rectangle-container {
-    background-color: #f0f0f0; /* цвет фона, можно изменить */
-    border: 2px solid #ccc; /* рамка, можно изменить */
-    border-radius: 10px; /* закругление углов */
-    padding: 15px; /* внутренние отступы */
-    width: 100%; /* ширина контейнера, по необходимости */
-    /*margin: 10px auto; /* центрирование контейнера */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* тень, добавляет объем */
-    box-sizing: border-box; /* чтобы padding учитывался в ширине */
-  }
+.score-input {
+  width: 24px;
+}
 
-  .journal-controls {
-    display: flex;
-  }
+.rectangle-container {
+  background-color: #f0f0f0;
+  /* цвет фона, можно изменить */
+  border: 2px solid #ccc;
+  /* рамка, можно изменить */
+  border-radius: 10px;
+  /* закругление углов */
+  padding: 15px;
+  /* внутренние отступы */
+  width: 100%;
+  /* ширина контейнера, по необходимости */
+  /*margin: 10px auto; /* центрирование контейнера */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* тень, добавляет объем */
+  box-sizing: border-box;
+  /* чтобы padding учитывался в ширине */
+}
 
-  /* Можно оставить остальные стили по необходимости */
-  .journal-controls select {
-    padding: 5px 5px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
+.journal-controls {
+  display: flex;
+}
 
-  .journal-controls button {
-    padding: 8px 16px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  .journal-table {
-    border-radius: 15px;
+/* Можно оставить остальные стили по необходимости */
+.journal-controls select {
+  padding: 5px 5px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
-  }
+.journal-controls button {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
 
-  /* Заголовки таблицы */
-  .journal-table thead th {
-    background-color: #f7f7f7;
-    padding: 5px 5px;
-    font-weight: 600;
-    font-size: 14px;
-    color: #333;
-    border-bottom: 2px solid #e0e0e0;
-    text-align: left;
-  }
+.journal-table {
+  border-radius: 15px;
 
-  /* Строки таблицы */
-  .journal-table tbody td {
-    padding: 4px 6px;
-    border-bottom: 1px solid #e0e0e0;
-    
-    border-radius: 8px;
-  }
+}
 
-  .journal-table select {
-    padding: 8px 8px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
+/* Заголовки таблицы */
+.journal-table thead th {
+  background-color: #f7f7f7;
+  padding: 5px 5px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  text-align: left;
+}
 
-  /* Размеры для input и select для более аккуратного вида */
-  .input-small {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    
-    width: 80px;
-  }
+/* Строки таблицы */
+.journal-table tbody td {
+  padding: 4px 6px;
+  border-bottom: 1px solid #e0e0e0;
 
-  .input-large {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+  border-radius: 8px;
+}
 
-  }
+.journal-table select {
+  padding: 8px 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
-  .input-very-small {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    
-    width: 55px;
-  }
+/* Размеры для input и select для более аккуратного вида */
+.input-small {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 
-  .input-medium {
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    
-    width: 200px;
-  }
-   .vertical-align {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px; /* расстояние между элементами, по желанию */
-  }
-  /* Стиль для select */
-  .select-medium {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    width: 220px;
-  }
-  .rotate-text {
-   transform: rotate(270deg);
-   color: darkgray;
-   width: 24px;
-   line-height: 4;
-  }
-  .n-lesson {
-   color: midnightblue; 
-   font-size: 8px;
-   padding: 2px;
-  }
-  .cell-date {
-   text-align: center;
-  }
-  .info {
-   max-width: 800px;
-   color: rgb(218, 218, 218); 
-   text-align: justify;
-   font-size: 12px;
-  }
-  .info:hover {
-   color: rgb(0, 0, 0);
-  }
-  .lessons-info-table {
-   font-size: 13px;
-  }
+  width: 80px;
+}
 
+.input-large {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+
+}
+
+.input-very-small {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+
+  width: 55px;
+}
+
+.input-medium {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+
+  width: 200px;
+}
+
+.vertical-align {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  /* расстояние между элементами, по желанию */
+}
+
+/* Стиль для select */
+.select-medium {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 220px;
+}
+
+.rotate-text {
+  transform: rotate(270deg);
+  color: darkgray;
+  width: 24px;
+  line-height: 4;
+}
+
+.n-lesson {
+  color: midnightblue;
+  font-size: 8px;
+  padding: 2px;
+}
+
+.cell-date {
+  text-align: center;
+}
+
+.info {
+  max-width: 800px;
+  color: rgb(218, 218, 218);
+  text-align: justify;
+  font-size: 12px;
+}
+
+.info:hover {
+  color: rgb(0, 0, 0);
+}
+
+.lessons-info-table {
+  font-size: 13px;
+}
+
+.pagination-right {
+  text-align: center;
+  font-size: 1.2em;
+}

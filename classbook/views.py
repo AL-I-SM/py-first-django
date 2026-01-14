@@ -21,6 +21,8 @@ from django_filters import rest_framework as filters
 from rest_framework.permissions import IsAuthenticated
 from django.views.generic import ListView
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator
+
 
 
 class PupilsViewSet(ModelViewSet):
@@ -363,13 +365,21 @@ class KTPListInlineEditView(View):
         ktp_list = KTP.objects.all()
         disciplines = Disciplines.objects.all()
         classes = Classes.objects.all()
+
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(ktp_list, 20)
+        ktp_page = paginator.get_page(page_number)
+
         context = {
-            'ktp_list': ktp_list,
+            'ktp_list': ktp_page,
+            # 'ktp_list': ktp_list,
             'disciplines': disciplines,
             'classes': classes,
             'all_menu': menu,
         }
         return render(request, 'classbook\ktp_list_inline.html', context)
+
+
 
 @require_POST
 def add_ktp(request):
