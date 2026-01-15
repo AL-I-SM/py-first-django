@@ -380,7 +380,6 @@ class KTPListInlineEditView(View):
         return render(request, 'classbook\ktp_list_inline.html', context)
 
 
-
 @require_POST
 def add_ktp(request):
     lesson_number = request.POST.get('lesson_number')
