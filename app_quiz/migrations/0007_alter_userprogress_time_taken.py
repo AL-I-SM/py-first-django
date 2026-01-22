@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app_test', '0006_remove_answer_answered_at_answer_answered_at_client_and_more'),
+        ('app_quiz', '0006_remove_answer_answered_at_answer_answered_at_client_and_more'),
     ]
 
     operations = [

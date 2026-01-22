@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     # мои приложения
     
     'projects',
-    'app_test',
+    'app_quiz',
     'blog',
     'users',
     'catalog',
@@ -88,7 +88,7 @@ ROOT_URLCONF = 'school.urls'
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["app_test/templates/"],
+        "DIRS": ["app_quiz/templates/"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -182,4 +182,4 @@ CHANNEL_LAYERS = {
     },
 }
 
-DATABASE_ROUTERS = ['app_test.routers.AuthRouter']
+DATABASE_ROUTERS = ['app_quiz.routers.AuthRouter']

@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('answered_at', models.DateTimeField(auto_now_add=True)),
                 ('is_correct', models.BooleanField()),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app_test.question')),
+                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app_quiz.question')),
             ],
         ),
         migrations.CreateModel(

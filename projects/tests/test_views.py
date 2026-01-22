@@ -1,6 +1,6 @@
 from django.test import TestCase 
 from classbook.models import User
-from app_test.models import Topic
+from app_quiz.models import Topic
 import pytest
 from django.urls import reverse
 import uuid

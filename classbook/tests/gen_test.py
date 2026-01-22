@@ -1,10 +1,10 @@
 from django.test import TestCase 
-from classbook.models import User
-from app_test.models import Topic
 import pytest
 from django.urls import reverse
 import uuid
-from serializers import ClassesSerializer
+from classbook.models import Classes
+import json
+
 
 @pytest.fixture
 def test_password():
@@ -31,10 +31,6 @@ def auto_login_user(db, client, create_user, test_password):
         client.login(username=user.username, password=test_password)
         return client, user
    return make_auto_login
-
-
-from classbook.models import Classes
-import json
 
 
 @pytest.mark.django_db
@@ -85,6 +81,7 @@ def test_Classes_API_delete(admin_client):
   response = admin_client.delete(url, data=json_data, content_type="application/json")
   assert response.status_code == 204
   assert Classes.objects.count() == 0
+
 
 # @pytest.mark.django_db
 # def test_not_owner_view(auto_login_user):

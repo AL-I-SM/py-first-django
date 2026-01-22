@@ -6,7 +6,7 @@ from datetime import datetime
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app_test', '0007_alter_userprogress_time_taken'),
+        ('app_quiz', '0007_alter_userprogress_time_taken'),
     ]
 
     operations = [

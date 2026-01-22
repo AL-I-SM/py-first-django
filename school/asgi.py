@@ -12,8 +12,8 @@ from django.core.asgi import get_asgi_application
 from django.urls import path
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-import app_test.routing
-from app_test.consumers import RatingConsumer
+import app_quiz.routing
+from app_quiz.consumers import RatingConsumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school.settings')
 
