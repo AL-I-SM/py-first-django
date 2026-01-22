@@ -22,7 +22,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.views.generic import ListView
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
-
+from django.http import Http404
 
 
 class PupilsViewSet(ModelViewSet):
@@ -67,9 +67,19 @@ types_of_lessons = {1: "Урок",
 
 # @method_decorator(login_required)
 class JournalView(View):
-    group = Classes.objects.first().id
-    discipline = Disciplines.objects.first().id
-    teacher = Teachers.objects.first().id
+    
+    '''
+    try:
+        # get_object_or_404
+        group = Classes.objects.first().id
+        discipline = Disciplines.objects.first().id
+        teacher = Teachers.objects.first().id
+
+    except Exception as e:
+        pass
+        # return render(request, 'no_data.html')  
+        # no_data = True
+    '''
 
     def get(self, request, *args, **kwargs):
         self.group = kwargs['group']

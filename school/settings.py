@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-ztmw^m%!ry*&a&oebckcbedclvy83t7@&0j76x=v*lls48dts1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 LOGIN_REDIRECT_URL = "players:dashboard"
 LOGOUT_REDIRECT_URL = "players:dashboard"

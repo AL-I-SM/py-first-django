@@ -1,8 +1,8 @@
 from django.test import TestCase 
 import pytest
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 import uuid
-from classbook.models import Classes
+from classbook.models import Classes,  Disciplines, Teachers, Positions, User
 import json
 
 
@@ -32,6 +32,25 @@ def auto_login_user(db, client, create_user, test_password):
         return client, user
    return make_auto_login
 
+'''
+def create_obj():
+  user = User.objects.create_user(
+    username='teacher1',
+    # password='password123',
+    first_name='Иван',
+    last_name='Иванов',
+    middle_name='Иванович'
+    )
+  
+  position = Positions.objects.create(position="Test Positions")
+  Classes.objects.create(name="Test Classes")
+  Disciplines.objects.create(name="Test Discipline")
+  Teachers.objects.create(position=position
+)
+  assert Classes.objects.count() == 1
+  assert Disciplines.objects.count() == 1
+  assert Teachers.objects.count() == 1
+'''
 
 @pytest.mark.django_db
 def test_Classes_API_create(admin_client):
@@ -130,8 +149,8 @@ def test_Classes_API_delete(admin_client):
 
 
 
-# pytest classbook\gen_test.py
+# pytest classbook\classbook_test.py
   
-# pytest classbook\gen_test.py --cov-report html --cov=app_test
-# pytest classbook\gen_test.py --cov=app_test
+# pytest classbook\classbook_test.py --cov-report html --cov=app_test
+# pytest classbook\classbook_test.py --cov=app_test
 

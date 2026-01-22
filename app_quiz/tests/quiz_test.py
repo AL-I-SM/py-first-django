@@ -1,22 +1,48 @@
 import pytest
 import asyncio
-from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
-from app_quiz.consumers import RatingConsumer
 from django.test import TransactionTestCase
+from classbook.models import User
+from asgiref.sync import sync_to_async
+from channels.layers import get_channel_layer
 
-User = get_user_model()
 
-class TestRatingConsumer(TransactionTestCase):
+from django.test import TestCase
+from channels.testing import WebsocketCommunicator
+from app_quiz.consumers import RatingConsumer
 
-    async def asyncSetUp(self):
+class TestRatingConsumer(TestCase):
+
+    def get_user(self):
         # Создаем тестового пользователя
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        
+        user =  User.objects.create_user(username='teacher1',
+                                         first_name='Иван',
+                                         last_name='Иванов',
+                                         middle_name='Иванович'
+                                        )
+        return user
+    
+
+    @pytest.fixture
+    def auto_login_user(db, client, create_user, test_password):
+        def make_auto_login(user=None):
+            if user:
+                client.logout()
+            if user is None:
+                user = create_user()
+            client.login(username=user.username, password=test_password)
+            return client, user
+        return make_auto_login
+
+
     @pytest.mark.asyncio
     async def test_connect_and_send_messages(self):
-        communicator = WebsocketCommunicator(application, "/ws/rating/")  # путь маршрута
-        communicator.scope['user'] = self.user
+        user = await sync_to_async(User.objects.create_user)(
+             username='testuser', password='testpassword'
+        )
+        # user = await sync_to_async(self.get_user)()
+        communicator = WebsocketCommunicator(RatingConsumer.as_asgi(), "/ws/rating/")
+        communicator.scope['user'] = user
         connected, subprotocol = await communicator.connect()
         assert connected
 
