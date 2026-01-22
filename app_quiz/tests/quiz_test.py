@@ -40,25 +40,26 @@ class TestRatingConsumer(TestCase):
         user = await sync_to_async(User.objects.create_user)(
              username='testuser', password='testpassword'
         )
-        # user = await sync_to_async(self.get_user)()
+        login_successful = await sync_to_async(self.client.login)(username='testuser', password='testpassword')
+        assert login_successful
         communicator = WebsocketCommunicator(RatingConsumer.as_asgi(), "/ws/rating/")
         communicator.scope['user'] = user
         connected, subprotocol = await communicator.connect()
         assert connected
 
         # Отправляем сообщение типа 'start'
-        await communicator.send_json_to({'type': 'start', 'user': self.user.username})
+        await communicator.send_json_to({'type': 'start', 'user': user.username})
         response = await communicator.receive_json_from()
         # Тут можно проверить, что получили ожидаемый ответ
 
         # Отправляем сообщение типа 'auth'
-        await communicator.send_json_to({'type': 'auth', 'user': self.user.username})
+        await communicator.send_json_to({'type': 'auth', 'user': user.username})
         response2 = await communicator.receive_json_from()
         # Аналогично проверяем содержимое ответа
 
         # Можно отправить и другие сообщения, проверить ответы
         # Например, запрос таблицы рейтинга
-        await communicator.send_json_to({'type': 'table', 'user': self.user.username})
+        await communicator.send_json_to({'type': 'table', 'user': user.username})
         response3 = await communicator.receive_json_from()
 
         # Отключение

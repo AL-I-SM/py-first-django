@@ -31,7 +31,8 @@ class RatingConsumer(AsyncWebsocketConsumer):
         print("экземпляр RatingConsumer создан")
 
     async def connect(self):
-        self.user = self.scope["user"]._wrapped 
+        print(self.scope)
+        self.user = self.scope["user"]
         self.group_name = 'rating' ###
         self.channel_layer = get_channel_layer() #???
 
@@ -65,7 +66,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
     async def send_to_layer_group(self, user, content, type, type_data):
 
         data = {
-            'user': user,
+            'user': str(user),
             'type': type,                       # соответствует обработчику на JS
             'content': content                  # данные (должны быть сериализуемы в JSON)
         }
@@ -83,6 +84,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         message_type = data.get("type")
         user = data.get('user', 'Аноним')
+        user_name = str(user)
 
         print(self.users_and_rating, self.channel_layer)
 
@@ -92,23 +94,23 @@ class RatingConsumer(AsyncWebsocketConsumer):
             
             # добавляет начавшийся тест и время его начала в общий словарь
             self.groups_started.update({self.group_name: datetime.now()})
-            await self.send_to_layer_group(user, str(datetime.now()),
+            await self.send_to_layer_group(user_name, str(datetime.now()),
                                             'start', 'send_rating_table')
 
         if message_type == 'auth':
-            self.users_and_rating.update({user: {"score": 0, 
+            self.users_and_rating.update({user_name: {"score": 0, 
                                                  "time": 0,
                                                  "number": 1,
                                                  "subject_id": 1,
                                                  "packet": 1}})
             
-            await self.send_to_layer_group(user, self.users_and_rating,
+            await self.send_to_layer_group(user_name, self.users_and_rating,
                                            'rating_updates', 'send_rating_table')
        
         if message_type == 'table':
             print('запрошена таблица рейтинга') 
             
-            await self.send_to_layer_group(user, self.users_and_rating,
+            await self.send_to_layer_group(user_name, self.users_and_rating,
                                            'rating_table', 'send_rating_table')
 
             '''
@@ -132,23 +134,25 @@ class RatingConsumer(AsyncWebsocketConsumer):
         
                 number_inc = 1 if data.get("state") == 'next' else 0
 
-                number = self.users_and_rating[user]['number']
+                number = self.users_and_rating[user_name]['number']
                 number += number_inc
-                subject_id = self.users_and_rating[user]['subject_id']
-                packet = self.users_and_rating[user]['packet'] 
-                score = self.users_and_rating[user]['score']
-                packet = self.users_and_rating[user]['packet']
-                time_taken = self.users_and_rating[user]['time']
+                subject_id = self.users_and_rating[user_name]['subject_id']
+                packet = self.users_and_rating[user_name]['packet'] 
+                score = self.users_and_rating[user_name]['score']
+                packet = self.users_and_rating[user_name]['packet']
+                time_taken = self.users_and_rating[user_name]['time']
                 
+                print(user_name, number, subject_id, packet)
+
                 question_obj = False
                 try:
                     question_obj = await self.get_question(number, subject_id, packet)
                 except Exception as e:
                     print(f'данне вопроса не получены: {e}')
-                    await self.send_to_layer_group(user, score,
+                    await self.send_to_layer_group(user_name, score,
                                                 'end_test', 'send_rating_table')
 
-                    student = await database_sync_to_async(User.objects.get)(username=user)
+                    student = await database_sync_to_async(User.objects.get)(username=user_name)
                     # get_or_create
                     # если завершение теста, то сохранение общего прогресса прользователя
                     await database_sync_to_async(UserProgress.objects.create)(
@@ -160,7 +164,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                     )
 
                     # удалить пользователя из теста
-                    del self.users_and_rating[user]
+                    del self.users_and_rating[user_name]
                     print("пользователь закончил тест")
                     
                     if not self.users_and_rating:
@@ -179,9 +183,9 @@ class RatingConsumer(AsyncWebsocketConsumer):
 
                     print(question)
                     
-                    self.users_and_rating[user]['number'] = number
+                    self.users_and_rating[user_name]['number'] = number
                     
-                    await self.send_to_layer_group(user, question,
+                    await self.send_to_layer_group(user_name, question,
                                                 'question', 'send_question_data')
 
         if message_type == 'answer':
@@ -193,7 +197,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
             answered_at_server =  datetime.now()
 
             try:
-                student = await database_sync_to_async(User.objects.get)(username=user)
+                student = await database_sync_to_async(User.objects.get)(username=user_name)
             except Exception as e:
                 print(f'пользователь с таким username не найден: {e}')
                 student = None
@@ -216,7 +220,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
             time_answer = datetime.strptime(answered_at, format).replace(tzinfo=timezone.utc)
             start =  self.groups_started[self.group_name].astimezone(zoneinfo.ZoneInfo("Europe/Moscow"))
             seconds = abs((time_answer - start).total_seconds())
-            self.users_and_rating[user]['time'] = seconds
+            self.users_and_rating[user_name]['time'] = seconds
 
             # Записываем ответ
             await database_sync_to_async(Answer.objects.create)(
@@ -229,8 +233,8 @@ class RatingConsumer(AsyncWebsocketConsumer):
             )
             
             if question_obj and is_correct:
-                self.users_and_rating[user]['score'] += question_obj.score
+                self.users_and_rating[user_name]['score'] += question_obj.score
 
             # Обновляем рейтинг
-            await self.send_to_layer_group(user, self.users_and_rating,
+            await self.send_to_layer_group(user_name, self.users_and_rating,
                                            'rating_updates', 'send_rating_table')
