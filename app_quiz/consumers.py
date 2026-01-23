@@ -4,6 +4,7 @@ from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from .models import UserProgress, Answer, Question
 from datetime import datetime, timezone
+from django.utils import timezone as tz
 from classbook.models import User
 import zoneinfo
 from asgiref.sync import sync_to_async
@@ -116,7 +117,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
             '''
             data = {
                 'type': 'rating_table',             # соответствует обработчику на JS
-                'content': self.users_and_rating   # данные (должны быть сериализуемы в JSON)
+                'content': self.users_and_rating    # данные (должны быть сериализуемы в JSON)
             }
 
             await self.channel_layer.group_send(
@@ -148,7 +149,7 @@ class RatingConsumer(AsyncWebsocketConsumer):
                 try:
                     question_obj = await self.get_question(number, subject_id, packet)
                 except Exception as e:
-                    print(f'данне вопроса не получены: {e}')
+                    print(f'данные вопроса не получены: {e}')
                     await self.send_to_layer_group(user_name, score,
                                                 'end_test', 'send_rating_table')
 
@@ -160,9 +161,11 @@ class RatingConsumer(AsyncWebsocketConsumer):
                         score=score,
                         packet=packet,
                         time_taken = time_taken,
-                        date = datetime.now()
+                        date = datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z')
+                        # date = datetime.now().replace(tzinfo=timezone.utc)
+                        # date = timezone.now()
                     )
-
+                    print(datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z'))
                     # удалить пользователя из теста
                     del self.users_and_rating[user_name]
                     print("пользователь закончил тест")
@@ -189,52 +192,56 @@ class RatingConsumer(AsyncWebsocketConsumer):
                                                 'question', 'send_question_data')
 
         if message_type == 'answer':
-            answer = data.get("answer")
-            question_id = data.get("question_id")
-            answered_at = data.get("answered_at")
-            print(f'получен ответ: {answer} в {answered_at}') 
-            
-            answered_at_server =  datetime.now()
+            # возможно необходимо условние ниже, для предотвращения ошибок, если запрос answer придет, но не ожидается
+            if self.group_name in self.groups_started:
+                answer = data.get("answer")
+                question_id = data.get("question_id")
+                answered_at = data.get("answered_at")
+                print(f'получен ответ: {answer} в {answered_at}') 
+                
+                answered_at_server =  datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z')
 
-            try:
-                student = await database_sync_to_async(User.objects.get)(username=user_name)
-            except Exception as e:
-                print(f'пользователь с таким username не найден: {e}')
-                student = None
+                try:
+                    student = await database_sync_to_async(User.objects.get)(username=user_name)
+                except Exception as e:
+                    print(f'пользователь с таким username не найден: {e}')
+                    student = None
 
-            is_correct = None
-            try:
-                question_obj =  await sync_to_async(Question.objects.get)(id=question_id)
-                correct_answer = question_obj.correct_answer
-                if answer:
-                    if answer == correct_answer:
-                        is_correct = True
-                    else:
-                        is_correct = False   
+                is_correct = None
+                try:
+                    question_obj =  await sync_to_async(Question.objects.get)(id=question_id)
+                    correct_answer = question_obj.correct_answer
+                    if answer:
+                        if answer == correct_answer:
+                            is_correct = True
+                        else:
+                            is_correct = False   
 
-            except Exception as e:
-                print(f'вопроса с таким ID нет в базе данных: {e}')
-                question_obj = None
+                except Exception as e:
+                    print(f'вопроса с таким ID нет в базе данных: {e}')
+                    question_obj = None
 
-            format = "%Y-%m-%dT%H:%M:%S.%fZ"
-            time_answer = datetime.strptime(answered_at, format).replace(tzinfo=timezone.utc)
-            start =  self.groups_started[self.group_name].astimezone(zoneinfo.ZoneInfo("Europe/Moscow"))
-            seconds = abs((time_answer - start).total_seconds())
-            self.users_and_rating[user_name]['time'] = seconds
+                format = "%Y-%m-%dT%H:%M:%S.%fZ"
+                time_answer = datetime.strptime(answered_at, format).replace(tzinfo=timezone.utc)
+                start =  self.groups_started[self.group_name].astimezone(zoneinfo.ZoneInfo("Europe/Moscow"))
+                seconds = abs((time_answer - start).total_seconds())
+                self.users_and_rating[user_name]['time'] = seconds
 
-            # Записываем ответ
-            await database_sync_to_async(Answer.objects.create)(
-                user=student,
-                question_id=question_id,
-                answer=answer,
-                answered_at_server=answered_at_server,
-                answered_at_client=time_answer,
-                is_correct=is_correct
-            )
-            
-            if question_obj and is_correct:
-                self.users_and_rating[user_name]['score'] += question_obj.score
+                # Записываем ответ
+                await database_sync_to_async(Answer.objects.create)(
+                    user=student,
+                    question_id=question_id,
+                    answer=answer,
+                    answered_at_server=answered_at_server,
+                    answered_at_client=time_answer,
+                    is_correct=is_correct
+                )
+                
+                if question_obj and is_correct:
+                    self.users_and_rating[user_name]['score'] += question_obj.score
 
-            # Обновляем рейтинг
-            await self.send_to_layer_group(user_name, self.users_and_rating,
-                                           'rating_updates', 'send_rating_table')
+                # Обновляем рейтинг
+                await self.send_to_layer_group(user_name, self.users_and_rating,
+                                            'rating_updates', 'send_rating_table')
+            else:
+                print('неожиданное сообщение')
