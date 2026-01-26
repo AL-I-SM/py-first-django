@@ -25,7 +25,17 @@ class TestRatingConsumer(TestCase):
         communicator.scope['user'] = user
         connected, _ = await communicator.connect()
         return (communicator, connected, login_successful)
+
+
+    async def auth_and_start(self, communicator):
         
+        user = communicator.scope['user']
+        await communicator.send_json_to({'type': 'auth', 'user': user.username})
+        response = await communicator.receive_json_from()
+        await communicator.send_json_to({'type': 'start', 'user': user.username})
+        response = await communicator.receive_json_from()
+        return user
+
 
     @pytest.fixture
     def auto_login_user(db, client, create_user, test_password):
@@ -137,13 +147,7 @@ class TestRatingConsumer(TestCase):
     async def test_send_message_question(self):
         communicator, _, _ = await self.сonnect_communicator()
         
-        user = communicator.scope['user'] 
-
-        await communicator.send_json_to({'type': 'auth', 'user': user.username})
-        response = await communicator.receive_json_from()
-        await communicator.send_json_to({'type': 'start', 'user': user.username})
-        response = await communicator.receive_json_from()
-
+        user = await self.auth_and_start(communicator)
 
         question = await sync_to_async(Question.objects.create)(subject_id = 1,
                                                                 text = "text1",
@@ -170,12 +174,7 @@ class TestRatingConsumer(TestCase):
     async def test_send_message_answer(self):
         communicator, _, _ = await self.сonnect_communicator()
         
-        user = communicator.scope['user']
-
-        await communicator.send_json_to({'type': 'auth', 'user': user.username})
-        response = await communicator.receive_json_from()
-        await communicator.send_json_to({'type': 'start', 'user': user.username})
-        response = await communicator.receive_json_from()
+        user = await self.auth_and_start(communicator)
 
         question = await sync_to_async(Question.objects.create)(subject_id = 1,
                                                                 text = "text1",
@@ -206,12 +205,7 @@ class TestRatingConsumer(TestCase):
     async def test_end_quiz_if_no_questions(self):
         communicator, _, _ = await self.сonnect_communicator()
         
-        user = communicator.scope['user']
-
-        await communicator.send_json_to({'type': 'auth', 'user': user.username})
-        response = await communicator.receive_json_from()
-        await communicator.send_json_to({'type': 'start', 'user': user.username})
-        response = await communicator.receive_json_from()
+        user = await self.auth_and_start(communicator)
 
         # запрос вопроса, когда в БД нет данных
         # он так же удалит пользователя из словаря рейтинга (как проверить?)
