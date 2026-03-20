@@ -128,6 +128,7 @@ class TopcisCreationTests(TestCase):
 
 # pytest --cov-report html --cov=app_test
 # pytest --cov=app_test
+# pytest -v
 
 # coverage run --source='.' ..\manage.py test tests 
 # coverage report

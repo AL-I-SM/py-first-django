@@ -36,6 +36,18 @@ class TestRatingConsumer(TestCase):
         response = await communicator.receive_json_from()
         return user
 
+    
+    async def add_db_data(self):
+        
+        question = await sync_to_async(Question.objects.create)(subject_id = 1,
+                                                                text = "text1",
+                                                                number = 1,
+                                                                options = ["1", "2"],
+                                                                correct_answer = "1",
+                                                                packet = 1,
+                                                                score = 1)
+        subject = await sync_to_async(Disciplines.objects.create)(name = "disciplines1")
+
 
     @pytest.fixture
     def auto_login_user(db, client, create_user, test_password):
@@ -121,16 +133,9 @@ class TestRatingConsumer(TestCase):
         communicator, _, _ = await self.сonnect_communicator()
         
         user = communicator.scope['user'] 
-
-        question = await sync_to_async(Question.objects.create)(subject_id = 1,
-                                                                text = "text1",
-                                                                number = 1,
-                                                                options = ["1", "2"],
-                                                                correct_answer = "1",
-                                                                packet = 1,
-                                                                score = 1)
-        subject = await sync_to_async(Disciplines.objects.create)(name = "disciplines1")
-
+        
+        await self.add_db_data()
+        
         # запрос вопроса, когда в БД есть данные, но еще тест не начался
         # ответ не должен приходить
         try:
@@ -149,15 +154,8 @@ class TestRatingConsumer(TestCase):
         
         user = await self.auth_and_start(communicator)
 
-        question = await sync_to_async(Question.objects.create)(subject_id = 1,
-                                                                text = "text1",
-                                                                number = 1,
-                                                                options = ["1", "2"],
-                                                                correct_answer = "1",
-                                                                packet = 1,
-                                                                score = 1)
-        subject = await sync_to_async(Disciplines.objects.create)(name = "disciplines1")
-
+        await self.add_db_data()
+        
         # запрос вопроса, когда в БД есть данные
         await communicator.send_json_to({'type': 'question', 'user': user.username})
         response = await communicator.receive_json_from()
@@ -176,15 +174,8 @@ class TestRatingConsumer(TestCase):
         
         user = await self.auth_and_start(communicator)
 
-        question = await sync_to_async(Question.objects.create)(subject_id = 1,
-                                                                text = "text1",
-                                                                number = 1,
-                                                                options = ["1", "2"],
-                                                                correct_answer = "1",
-                                                                packet = 1,
-                                                                score = 1)
-        subject = await sync_to_async(Disciplines.objects.create)(name = "disciplines1")
-
+        await self.add_db_data
+        
         await communicator.send_json_to({'type': 'answer',
                                          'answered_at': datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z'),
                                          'user': user.username,
